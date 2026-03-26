@@ -1,0 +1,116 @@
+namespace MojiGotchi;
+
+public class Sprite
+{
+	private Vec2 _size;
+	public Vec2 Size
+	{
+		get
+		{
+			return _size; 
+		}
+	}
+
+	private ScreenCell[,] _data = new ScreenCell[0,0];
+	public ScreenCell[,] Data
+	{
+		get
+		{
+			return _data;
+		}
+		set
+		{
+			_data = value;
+		}
+	}
+
+	public Sprite(Vec2 size)
+	{
+		_size = size;
+		Data = new ScreenCell[size.Y, size.X];
+	}
+
+	public bool WriteCell(Vec2 pos, ScreenCell cell)
+	{
+		if (pos.X >= 0 && pos.X < _size.X && pos.Y >= 0 && pos.Y < _size.Y)
+		{
+			Data[pos.Y, pos.X] = cell;
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+}
+
+public class Animation
+{
+	private List<Sprite>? _frames = null;
+	public List<Sprite>? Frames
+	{
+		get
+		{
+			return _frames;
+		}
+	}
+	private int _currentFrame;
+	private int _frameDurationMs;
+	private DateTime _lastFrameTime;
+
+	//constructor
+	public Animation(int framedurationms)
+	{
+		_frameDurationMs = framedurationms;
+		_currentFrame = 0;
+		_lastFrameTime = DateTime.Now;
+	}
+
+	public void addFrame(Sprite frame)
+	{
+		//check if this is the first time a frame is added
+		if (_frames == null)
+		{
+			_frames = [frame];
+		}
+		else if(Vec2.Equals(frame.Size, _frames[0].Size)) //check if the sizes match
+		{
+			_frames.Add(frame);
+		}
+	}
+
+	public Sprite? GetSprite(int offset = 0) // Changed return type to nullable Sprite?
+	{
+		// If _frames is null or empty, there are no frames to return.
+		if (_frames == null || _frames.Count == 0)
+		{
+			return null;
+		}
+		//check if we need to advance the animation
+	TimeSpan frameDuration = TimeSpan.FromMilliseconds(_frameDurationMs);
+	if (DateTime.Now - _lastFrameTime > frameDuration)
+		{
+			_currentFrame++;
+			if (_currentFrame >= _frames.Count)
+			{
+				_currentFrame = 0;
+			}
+			_lastFrameTime = DateTime.Now;
+		}
+		int offsetcurrent = (_currentFrame + offset) % _frames.Count;
+		return _frames[offsetcurrent];
+	}
+
+	public void AdvanceFrames(int numframes)
+	{
+		if(_frames != null)
+		{
+			_currentFrame = (_currentFrame + numframes) % _frames.Count;
+		}
+	}
+}
+
+	
+
+	

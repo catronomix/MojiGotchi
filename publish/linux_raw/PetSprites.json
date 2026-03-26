@@ -1,0 +1,131 @@
+{
+  "Sprite": {
+    "grid_size": {
+      "rows": 3,
+      "cols": 3
+    },
+    "Frames": [
+      {
+        "cells": [ 
+          { "char": ".", "fg": "Black", "bg": "Black" }, { "char": " ", "fg": "Black", "bg": "Black" }, { "char": ".", "fg": "Black", "bg": "Black" },
+          { "char": "|", "fg": "White", "bg": "DarkGray" }, { "char": "o", "fg": "White", "bg": "DarkGray" }, { "char": "(", "fg": "White", "bg": "DarkGray" },
+          { "char": "\u0000", "fg": "White", "bg": "DarkGray" }, { "char": "v", "fg": "White", "bg": "DarkGray" }, { "char": "\u0000", "fg": "White", "bg": "DarkGray" }
+        ]
+      },
+      {
+        "cells": [
+          { "char": ".", "fg": "Black", "bg": "Black" }, { "char": " ", "fg": "Black", "bg": "Black" }, { "char": ".", "fg": "Black", "bg": "Black" },
+          { "char": ")", "fg": "White", "bg": "DarkGray" }, { "char": "o", "fg": "White", "bg": "DarkGray" }, { "char": "|", "fg": "White", "bg": "DarkGray" },
+          { "char": "v", "fg": "White", "bg": "DarkGray" }, { "char": "\u0000", "fg": "White", "bg": "DarkGray" }, { "char": "\u0000", "fg": "White", "bg": "DarkGray" }
+        ]
+      },
+      {
+        "cells": [ 
+          { "char": ".", "fg": "Black", "bg": "Black" }, { "char": " ", "fg": "Black", "bg": "Black" }, { "char": ".", "fg": "Black", "bg": "Black" },
+          { "char": "|", "fg": "White", "bg": "DarkGray" }, { "char": "o", "fg": "White", "bg": "DarkGray" }, { "char": "(", "fg": "White", "bg": "DarkGray" },
+          { "char": "\u0000", "fg": "White", "bg": "DarkGray" }, { "char": "v", "fg": "White", "bg": "DarkGray" }, { "char": "\u0000", "fg": "White", "bg": "DarkGray" }
+        ]
+      },
+      {
+        "cells": [
+          { "char": ".", "fg": "Black", "bg": "Black" }, { "char": " ", "fg": "Black", "bg": "Black" }, { "char": ".", "fg": "Black", "bg": "Black" },
+          { "char": ")", "fg": "White", "bg": "DarkGray" }, { "char": "o", "fg": "White", "bg": "DarkGray" }, { "char": "|", "fg": "White", "bg": "DarkGray" },
+          { "char": "\u0000", "fg": "White", "bg": "DarkGray" }, { "char": "\u0000", "fg": "White", "bg": "DarkGray" }, { "char": "v", "fg": "White", "bg": "DarkGray" }
+        ]
+      },
+      {
+        "cells": [
+          { "char": "^", "fg": "Black", "bg": "Black" }, { "char": "0", "fg": "Black", "bg": "Black" }, { "char": "^", "fg": "Black", "bg": "Black" },
+          { "char": ")", "fg": "White", "bg": "DarkGray" }, { "char": "o", "fg": "White", "bg": "DarkGray" }, { "char": "(", "fg": "White", "bg": "DarkGray" },
+          { "char": "\u0000", "fg": "White", "bg": "DarkGray" }, { "char": "v", "fg": "White", "bg": "DarkGray" }, { "char": "\u0000", "fg": "White", "bg": "DarkGray" }
+        ]
+      },
+      {
+        "cells": [
+          { "char": "^", "fg": "Black", "bg": "Black" }, { "char": "8", "fg": "Red", "bg": "Black" }, { "char": "^", "fg": "Black", "bg": "Black" },
+          { "char": ")", "fg": "White", "bg": "DarkGray" }, { "char": "o", "fg": "White", "bg": "DarkGray" }, { "char": "(", "fg": "White", "bg": "DarkGray" },
+          { "char": "\u0000", "fg": "White", "bg": "DarkGray" }, { "char": "v", "fg": "White", "bg": "DarkGray" }, { "char": "\u0000", "fg": "White", "bg": "DarkGray" }
+        ]
+      },
+      {
+        "cells": [ 
+          { "char": ".", "fg": "Black", "bg": "Black" }, { "char": " ", "fg": "Black", "bg": "Black" }, { "char": ".", "fg": "Black", "bg": "Black" },
+          { "char": "|", "fg": "White", "bg": "DarkGray" }, { "char": "o", "fg": "White", "bg": "DarkGray" }, { "char": "(", "fg": "White", "bg": "DarkGray" },
+          { "char": "\u0000", "fg": "White", "bg": "DarkGray" }, { "char": "\u0000", "fg": "White", "bg": "DarkGray" }, { "char": "v", "fg": "White", "bg": "DarkGray" }
+        ]
+      },
+      {
+        "cells": [
+          { "char": "^", "fg": "Black", "bg": "Black" }, { "char": " ", "fg": "Black", "bg": "Black" }, { "char": "^", "fg": "Black", "bg": "Black" },
+          { "char": ")", "fg": "White", "bg": "DarkGray" }, { "char": "o", "fg": "White", "bg": "DarkGray" }, { "char": "|", "fg": "White", "bg": "DarkGray" },
+          { "char": "v", "fg": "White", "bg": "DarkGray" }, { "char": "\u0000", "fg": "White", "bg": "DarkGray" }, { "char": "\u0000", "fg": "White", "bg": "DarkGray" }
+        ]
+      },
+      {
+        "cells": [ 
+          { "char": "^", "fg": "Black", "bg": "Black" }, { "char": " ", "fg": "Black", "bg": "Black" }, { "char": "^", "fg": "Black", "bg": "Black" },
+          { "char": "|", "fg": "White", "bg": "DarkGray" }, { "char": "o", "fg": "White", "bg": "DarkGray" }, { "char": "(", "fg": "White", "bg": "DarkGray" },
+          { "char": "\u0000", "fg": "White", "bg": "DarkGray" }, { "char": "\u0000", "fg": "White", "bg": "DarkGray" }, { "char": "v", "fg": "White", "bg": "DarkGray" }
+        ]
+      },
+      {
+        "cells": [
+          { "char": "^", "fg": "Black", "bg": "Black" }, { "char": " ", "fg": "Black", "bg": "Black" }, { "char": "^", "fg": "Black", "bg": "Black" },
+          { "char": ")", "fg": "White", "bg": "DarkGray" }, { "char": "o", "fg": "White", "bg": "DarkGray" }, { "char": "|", "fg": "White", "bg": "DarkGray" },
+          { "char": "v", "fg": "White", "bg": "DarkGray" }, { "char": "\u0000", "fg": "White", "bg": "DarkGray" }, { "char": "\u0000", "fg": "White", "bg": "DarkGray" }
+        ]
+      },
+      {
+        "cells": [
+          { "char": "z", "fg": "Black", "bg": "White" }, { "char": "\u0000", "fg": "Black", "bg": "White" }, { "char": "\u0000", "fg": "Black", "bg": "White" },
+          { "char": "\u0000", "fg": "White", "bg": "Black" }, { "char": "\u0000", "fg": "White", "bg": "DarkGray" }, { "char": "\u0000", "fg": "White", "bg": "DarkGray" },
+          { "char": "_", "fg": "White", "bg": "Black" }, { "char": "o", "fg": "White", "bg": "DarkGray" }, { "char": ">", "fg": "White", "bg": "DarkGray" }
+        ]
+      },
+      {
+        "cells": [
+          { "char": "\u0000", "fg": "Black", "bg": "White" }, { "char": "z", "fg": "Black", "bg": "White" }, { "char": "\u0000", "fg": "Black", "bg": "White" },
+          { "char": "\u0000", "fg": "White", "bg": "Black" }, { "char": "\u0000", "fg": "White", "bg": "DarkGray" }, { "char": "\u0000", "fg": "White", "bg": "DarkGray" },
+          { "char": "_", "fg": "White", "bg": "Black" }, { "char": "o", "fg": "White", "bg": "DarkGray" }, { "char": ">", "fg": "White", "bg": "DarkGray" }
+        ]
+      },
+      {
+        "cells": [
+          { "char": "\u0000", "fg": "Black", "bg": "White" }, { "char": "\u0000", "fg": "Black", "bg": "White" }, { "char": "z", "fg": "Black", "bg": "White" },
+          { "char": "\u0000", "fg": "White", "bg": "Black" }, { "char": "\u0000", "fg": "White", "bg": "DarkGray" }, { "char": "\u0000", "fg": "White", "bg": "DarkGray" },
+          { "char": "_", "fg": "White", "bg": "Black" }, { "char": "o", "fg": "White", "bg": "DarkGray" }, { "char": ">", "fg": "White", "bg": "DarkGray" }
+        ]
+      },
+      {
+        "cells": [ 
+          { "char": "=", "fg": "Black", "bg": "Black" }, { "char": "_", "fg": "Black", "bg": "Black" }, { "char": "=", "fg": "Black", "bg": "Black" },
+          { "char": "|", "fg": "White", "bg": "DarkGray" }, { "char": "o", "fg": "White", "bg": "DarkGray" }, { "char": "(", "fg": "White", "bg": "DarkGray" },
+          { "char": "\u0000", "fg": "White", "bg": "DarkGray" }, { "char": "v", "fg": "White", "bg": "DarkGray" }, { "char": "\u0000", "fg": "White", "bg": "DarkGray" }
+        ]
+      }
+      
+    ],
+    "Animations": [
+      {
+        "state": "DEFAULT",
+        "frames": [0, 1, 2, 3]
+      },
+      {
+        "state": "EATING",
+        "frames": [4, 5]
+      },
+      {
+        "state": "PLAYING",
+        "frames": [6, 7, 8, 9]
+      },
+      {
+        "state": "SLEEPING",
+        "frames": [10, 11, 12]
+      },
+      {
+        "state": "WAKEUP",
+        "frames": [13]
+      }
+    ]
+  }
+}
