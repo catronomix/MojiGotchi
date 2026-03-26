@@ -35,63 +35,63 @@ public static class BlueprintManager
 
 		// '═' horizontal wall
 		var wallSpriteH = new Sprite(new Vec2(1, 1));
-		wallSpriteH.WriteCell(new Vec2(0, 0), new ScreenCell('═', Color.Black, Color.Gray));
+		wallSpriteH.WriteCell(new Vec2(0, 0), new ScreenCell('═', Color.White, Color.DarkGray));
 		var wallAnimationH = new Animation(1000);
 		wallAnimationH.addFrame(wallSpriteH);
 		_blueprints.Add('=', new LevelElementBlueprint("WallH", wallAnimationH, true, "MidLayer"));
 
 		// '║' vertical wall
 		var wallSpriteV = new Sprite(new Vec2(1, 1));
-		wallSpriteV.WriteCell(new Vec2(0, 0), new ScreenCell('║', Color.Black, Color.Gray));
+		wallSpriteV.WriteCell(new Vec2(0, 0), new ScreenCell('║', Color.White, Color.DarkGray));
 		var wallAnimationV = new Animation(1000);
 		wallAnimationV.addFrame(wallSpriteV);
 		_blueprints.Add('|', new LevelElementBlueprint("WallV", wallAnimationV, true, "MidLayer"));
 
 		// '╔' topleft corner wall
 		var cornerSpriteTL = new Sprite(new Vec2(1, 1));
-		cornerSpriteTL.WriteCell(new Vec2(0, 0), new ScreenCell('╔', Color.Black, Color.Gray));
+		cornerSpriteTL.WriteCell(new Vec2(0, 0), new ScreenCell('╔', Color.White, Color.DarkGray));
 		var cornerAnimationTL = new Animation(1000);
 		cornerAnimationTL.addFrame(cornerSpriteTL);
 		_blueprints.Add('<', new LevelElementBlueprint("CornerTL", cornerAnimationTL, true, "MidLayer"));
 
 		// '╗' topright corner wall
 		var cornerSpriteTR = new Sprite(new Vec2(1, 1));
-		cornerSpriteTR.WriteCell(new Vec2(0, 0), new ScreenCell('╗', Color.Black, Color.Gray));
+		cornerSpriteTR.WriteCell(new Vec2(0, 0), new ScreenCell('╗', Color.White, Color.DarkGray));
 		var cornerAnimationTR = new Animation(1000);
 		cornerAnimationTR.addFrame(cornerSpriteTR);
 		_blueprints.Add('>', new LevelElementBlueprint("CornerTR", cornerAnimationTR, true, "MidLayer"));
 
 		// '╚' bottomleft corner wall
 		var cornerSpriteBL = new Sprite(new Vec2(1, 1));
-		cornerSpriteBL.WriteCell(new Vec2(0, 0), new ScreenCell('╚', Color.Black, Color.Gray));
+		cornerSpriteBL.WriteCell(new Vec2(0, 0), new ScreenCell('╚', Color.White, Color.DarkGray));
 		var cornerAnimationBL = new Animation(1000);
 		cornerAnimationBL.addFrame(cornerSpriteBL);
 		_blueprints.Add('(', new LevelElementBlueprint("CornerBL", cornerAnimationBL, true, "MidLayer"));
 
 		// '╝' bottomright corner wall
 		var cornerSpriteBR = new Sprite(new Vec2(1, 1));
-		cornerSpriteBR.WriteCell(new Vec2(0, 0), new ScreenCell('╝', Color.Black, Color.Gray));
+		cornerSpriteBR.WriteCell(new Vec2(0, 0), new ScreenCell('╝', Color.White, Color.DarkGray));
 		var cornerAnimationBR = new Animation(1000);
 		cornerAnimationBR.addFrame(cornerSpriteBR);
 		_blueprints.Add(')', new LevelElementBlueprint("CornerBR", cornerAnimationBR, true, "MidLayer"));
 
 		// '#' floor tile
 		var floorSprite = new Sprite(new Vec2(1, 1));
-		floorSprite.WriteCell(new Vec2(0, 0), new ScreenCell('#', Color.Yellow, Color.DarkYellow));
+		floorSprite.WriteCell(new Vec2(0, 0), new ScreenCell('#', Color.DarkYellow, Color.Yellow));
 		var floorAnimation = new Animation(1000);
 		floorAnimation.addFrame(floorSprite);
 		_blueprints.Add('#', new LevelElementBlueprint("Floor", floorAnimation, false, "BottomLayer"));
 
 		// '▒' window
 		var windowSprite = new Sprite(new Vec2(1, 1));
-		windowSprite.WriteCell(new Vec2(0, 0), new ScreenCell('▒', Color.Blue, Color.DarkBlue));
+		windowSprite.WriteCell(new Vec2(0, 0), new ScreenCell('▒', Color.LightBlue, Color.Blue));
 		var windowAnimation = new Animation(1000);
 		windowAnimation.addFrame(windowSprite);
 		_blueprints.Add('%', new LevelElementBlueprint("Window", windowAnimation, true, "MidLayer"));
 
 		// ' ' door
 		var doorSprite = new Sprite(new Vec2(1, 1));
-		doorSprite.WriteCell(new Vec2(0, 0), new ScreenCell(' ', Color.DarkRed, Color.Magenta));
+		doorSprite.WriteCell(new Vec2(0, 0), new ScreenCell(' ', Color.DarkRed, Color.DarkRed));
 		var doorAnimation = new Animation(1000);
 		doorAnimation.addFrame(doorSprite);
 		_blueprints.Add('D', new LevelElementBlueprint("Door", doorAnimation, false, "MidLayer"));

@@ -58,9 +58,9 @@ class Game
 	{
 		_renderer = new Renderer(programBgColor);
 		// Initialize Rects for drawing the game's menu, status bar and play area
-		_menuBgRect = new Rect(new Vec2(0, 0), new Vec2(_menuWidth, 1), 1, 1, Color.White, Color.Green, Color.Green, ' ');
-		_statusBgRect = new Rect(new Vec2(_menuWidth, 0), new Vec2(1, _statusHeight), 0, 1, Color.Yellow, Color.DarkYellow, Color.Blue, '.');
-		_playAreaBgRect = new Rect(new Vec2(_menuWidth, _statusHeight), new Vec2(1, 1), 0, 0, Color.White, Color.DarkGray, Color.DarkGray, ' ');
+		_menuBgRect = new Rect(new Vec2(0, 0), new Vec2(_menuWidth, 1), 1, 1, Color.Yellow, Color.DarkYellow, new Color("#17303b"), '.');
+		_statusBgRect = new Rect(new Vec2(_menuWidth, 0), new Vec2(1, _statusHeight), 0, 1, Color.Yellow, Color.DarkYellow, new Color("#2a34b8"), '.');
+		_playAreaBgRect = new Rect(new Vec2(_menuWidth, _statusHeight), new Vec2(1, 1), 0, 0, Color.White, Color.Black, Color.Black, ' ');
 
 		//init menu
 		_menu = new Menu(_menuWidth, Color.DarkGreen, Color.Green);
@@ -319,7 +319,7 @@ class Game
 		{
 			int transientY = _statusBgRect.Pos.Y + 4;
 			int transientX = _statusBgRect.Pos.X + _statusBgRect.Width / 2 - _transientStatus.Length / 2;
-			_renderer.DrawText(_transientStatus, new Vec2(transientX, transientY), Color.Yellow);
+			_renderer.DrawText(_transientStatus, new Vec2(transientX, transientY), Color.LightYellow);
 		}
 	}
 

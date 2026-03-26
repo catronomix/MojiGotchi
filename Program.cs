@@ -4,7 +4,7 @@ class Program
 {
 	private static void Main(string[] args)
 	{
-		ConsoleHelper.SetWindowSize(120,45);
+		ConsoleHelper.SetWindowSize(120,44);
 		ConsoleHelper.EnableAnsiEscapeCodes(); // Enable ANSI support for the console
 		ConsoleHelper.HideCursor();
 		ConsoleHelper.EnableUTF8();

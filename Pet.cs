@@ -190,16 +190,14 @@ public class Pet : Entity //Pet inherits from Entity class
 	//constant arrays to choose random colors
 	private static readonly Color[] _availableFaceColor = new Color[]
 	{
-		Color.Yellow, Color.Cyan, Color.Magenta, Color.Green, Color.Red,
-		new Color(255, 200, 150), // Peach
-		new Color(200, 255, 100)  // Lime
+		Color.BabyBrown, Color.BabyPink, Color.BabyWhite, Color.LightBlue, Color.LightCyan,
+		Color.LightGray, Color.LightGreen, Color.LightRed, Color.Yellow, Color.White
 	};
 
 	private static readonly Color[] _availableBodyColor = new Color[]
 	{
 		Color.DarkBlue, Color.DarkCyan, Color.DarkGreen, Color.DarkMagenta, Color.DarkRed, Color.DarkYellow,
-		new Color(60, 60, 60),    // Charcoal
-		new Color(100, 50, 0)     // Brown
+		Color.DarkGray, Color.Magenta, Color.Red
 	};
 
 	//constructor
