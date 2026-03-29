@@ -38,7 +38,10 @@ chmod +x "./$projectName"
 "@
 $shContent | Out-File "$publishDir/start.sh" -Encoding ascii
 
-# --- 3. Create the Tarball (Excluding Debug Files) ---
+# --- 3. Ensure LF line endings for start.sh ---
+(Get-Content "$publishDir/start.sh") -join "`n" | Set-Content "$publishDir/start.sh" -NoNewline
+
+# --- 4. Create the Tarball (Excluding Debug Files) ---
 Write-Host "Packing into .tar.gz (excluding .pdb)..." -ForegroundColor Cyan
 
 Push-Location $publishDir
@@ -47,7 +50,7 @@ Push-Location $publishDir
 tar -czf "../../$outputArchive" --exclude="*.pdb" *
 Pop-Location
 
-# --- 4. Summary ---
+# --- 5. Summary ---
 if (Test-Path $outputArchive) {
     $file = Get-Item $outputArchive
     $sizeMB = [math]::Round($file.Length / 1MB, 2)

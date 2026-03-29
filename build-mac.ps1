@@ -39,6 +39,9 @@ chmod +x "`$HERE/$appName"
 "@
 $commandContent | Out-File "$macOSDir/play.command" -Encoding ascii
 
+# Ensure LF line endings for play.command
+(Get-Content "$macOSDir/play.command") -join "`n" | Set-Content "$macOSDir/play.command" -NoNewline
+
 # --- 4. Move Binary and Assets ---
 # Move everything from publish to the MacOS folder, excluding .pdb files
 Get-ChildItem -Path $publishDir -Exclude "*.pdb", "*.ds_store" | Move-Item -Destination $macOSDir

@@ -5,26 +5,34 @@ using System.IO; // Needed for file operations
 
 static class DataManager
 {
-    static string saveFile = "savegame.json";
+    static string saveFile = Path.Combine(AppContext.BaseDirectory, "savegame.json");
     static string highScoreFile = "highscores.txt"; // Changed to .txt for flat file
     public static bool SavePet(Pet myPet)
     {
         bool success = false;
+        DebugLogger.Log("SavePet called");
         if (EnsureSaveFileExists())
         {
             try
             {
                 myPet.SaveTime = DateTime.Now;
-                var options = new JsonSerializerOptions { WriteIndented = true };
-                string jsonString = JsonSerializer.Serialize(myPet, options);
+                var context = new PetJsonContext();
+                string jsonString = JsonSerializer.Serialize(myPet, typeof(Pet), context);
+                DebugLogger.Log($"About to write JSON ({jsonString.Length} bytes)");
                 File.WriteAllText(saveFile, jsonString);
+                DebugLogger.Log("File written successfully");
                 success = true;
             }
-            catch
+            catch (Exception ex)
             {
-                //do nothing
+                Console.WriteLine($"Error saving pet: {ex.Message}");
+                DebugLogger.Log($"Exception: {ex.Message}");
                 success = false;
             }
+        }
+        else
+        {
+            DebugLogger.Log("EnsureSaveFileExists returned false");
         }
         return success;
         
@@ -39,7 +47,8 @@ static class DataManager
             string jsonString = File.ReadAllText(saveFile);
             if (string.IsNullOrWhiteSpace(jsonString) || jsonString == "{}") return null;
             
-            Pet? myPet = JsonSerializer.Deserialize<Pet>(jsonString);
+            var context = new PetJsonContext();
+            Pet? myPet = JsonSerializer.Deserialize<Pet>(jsonString, context.Pet);
             if (myPet != null)
             {
                 myPet = UpdateDateTimes(myPet);

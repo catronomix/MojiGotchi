@@ -36,10 +36,16 @@ static class JsonParser
 
     public static Dictionary<string, Animation>? LoadPetAnimations(string filepath, int frametime)
     {
+        DebugLogger.Log($"LoadPetAnimations called with path: {filepath}");
         var loadedAnimations = new Dictionary<string, Animation>();
 
-        if (!File.Exists(filepath)) return loadedAnimations;
+        if (!File.Exists(filepath))
+        {
+            DebugLogger.Log($"Pet sprites file not found: {filepath}");
+            return loadedAnimations;
+        }
 
+        DebugLogger.Log($"Pet sprites file found: {filepath}");
         try
         {
             using JsonDocument document = JsonDocument.Parse(File.ReadAllText(filepath));
@@ -49,6 +55,7 @@ static class JsonParser
             int width = gridSize.GetProperty("cols").GetInt32();
             int height = gridSize.GetProperty("rows").GetInt32();
 
+            DebugLogger.Log($"Pet animation grid size: {width}x{height}");
             var frameSprites = new List<Sprite>();
             if (spriteElement.TryGetProperty("Frames", out JsonElement framesArray))
             {
@@ -99,10 +106,12 @@ static class JsonParser
                 }
             }
 
+            DebugLogger.Log($"Pet animations loaded successfully. Animation states: {loadedAnimations.Count}");
             return loadedAnimations;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            DebugLogger.Log($"Exception loading pet animations: {ex.Message}");
             return null;
         }
     }

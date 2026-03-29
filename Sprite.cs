@@ -67,6 +67,11 @@ public class Animation
 		_lastFrameTime = DateTime.Now;
 	}
 
+	public void OffsetTime(float offset)
+	{
+		_lastFrameTime -= TimeSpan.FromMilliseconds(offset);
+	}
+
 	public void addFrame(Sprite frame)
 	{
 		//check if this is the first time a frame is added
@@ -96,7 +101,7 @@ public class Animation
 			{
 				_currentFrame = 0;
 			}
-			_lastFrameTime = DateTime.Now;
+			_lastFrameTime += frameDuration;
 		}
 		int offsetcurrent = (_currentFrame + offset) % _frames.Count;
 		return _frames[offsetcurrent];
@@ -109,6 +114,11 @@ public class Animation
 			_currentFrame = (_currentFrame + numframes) % _frames.Count;
 		}
 	}
+
+	public Animation Clone()
+    {
+        return (Animation)this.MemberwiseClone();
+    }
 }
 
 	

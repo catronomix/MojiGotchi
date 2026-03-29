@@ -32,6 +32,13 @@ public struct Color
     public static readonly Color BabyPink = new Color("#f8a6ba");
     public static readonly Color BabyBrown = new Color("#703615");
     public static readonly Color BabyWhite = new Color("#f5ece7");
+    public static readonly Color GrassGreen = new Color("#00a700");
+    public static readonly Color GroundGreen = new Color("#007700");
+    public static readonly Color BushGreen = new Color("#1b691b");
+    public static readonly Color WoodLight = new Color("#aa752e");
+    public static readonly Color WoodDark = new Color("#855517");
+    public static readonly Color WaterLight = new Color("#76c9d4");
+    public static readonly Color WaterDark = new Color("#4e9ca7");
 
     public Color(byte r, byte g, byte b)
     {
@@ -152,22 +159,21 @@ public struct Vec2
     {
         return Math.Max(Math.Abs(A.X - B.X), Math.Abs(A.Y - B.Y));
     }
+
+    //invert values
+    static public Vec2 Invert(Vec2 A)
+    {
+        return new Vec2(-A.X, -A.Y);
+    }
+
 }
 
-// for testing: a rectangle class
-class Rect // Changed to public class for broader access if needed.
+class SimpleRect
 {
     private Vec2 _pos; // Represents Top and Left
     private Vec2 _size; // Represents Width and Height
+    protected bool _isDirty; //if rect is changed after creation
 
-    private int _borderWidth;
-    private int _borderHeight;
-    private Color _fgColor;
-    private Color _borderBgColor;
-    private Color _bgColor;
-    private char _character;
-
-    // New properties for Vec2 access
     public Vec2 Pos
     {
         get
@@ -199,32 +205,103 @@ class Rect // Changed to public class for broader access if needed.
             } 
         }
     }
+
+    public Vec2 BottomRight
+    {
+        get
+        {
+            return Vec2.Add(Pos, Size);     
+        }
+    }
+
+    //some ints for convenience
+    public int Left
+    {
+        get
+        {
+            return Pos.X;
+        }
+    }
+    public int Top
+    {
+        get
+        {
+            return Pos.Y;
+        }
+    }
+    public int Right
+    {
+        get
+        {
+            return BottomRight.X;
+        }
+    }
+    public int Bottom
+    {
+        get
+        {
+            return BottomRight.Y;
+        }
+    }
+
+    public SimpleRect(Vec2 pos, Vec2 size)
+    {
+        // _isDirty is already true by default, ensuring the sprite is generated on first GetSprite() call.
+        _pos = pos;
+        _size = size;
+        _isDirty = true;
+    }
+
+    public SimpleRect(SimpleRect other)
+    {
+        // _isDirty is already true by default, ensuring the sprite is generated on first GetSprite() call.
+        _pos = other.Pos;
+        _size = other.Size;
+        _isDirty = true;
+    }
+
+    //helper properties for setting width and setting height by making new Vec2 for size
+    public int Width { get => Size.X; set { Size = new Vec2(value, Size.Y); } }
+    public int Height { get => Size.Y; set { Size = new Vec2(Size.X, value); } }
+    public Vec2 RelativeCenter {get => _size.Divide(2);}
+    public Vec2 AbsCenter {get => new Vec2(Left + Width / 2, Top + Height / 2);}
+}
+
+// for testing: a rectangle class
+class Rect : SimpleRect // Changed to public class for broader access if needed.
+{
+    private int _borderWidth;
+    private int _borderHeight;
+    private Color _fgColor;
+    private Color _borderBgColor;
+    private Color _bgColor;
+    private char _character;
+
+
     public int BorderWidth { get => _borderWidth; set { if (_borderWidth != value) { _borderWidth = value; _isDirty = true; } } }
     public int BorderHeight { get => _borderHeight; set { if (_borderHeight != value) { _borderHeight = value; _isDirty = true; } } }
     public Color FgColor { get => _fgColor; set { if (!Color.Equals(_fgColor, value)) { _fgColor = value; _isDirty = true; } } }
     public Color BorderBgColor { get => _borderBgColor; set { if (!Color.Equals(_borderBgColor, value)) { _borderBgColor = value; _isDirty = true; } } }
     public Color BgColor { get => _bgColor; set { if (!Color.Equals(_bgColor, value)) { _bgColor = value; _isDirty = true; } } }
     public char Character { get => _character; set { if (_character != value) { _character = value; _isDirty = true; } } }
-    //helper properties for setting width and setting height by making new Vec2 for size
-    public int Width { get => Size.X; set { Size = new Vec2(value, Size.Y); } }
-    public int Height { get => Size.Y; set { Size = new Vec2(Size.X, value); } }
+    
 
     private Sprite? _cachedSprite;
-    private bool _isDirty = true;
 
-    public Rect(Vec2 pos, Vec2 size, int borderwidth, int borderheight, Color fgColor, Color borderBgColor, Color bgColor, char character)
+    public Rect(Vec2 pos, Vec2 size, int borderwidth, int borderheight, Color fgColor, Color borderBgColor, Color bgColor, char character) : base (pos, size)
     {
         // Assign directly to backing fields during construction.
-        // _isDirty is already true by default, ensuring the sprite is generated on first GetSprite() call.
-        _pos = pos;
-        _size = size;
         _borderWidth = borderwidth;    // Thickness of left/right borders
         _borderHeight = borderheight;  // Thickness of top/bottom borders
         _fgColor = fgColor;
         _borderBgColor = borderBgColor;
         _bgColor = bgColor;
         _character = character;
-        _isDirty = true; // Explicitly set to true to ensure sprite generation on first access
+    }
+
+    public SimpleRect GetSimple()
+    {
+        return new SimpleRect(Pos, Size);
     }
 
     public Sprite GetSprite()
@@ -234,15 +311,15 @@ class Rect // Changed to public class for broader access if needed.
         // or if the dimensions of the cached sprite no longer match the current Rect dimensions.
         // The last check is crucial because if Size change, the underlying
         // ScreenCell[,] array needs to be re-allocated, which means a new Sprite instance.
-        if (_isDirty || _cachedSprite == null || _cachedSprite.Size.X != _size.X || _cachedSprite.Size.Y != _size.Y)
+        if (_isDirty || _cachedSprite == null || _cachedSprite.Size.X != Size.X || _cachedSprite.Size.Y != Size.Y)
         {
             // Create a new Sprite instance. The Sprite constructor allocates a new ScreenCell[,] array.
-            _cachedSprite = new Sprite(_size);
+            _cachedSprite = new Sprite(Size);
             var data = _cachedSprite.Data;
 
-            for (int y = 0; y < _size.Y; y++)
+            for (int y = 0; y < Size.Y; y++)
             {
-                for (int x = 0; x < _size.X; x++)
+                for (int x = 0; x < Size.X; x++)
                 {
                     // Determine if the current cell is part of the border
                     bool isBorder = y < BorderHeight ||                  // Top border

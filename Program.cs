@@ -4,10 +4,12 @@ class Program
 {
 	private static void Main(string[] args)
 	{
-		ConsoleHelper.SetWindowSize(120,44);
+		ConsoleHelper.SetWindowSize(122,40);
 		ConsoleHelper.EnableAnsiEscapeCodes(); // Enable ANSI support for the console
 		ConsoleHelper.HideCursor();
 		ConsoleHelper.EnableUTF8();
+
+		DebugLogger.Enable(); 
 
 		Game _game = new Game();             // Declare as local variable
 		

@@ -78,24 +78,60 @@ class Renderer
 		Console.Write(_stringBuilder.ToString());
 	}
 
-	public void DrawSprite(Sprite? sprite, Vec2 position, Rect? crop = null)
+	public void DrawSprite(Sprite? sprite, Vec2 position, SimpleRect? crop = null)
 	{
 		if (sprite == null) return;
-		for (int y = 0; y < sprite.Size.Y; y++)
+		
+		// 1. Define the sprite's bounding box in screen coordinates
+		int spriteLeft = position.X;
+		int spriteTop = position.Y;
+		int spriteRight = position.X + sprite.Size.X;
+		int spriteBottom = position.Y + sprite.Size.Y;
+
+		// 2. Determine the effective drawing area (crop, clamped to console bounds)
+		int drawAreaLeft, drawAreaTop, drawAreaRight, drawAreaBottom;
+
+		if (crop == null)
 		{
-			for (int x = 0; x < sprite.Size.X; x++)
+			// If no crop is provided, the drawing area is the entire console
+			drawAreaLeft = 0;
+			drawAreaTop = 0;
+			drawAreaRight = _consoleWidth;
+			drawAreaBottom = _consoleHeight;
+		}
+		else
+		{
+			// If a crop is provided, clamp it to the console bounds
+			drawAreaLeft = Math.Max(crop.Left, 0);
+			drawAreaTop = Math.Max(crop.Top, 0);
+			drawAreaRight = Math.Min(crop.Right, _consoleWidth);
+			drawAreaBottom = Math.Min(crop.Bottom, _consoleHeight);
+		}
+
+		// 3. Calculate the intersection of the sprite's screen bounds and the effective drawing area
+		int renderLeft = Math.Max(spriteLeft, drawAreaLeft);
+		int renderTop = Math.Max(spriteTop, drawAreaTop);
+		int renderRight = Math.Min(spriteRight, drawAreaRight);
+		int renderBottom = Math.Min(spriteBottom, drawAreaBottom);
+		
+		// 4. If there's no valid intersection (or it's empty), return early
+		if (renderLeft >= renderRight || renderTop >= renderBottom)
+		{
+			return;
+		}
+		
+		// 5. Iterate over the intersection area in screen coordinates
+		for (int y = renderTop; y < renderBottom; y++)
+		{
+			for (int x = renderLeft; x < renderRight; x++)
 			{
-				int screenY = position.Y + y;
-				int screenX = position.X + x;
-				ScreenCell spriteCell = sprite.Data[y, x];
+				// Convert screen coordinates (x, y) to sprite-local coordinates (spriteX, spriteY)
+				int spriteLocalY = y - position.Y;
+				int spriteLocalX = x - position.X;
+				ScreenCell spriteCell = sprite.Data[spriteLocalY, spriteLocalX];
 				if (spriteCell.Character == ScreenCell.SkipChar) continue;
-				if (screenY >= 0 && screenY < _consoleHeight && screenX >= 0 && screenX < _consoleWidth)
-				{
-					if (crop == null || (screenX >= crop.Pos.X && screenX < crop.Pos.X + crop.Size.X && screenY >= crop.Pos.Y && screenY < crop.Pos.Y + crop.Size.Y))
-					{
-						_screenBuffer[screenY, screenX] = spriteCell;
-					}
-				}
+				// Draw to the screen buffer (no need for console bounds check here, as renderLeft/Right/Top/Bottom are already clamped)
+				_screenBuffer[y, x] = spriteCell;
 			}
 		}
 	}

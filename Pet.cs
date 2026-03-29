@@ -226,7 +226,7 @@ public class Pet : Entity //Pet inherits from Entity class
 		_animations = JsonParser.LoadPetAnimations("PetSprites.json", 500);
 		SetAnimation(AnimDefault);
 
-		//position in the level, relative to game area center
+		//position in the level, relative to world origin
 		_position = new Vec2(0,0);
 
 		//get born :)
