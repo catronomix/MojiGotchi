@@ -24,6 +24,11 @@ class Camera
 		_viewport = viewport;
 	}
 
+	public void SetPet (Pet? pet)
+	{
+		_pet = pet;
+	}
+
 	public void UpdateCamera()
 	{
 		if (_pet != null && _level != null)

@@ -416,6 +416,8 @@ class Game
 				logic = (game) =>
 				{
 					game._pet = new Pet();
+					//provide new pet to camera
+					game._camera.SetPet(game._pet);
 					//replace default colors from animation to random colors
 					game._pet.RandomizePetColor();
 					game.UpdateMenuAvailability([ActionType.FEED, ActionType.PLAY, ActionType.PET, ActionType.WAKE], true);
