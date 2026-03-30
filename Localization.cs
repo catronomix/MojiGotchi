@@ -27,13 +27,11 @@ public static class LM //shorthand for localizationmanager
 			using var stream = new FileStream(langfile, FileMode.Open, FileAccess.Read, FileShare.Read);
 			using var reader = new StreamReader(stream);
 			string jsonstring = reader.ReadToEnd();
-			var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true};
 			_currentStrings.Clear();
-			_currentStrings = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonstring, options) ?? new();
+			_currentStrings = OptionsJsonContext.Deserialize(jsonstring);
 			
 			_currentLanguage = language;
 			
-
 			DebugLogger.Log($"Language file loaded: {_currentStrings.Count} strings (language: {_currentLanguage})");
 		}
 		catch (Exception ex)
@@ -54,7 +52,7 @@ public static class LM //shorthand for localizationmanager
 			DebugLogger.Log($"Missing localization key: {key}");
 			return key;
 		}
-			
+		
 	}
 
 	public static string Get(string key, params object?[] args)
@@ -69,7 +67,7 @@ public static class LM //shorthand for localizationmanager
             return value;
 
         try
-        {
+		{
 			string formatted = string.Format(value, args);
             return formatted;
         }
@@ -84,7 +82,6 @@ public static class LM //shorthand for localizationmanager
 	{
 		return _currentLanguage;
 	}
-
 	
 }
 
