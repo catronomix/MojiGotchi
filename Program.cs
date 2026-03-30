@@ -16,10 +16,28 @@ class Program
 		ConsoleHelper.EnableUTF8();
 
 		DebugLogger.Enable();
-		
+		LoadGameOptions();
+
+		//optionally start editor
+		_gameOptions.TryGetValue( "devmode", out var devmode);
+		if (devmode == "true")
+		{
+			Editor _editor = new Editor();
+			bool devloop = true;
+			while (devloop)
+			{
+				devloop = Loop(_editor);
+			}
+		}
+
+		//start game
 		Game _game = new Game();         // Declare as local variable
-		LoadGameOptions(_game);
-		
+		_gameOptions.TryGetValue( "language", out var language);
+		if (language == null)
+		{
+			SetupLanguage(_game);
+		}
+
 		bool running = true;
 		//need to differentiate between game mode and editor mode
 		while (running)
@@ -36,7 +54,12 @@ class Program
 		return game.Step();
 	}
 
-	private static void LoadGameOptions(Game game)
+	private static bool Loop(Editor editor)
+	{
+		return editor.Step();
+	}
+
+	private static void LoadGameOptions()
 	{
 		try
 		{
@@ -59,15 +82,30 @@ class Program
 		else
 		{
 			LM.SetLanguage("en");
-			game.ChooseLanguage();
-			
-			_gameOptions["language"] = "en";
+		}
+		
+	}
+
+	private static void SaveGameOptions()
+	{
+		try
+		{
 			var options = new JsonSerializerOptions { WriteIndented = true };
 			string jsonString = JsonSerializer.Serialize(_gameOptions, options);
 			using var stream = new FileStream("options.json", FileMode.Create, FileAccess.Write, FileShare.None);
 			using var writer = new StreamWriter(stream);
-			writer.Write(jsonString);
+			writer.Write(jsonString);	
 		}
-		
+		catch (Exception ex)
+		{
+			DebugLogger.Log($"Exception saving game options: {ex.Message}");
+		}
+	}
+
+	private static void SetupLanguage(Game game)
+	{
+		_gameOptions["language"] = "en";
+		SaveGameOptions();
+		game.ChooseLanguage();
 	}
 }

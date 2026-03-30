@@ -1,62 +1,49 @@
 namespace MojiGotchi;
 
-//actions enum, for player actions only
-public enum ActionType
-{
-	NEWPET,
-	QUIT,
-	TOPSCORE,
-	HELP,
-	FEED,
-	PLAY,
-	PET,
-	WAKE
-}
-
 class Game
 {
-	private const int FPS = 30;
-	private const int sleepDelta = 1000 / FPS;
-	private const int statUpdateIntervalMs = 250;
+	protected const int FPS = 30;
+	protected const int sleepDelta = 1000 / FPS;
+	protected const int statUpdateIntervalMs = 250;
 
-	private static Color programBgColor = Color.Black;
-	private Renderer _renderer; // Changed to instance field
-	private bool _isRunning = true;
+	protected static Color programBgColor = Color.Black;
+	protected Renderer _renderer; // Changed to instance field
+	protected bool _isRunning = true;
 
 	// Declare Rect objects as instance fields to cache them
-	private Rect _menuBgRect;
-	private Rect _statusBgRect;
-	private SimpleRect _viewport;
+	protected Rect _menuBgRect;
+	protected Rect _statusBgRect;
+	protected SimpleRect _viewport;
 
 
 	// Set area sizes
-	private int _menuWidth = 21;
-	private int _statusHeight = 7;
+	protected int _menuWidth = 21;
+	protected int _statusHeight = 7;
 
 	//have a menu
-	private Menu _menu;
+	protected Menu _menu;
 
 	//have a pet
-	private Pet? _pet;
+	protected Pet? _pet;
 
 	//have a level
-	private Level _level;
+	protected Level _level;
 
 	//have a camera
-	private Camera _camera;
+	protected Camera _camera;
 
 
 	//have a status
-	private string _persistentStatus;
-	private string _transientStatus = "";
-	private DateTime _transientStatusExpires = DateTime.MinValue;
-	private DateTime _lastStatUpdate = DateTime.MinValue;
+	protected string _persistentStatus;
+	protected string _transientStatus = "";
+	protected DateTime _transientStatusExpires = DateTime.MinValue;
+	protected DateTime _lastStatUpdate = DateTime.MinValue;
 
 	//modals
-	private Modal? _currentModal;
-	private Help _help;
-	private HighScores _highScores;
-	private LanguageChoice _languageChoice;
+	protected Modal? _currentModal;
+	protected Help _help;
+	protected HighScores _highScores;
+	protected LanguageChoice _languageChoice;
 
 	// Initialize the game
 	public Game()
@@ -147,7 +134,7 @@ class Game
 	}
 
 	// Check if window has been resized
-	private void CheckWindow(bool force = false)
+	protected void CheckWindow(bool force = false)
 	{
 		Vec2 consoleSize = ConsoleHelper.GetWindowSize();
 		bool resized = false;
@@ -183,7 +170,7 @@ class Game
 		}
 	}
 
-	void SetTransientStatus(string message, int durationMs = 5000)
+	protected void SetTransientStatus(string message, int durationMs = 5000)
 	{
 		if (!string.IsNullOrEmpty(message))
 		{
@@ -192,7 +179,7 @@ class Game
 		}
 	}
 
-	void UpdateMenuAvailability(ActionType[] actions, bool enabled)
+	protected void UpdateMenuAvailability(ActionType[] actions, bool enabled)
 	{
 		//compare menu items's action types to provided list of action types
 		foreach (MenuItem item in _menu.MenuItems)
@@ -208,7 +195,7 @@ class Game
 		}
 	}
 
-	void HandleInput()
+	protected void HandleInput()
 	{
 		if (Console.KeyAvailable)
 		{
@@ -238,7 +225,7 @@ class Game
 		}
 	}
 
-	void DrawRects()
+	protected void DrawRects()
 	{
 		// make sprites
 		Sprite menuBgSprite = _menuBgRect.GetSprite();
@@ -256,7 +243,7 @@ class Game
 		
 	}
 
-	void DrawMenuItems()
+	protected void DrawMenuItems()
 	{
 		int index = 0;
 		int selected = _menu.SelectedIndex;
@@ -310,7 +297,7 @@ class Game
 		}
 	}
 
-	void DrawStatus()
+	protected void DrawStatus()
 	{
 		// Clear transient status if it has expired
 		if (DateTime.Now > _transientStatusExpires)
@@ -499,12 +486,12 @@ class Game
 		return new GameAction(type, logic);
 	}
 
-	private void CloseModal()
+	protected void CloseModal()
 	{
 		_currentModal = null;
 	}
 
-	private void DrawLevelLayer(List<LevelElement> layer, Sprite? layerSprite)
+	protected void DrawLevelLayer(List<LevelElement> layer, Sprite? layerSprite)
 	{
 		if (_level == null || layerSprite == null || _currentModal != null) return;
 
@@ -514,7 +501,7 @@ class Game
 		_renderer.DrawSprite(layerSprite, drawPos, _viewport);
 	}
 
-	private Vec2 ElementPosInWorldSpace(LevelElement element)
+	protected Vec2 ElementPosInWorldSpace(LevelElement element)
 	{
 		if (_level == null) return new Vec2(0, 0);
 		return Vec2.Subtract(element.Position, _level.RelativeCenter);

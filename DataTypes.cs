@@ -1,5 +1,23 @@
 namespace MojiGotchi;
 
+//actions enum for menus
+public enum ActionType
+{
+	NEWPET,
+	QUIT,
+	TOPSCORE,
+	HELP,
+	FEED,
+	PLAY,
+	PET,
+	WAKE,
+	EDITOR_LOAD,
+	EDITOR_SAVE,
+	EDITOR_EDIT,
+	EDITOR_HELP,
+	EDITOR_QUIT
+}
+
 public struct Color
 {
     public byte R { get; set; }
