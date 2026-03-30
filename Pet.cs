@@ -79,82 +79,15 @@ public class Pet : Entity //Pet inherits from Entity class
 		"Bavo"
 	};
 	
-	private Stat _saturation;
-	public Stat Saturation
-	{
-		get
-		{
-			return _saturation;
-		}
-		set
-		{
-			_saturation = value;
-		}
-	}
-	private Stat _energy;
-	public Stat Energy
-	{
-		get
-		{
-			return _energy;
-		}
-		set
-		{
-			_energy = value;
-		}
-	}
-	private Stat _mood;
-	public Stat Mood
-	{
-		get
-		{
-			return _mood;
-		}
-		set
-		{
-			_mood = value;
-		}
-	}
-	private Stat _sleepyness;
-	public Stat Sleepyness
-	{
-		get
-		{
-			return _sleepyness;
-		}
-		set
-		{
-			_sleepyness = value;
-		}
-	}
+	public Stat Saturation { get; set; }
+	public Stat Energy { get; set; }
+	public Stat Mood { get; set; }
+	public Stat Sleepyness { get; set; }
 
 	//alive or not?
-	private bool _isAlive;
-	public bool IsAlive
-	{
-		get
-		{
-			return _isAlive;
-		}
-		set
-		{
-			_isAlive = value;
-		}
-	}
+	public bool IsAlive { get; set; }
 	//sleep management
-	private bool _isSleeping;
-	public bool IsSleeping
-	{
-		get
-		{
-			return _isSleeping;
-		}
-		set
-		{
-			_isSleeping = value;
-		}
-	}
-
+	public bool IsSleeping { get; set; }
 
 	//timestamps for actions
 	private DateTime _lastFed;
@@ -181,7 +114,7 @@ public class Pet : Entity //Pet inherits from Entity class
 	public Color BodyColor { get => _bodyColor; set => _bodyColor = value; }
 
 	//pet can wander
-	private Random _wanderRandom;
+	private Random random;
 	private int _wanderDirection;
 	private const int _wanderIntervalMs = 50;
 	private const int _animationTimeout = 2000;
@@ -200,21 +133,24 @@ public class Pet : Entity //Pet inherits from Entity class
 		Color.DarkGray, Color.Magenta, Color.Red
 	};
 
+	//make it talk :)
+	public MessageBubble MessageBubble;
+
 	//constructor
 	public Pet() : base()
 	{
 		//go wander
-		_wanderRandom = new Random();
-		_wanderDirection = _wanderRandom.Next(0, 8);
+		random = new Random();
+		_wanderDirection = random.Next(0, 8);
 		
 		_name = GenerateRandomName();
 		//set birth time
 		_birthTime = DateTime.Now;
 		//set stats
-		_saturation = new Stat(StatType.SATURATION, 60, 5);
-		_energy = new Stat(StatType.ENERGY, 60, 5);
-		_mood = new Stat(StatType.MOOD, 60, 5);
-		_sleepyness = new Stat(StatType.SLEEPYNESS, 25, 0);
+		Saturation = new Stat(StatType.SATURATION, 60, 5);
+		Energy = new Stat(StatType.ENERGY, 60, 5);
+		Mood = new Stat(StatType.MOOD, 60, 5);
+		Sleepyness = new Stat(StatType.SLEEPYNESS, 25, 0);
 
 		//set timestamps
 		_lastFed = DateTime.MinValue;
@@ -230,24 +166,25 @@ public class Pet : Entity //Pet inherits from Entity class
 		_position = new Vec2(0,0);
 
 		//get born :)
-		_isAlive = true;
+		IsAlive = true;
 
 		//wake up
-		_isSleeping = false;
+		IsSleeping = false;
+
+		//message bubble
+		MessageBubble = new MessageBubble(Color.Black, Color.White);
 
 	}
 
 	private string GenerateRandomName()
 	{
 		//generate random name from names list
-		Random random = new Random();
 		int index = random.Next(_namelist.Length);
 		return _namelist[index];
 	}
 
 	public void RandomizePetColor()
 	{
-		Random random = new Random();
 		_faceColor = _availableFaceColor[random.Next(_availableFaceColor.Length)];
 		_bodyColor = _availableBodyColor[random.Next(_availableBodyColor.Length)];
 		ApplyColorToAnimations();
@@ -287,29 +224,31 @@ public class Pet : Entity //Pet inherits from Entity class
 	public string Feed()
 	{
 		// Example: Feeding reduces hunger and might slightly increase mood
-		_saturation.Raise(); // Or set to a specific value, e.g., _hunger.Reset();
+		Saturation.Raise(); // Or set to a specific value, e.g., _hunger.Reset();
 		// _mood.Raise(); //trying to balance the game
-		_energy.Raise();
+		Energy.Raise();
 		_lastFed = DateTime.Now;
 		_animationState = AnimEating;
 		SoundManager.Play("eat.wav");
+		MessageBubble.SetMessage("Omnomnom", 1000, true);
 		return "Je hebt " + _name + " eten gegeven.";
 	}
 
 	public string Play()
 	{
-		_energy.Lower(); // Playing uses energy
-		_mood.Raise();   // Playing increases mood
+		Energy.Lower(); // Playing uses energy
+		Mood.Raise();   // Playing increases mood
 		_lastPlayed = DateTime.Now;
 		_animationState = AnimPlaying;
 		SoundManager.Play("play.wav");
+		MessageBubble.SetMessage("Wheeeee!", 1000, true);
 		return "Je hebt met " + _name + " gespeeld.";
 	}
 
 	public string PetPet() // Renamed to avoid conflict with class name 'Pet'
 	{
-		_mood.Raise(); // Petting increases mood
-		_sleepyness.Raise(); // Playing increases sleeping
+		Mood.Raise(); // Petting increases mood
+		Sleepyness.Raise(); // Playing increases sleeping
 		_lastPetted = DateTime.Now;
 		//not implemented yet
 		// _animationState = AnimationState.HAPPY;
@@ -319,11 +258,12 @@ public class Pet : Entity //Pet inherits from Entity class
 
 	public string WakeUp() // Renamed for clarity
 	{
-		_sleepyness.Lower(3); // Waking up reduces sleeping stat
-		_isSleeping = false;
-		_mood.Lower(3); // Waking up reduces mood
+		Sleepyness.Lower(3); // Waking up reduces sleeping stat
+		IsSleeping = false;
+		Mood.Lower(3); // Waking up reduces mood
 		_lastWaked = DateTime.Now;
 		_animationState = AnimWakeup;
+		MessageBubble.SetMessage("Ugh..", 1000, true);
 		SoundManager.Play("wakeup.wav");
 		return "Je hebt " + _name + " wakker gemaakt.";
 	}
@@ -334,67 +274,68 @@ public class Pet : Entity //Pet inherits from Entity class
 		string ageString = DataManager.GetAgeString(age); // Use the new helper method
 		//for stat expirations
 		
-		if (_sleepyness.LastUpdated + TimeSpan.FromSeconds(_sleepyness.UpdateInterval) < DateTime.Now)
+		if (Sleepyness.LastUpdated + TimeSpan.FromSeconds(Sleepyness.UpdateInterval) < DateTime.Now)
 		{
-			if (_isSleeping)
+			if (IsSleeping)
 			{
-				_sleepyness.Lower(2);
+				Sleepyness.Lower(2);
 				//sleep happenings
-				_mood.Raise();
-				_energy.Raise();			}
+				Mood.Raise();
+				Energy.Raise();
+			}
 			else
 			{
-				_sleepyness.Raise();
+				Sleepyness.Raise();
 				//wake happenings
-				if (_saturation.LastUpdated + TimeSpan.FromSeconds(_saturation.UpdateInterval) < DateTime.Now)
+				if (Saturation.LastUpdated + TimeSpan.FromSeconds(Saturation.UpdateInterval) < DateTime.Now)
 				{
-					_saturation.Lower();
+					Saturation.Lower();
 				}
-				if (_energy.LastUpdated + TimeSpan.FromSeconds(_energy.UpdateInterval) < DateTime.Now)
+				if (Energy.LastUpdated + TimeSpan.FromSeconds(Energy.UpdateInterval) < DateTime.Now)
 				{
-					_energy.Lower();
+					Energy.Lower();
 				}
-				if (_lastPlayed + TimeSpan.FromSeconds(_mood.UpdateInterval) < DateTime.Now)
+				if (_lastPlayed + TimeSpan.FromSeconds(Mood.UpdateInterval) < DateTime.Now)
 				{
-					_mood.Lower();
+					Mood.Lower();
 					_lastPlayed = DateTime.Now;
 				}
 			}
 		}
 
 		//check for sleep or wake
-		if (_sleepyness.Value == _sleepyness.Max)
+		if (Sleepyness.Value == Sleepyness.Max)
 		{
-			_isSleeping = true;
+			IsSleeping = true;
 		}
-		if (_sleepyness.Value == _sleepyness.Min)
+		if (Sleepyness.Value == Sleepyness.Min)
 		{
-			_isSleeping = false;
+			IsSleeping = false;
 		}
 
 		//check for death conditions
-		if (_mood.Value <= _mood.Min)
+		if (Mood.Value <= Mood.Min)
 		{
 			//pet has died from depression
-			_isAlive = false;
+			IsAlive = false;
 			return _name + " is gestorven van depressie op de leeftijd van " + ageString;
 		}
-		if (_energy.Value <= _energy.Min)
+		if (Energy.Value <= Energy.Min)
 		{
 			//pet has died from exhaustion
-			_isAlive = false;
+			IsAlive = false;
 			return _name + " is gestorven van uitputting op de leeftijd van " + ageString;
 		}
-		if (_saturation.Value <= _saturation.Min)
+		if (Saturation.Value <= Saturation.Min)
 		{
 			//pet has died from hunger
-			_isAlive = false;
+			IsAlive = false;
 			return _name + " is gestorven van de honger op de leeftijd van " + ageString;
 		}
-		if (_saturation.Value >= _saturation.Max)
+		if (Saturation.Value >= Saturation.Max)
 		{
 			//pet has died from overfeeding
-			_isAlive = false;
+			IsAlive = false;
 			return _name + " is gestorven door zich te overeten op de leeftijd van " + ageString;
 		}
 
@@ -403,22 +344,52 @@ public class Pet : Entity //Pet inherits from Entity class
 
 	public void Wander()
 	{
-		if (!IsSleeping&&  DateTime.Now > _lastFed + TimeSpan.FromMilliseconds(_animationTimeout) 
-		&& DateTime.Now > _lastFed + TimeSpan.FromMilliseconds(_animationTimeout)
+		if (!IsSleeping&&  DateTime.Now > _lastFed + TimeSpan.FromMilliseconds(_animationTimeout)
 		&& DateTime.Now > _lastPetted + TimeSpan.FromMilliseconds(_animationTimeout)
 		&& DateTime.Now > _lastWaked + TimeSpan.FromMilliseconds(_animationTimeout))
 		{
 			//50% chance to change direction
-			if (_wanderRandom.Next(0, 100) < 50)
+			if (random.Next(0, 100) < 50)
 			{
-				_wanderDirection = (_wanderDirection + _wanderRandom.Next(-2, 3) + 8) % 8; //rotate between -90 and 90 degrees
+				_wanderDirection = (_wanderDirection + random.Next(-2, 3) + 8) % 8; //rotate between -90 and 90 degrees
 			}
 
 			//80% chance to move
-			if (_wanderRandom.Next(0, 100) < 80)
+			if (random.Next(0, 100) < 80)
 			{
 				Move(_wanderDirection);
 			}
+		}
+	}
+
+	public void Communicate()
+	{
+		//check for hunger
+		if (Saturation.Value <= Saturation.Min + 1)
+		{
+			MessageBubble.SetMessage("Honger!",Color.Red, Color.LightYellow);
+		}
+
+		//check for too full
+		if (Saturation.Value >= Saturation.Max - 1)
+		{
+			MessageBubble.SetMessage("Ufff..",Color.Red, Color.LightYellow);
+		}
+
+		//check for bad mood
+		if (Mood.Value <= Mood.Min + 2)
+		{
+			MessageBubble.SetMessage("Ughhhh..",Color.Red, Color.LightYellow);
+		}
+		if (Mood.Value <= Mood.Min + 1)
+		{
+			MessageBubble.SetMessage("Aaaargh!",Color.Red, Color.LightYellow);
+		}
+
+		//check for energy
+		if (Energy.Value <= Energy.Min + 1)
+		{
+			MessageBubble.SetMessage("Ik kan niet meer!",Color.Red, Color.LightYellow);
 		}
 	}
 }

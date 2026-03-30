@@ -48,7 +48,10 @@ static class JsonParser
         DebugLogger.Log($"Pet sprites file found: {filepath}");
         try
         {
-            using JsonDocument document = JsonDocument.Parse(File.ReadAllText(filepath));
+            using var stream = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            using var reader = new StreamReader(stream);
+
+            using JsonDocument document = JsonDocument.Parse(reader.ReadToEnd());
             var spriteElement = document.RootElement.GetProperty("Sprite");
 
             var gridSize = spriteElement.GetProperty("grid_size");

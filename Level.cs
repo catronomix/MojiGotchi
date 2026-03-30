@@ -33,112 +33,64 @@ public static class BlueprintManager
 		// Define blueprints here. Each character in your level file will map to one of these.
 
 		// '═' horizontal wall
-		var wallSpriteH = new Sprite(new Vec2(1, 1));
-		wallSpriteH.WriteCell(new Vec2(0, 0), new ScreenCell('═', Color.White, Color.DarkRed));
-		var wallAnimationH = new Animation(1000);
-		wallAnimationH.addFrame(wallSpriteH);
-		_blueprints.Add('=', new LevelElementBlueprint("WallH", wallAnimationH, true, "MidLayer"));
+		MakeBlueprint1("WallH", '=', '═', Color.White, Color.DarkRed, "MidLayer", true, 1000);
 
 		// '║' vertical wall
-		var wallSpriteV = new Sprite(new Vec2(1, 1));
-		wallSpriteV.WriteCell(new Vec2(0, 0), new ScreenCell('║', Color.White, Color.DarkRed));
-		var wallAnimationV = new Animation(1000);
-		wallAnimationV.addFrame(wallSpriteV);
-		_blueprints.Add('|', new LevelElementBlueprint("WallV", wallAnimationV, true, "MidLayer"));
+		MakeBlueprint1("WallV", '|', '║', Color.White, Color.DarkRed, "MidLayer", true, 1000);
 
 		// '╔' topleft corner wall
-		var cornerSpriteTL = new Sprite(new Vec2(1, 1));
-		cornerSpriteTL.WriteCell(new Vec2(0, 0), new ScreenCell('╔', Color.White, Color.DarkRed));
-		var cornerAnimationTL = new Animation(1000);
-		cornerAnimationTL.addFrame(cornerSpriteTL);
-		_blueprints.Add('<', new LevelElementBlueprint("CornerTL", cornerAnimationTL, true, "MidLayer"));
+		MakeBlueprint1("CornerTL", '<', '╔', Color.White, Color.DarkRed, "MidLayer", true, 1000);
 
 		// '╗' topright corner wall
-		var cornerSpriteTR = new Sprite(new Vec2(1, 1));
-		cornerSpriteTR.WriteCell(new Vec2(0, 0), new ScreenCell('╗', Color.White, Color.DarkRed));
-		var cornerAnimationTR = new Animation(1000);
-		cornerAnimationTR.addFrame(cornerSpriteTR);
-		_blueprints.Add('>', new LevelElementBlueprint("CornerTR", cornerAnimationTR, true, "MidLayer"));
+		MakeBlueprint1("CornerTR", '>', '╗', Color.White, Color.DarkRed, "MidLayer", true, 1000);
 
 		// '╚' bottomleft corner wall
-		var cornerSpriteBL = new Sprite(new Vec2(1, 1));
-		cornerSpriteBL.WriteCell(new Vec2(0, 0), new ScreenCell('╚', Color.White, Color.DarkRed));
-		var cornerAnimationBL = new Animation(1000);
-		cornerAnimationBL.addFrame(cornerSpriteBL);
-		_blueprints.Add('(', new LevelElementBlueprint("CornerBL", cornerAnimationBL, true, "MidLayer"));
+		MakeBlueprint1("CornerBL", '(', '╚', Color.White, Color.DarkRed, "MidLayer", true, 1000);
 
 		// '╝' bottomright corner wall
-		var cornerSpriteBR = new Sprite(new Vec2(1, 1));
-		cornerSpriteBR.WriteCell(new Vec2(0, 0), new ScreenCell('╝', Color.White, Color.DarkRed));
-		var cornerAnimationBR = new Animation(1000);
-		cornerAnimationBR.addFrame(cornerSpriteBR);
-		_blueprints.Add(')', new LevelElementBlueprint("CornerBR", cornerAnimationBR, true, "MidLayer"));
+		MakeBlueprint1("CornerBR", ')', '╝', Color.White, Color.DarkRed, "MidLayer", true, 1000);
 
 		// '#' floor tile
-		var floorSprite = new Sprite(new Vec2(1, 1));
-		floorSprite.WriteCell(new Vec2(0, 0), new ScreenCell('#', Color.DarkYellow, Color.Yellow));
-		var floorAnimation = new Animation(1000);
-		floorAnimation.addFrame(floorSprite);
-		_blueprints.Add('#', new LevelElementBlueprint("Floor", floorAnimation, false, "BottomLayer"));
+		MakeBlueprint1("Floor", '#', '#', Color.DarkYellow, Color.Yellow, "BottomLayer", false, 1000);
 
 		// '%' window
-		var windowSprite = new Sprite(new Vec2(1, 1));
-		windowSprite.WriteCell(new Vec2(0, 0), new ScreenCell('▒', Color.LightBlue, Color.Blue));
-		var windowAnimation = new Animation(1000);
-		windowAnimation.addFrame(windowSprite);
-		_blueprints.Add('%', new LevelElementBlueprint("Window", windowAnimation, true, "MidLayer"));
+		MakeBlueprint1("Window", '%', '▒', Color.LightBlue, Color.Blue, "MidLayer", true, 1000);
 
 		// 'D' door
-		var doorSprite = new Sprite(new Vec2(1, 1));
-		doorSprite.WriteCell(new Vec2(0, 0), new ScreenCell('•', Color.Gray, Color.DarkRed));
-		var doorAnimation = new Animation(1000);
-		doorAnimation.addFrame(doorSprite);
-		_blueprints.Add('D', new LevelElementBlueprint("Door", doorAnimation, false, "BottomLayer"));
+		MakeBlueprint1("Door", 'D', '•', Color.Gray, Color.DarkRed, "BottomLayer", false, 1000);
 
 		// ',' grass
-		var grassAnimation = new Animation(1000);
-		var grassSprite1 = new Sprite(new Vec2(1, 1));
-		grassSprite1.WriteCell(new Vec2(0, 0), new ScreenCell('\\', Color.GrassGreen, Color.GroundGreen));
-		grassAnimation.addFrame(grassSprite1);
-		var grassSprite2 = new Sprite(new Vec2(1, 1));
-		grassSprite2.WriteCell(new Vec2(0, 0), new ScreenCell('|', Color.GrassGreen, Color.GroundGreen));
-		grassAnimation.addFrame(grassSprite2);
-		var grassSprite3 = new Sprite(new Vec2(1, 1));
-		grassSprite3.WriteCell(new Vec2(0, 0), new ScreenCell('/', Color.GrassGreen, Color.GroundGreen));
-		grassAnimation.addFrame(grassSprite3);
-		_blueprints.Add(',', new LevelElementBlueprint("Grass", grassAnimation, false, "BottomLayer"));
+		MakeBlueprint1("Grass", ',', new char[] { '\\', '|', '/' }, Color.GrassGreen, Color.GroundGreen, "BottomLayer", false, 1000);
 
 		// 'B', 'b' bush
-		var bushAnimation = new Animation(500);
-		var bushSprite1 = new Sprite(new Vec2(1, 1));
-		bushSprite1.WriteCell(new Vec2(0, 0), new ScreenCell('@', Color.BushGreen, Color.DarkGreen));
-		bushAnimation.addFrame(bushSprite1);
-		var bushSprite2 = new Sprite(new Vec2(1, 1));
-		bushSprite2.WriteCell(new Vec2(0, 0), new ScreenCell('O', Color.BushGreen, Color.DarkGreen));
-		bushAnimation.addFrame(bushSprite2);
-		_blueprints.Add('B', new LevelElementBlueprint("MidBush", bushAnimation, true, "MidLayer"));
-		_blueprints.Add('b', new LevelElementBlueprint("TopBush", bushAnimation, false, "TopLayer"));
+		MakeBlueprint1("MidBush", 'B', new char[] { '@', 'O' }, Color.BushGreen, Color.DarkGreen, "MidLayer", true, 500);
+		MakeBlueprint1("TopBush", 'b', new char[] { '@', 'O' }, Color.BushGreen, Color.DarkGreen, "TopLayer", false, 500);
 
 		// 'W', 'w' wood
-		var WoodAnim = new Animation(500);
-		var WoodSprite = new Sprite(new Vec2(1, 1));
-		WoodSprite.WriteCell(new Vec2(0, 0), new ScreenCell('#', Color.WoodLight, Color.WoodDark));
-		WoodAnim.addFrame(WoodSprite);
-		_blueprints.Add('W', new LevelElementBlueprint("MidWood", WoodAnim, true, "MidLayer"));
-		_blueprints.Add('w', new LevelElementBlueprint("TopWood", WoodAnim, false, "TopLayer"));
+		MakeBlueprint1("MidWood", 'W', '#', Color.WoodLight, Color.WoodDark, "MidLayer", true, 500);
+		MakeBlueprint1("TopWood", 'w', '#', Color.WoodLight, Color.WoodDark, "TopLayer", false, 500);
 
 		// '~' Water
-		var WaterAnim = new Animation(400);
-		var WaterSprite1 = new Sprite(new Vec2(1, 1));
-		WaterSprite1.WriteCell(new Vec2(0, 0), new ScreenCell('~', Color.WaterLight, Color.WaterDark));
-		WaterAnim.addFrame(WaterSprite1);
-		var WaterSprite2 = new Sprite(new Vec2(1, 1));
-		WaterSprite2.WriteCell(new Vec2(0, 0), new ScreenCell('-', Color.WaterLight, Color.WaterDark));
-		WaterAnim.addFrame(WaterSprite2);
-		_blueprints.Add('~', new LevelElementBlueprint("Water", WaterAnim, true, "MidLayer"));
-
-
+		MakeBlueprint1("Water", '~', new char[] { '~', '-' }, Color.WaterLight, Color.WaterDark, "MidLayer", true, 400);
 	}
+
+	public static void MakeBlueprint1(string name, char key, char[] chars, Color fg, Color bg, string layer, bool blocking = false, int animtime = 500)
+	{
+		var anim = new Animation(animtime);
+		foreach (char c in chars)
+		{
+			var sprite = new Sprite(new Vec2(1, 1));
+			sprite.WriteCell(new Vec2(0, 0), new ScreenCell(c, fg, bg));
+			anim.addFrame(sprite);
+		}
+		_blueprints.Add(key, new LevelElementBlueprint(name, anim, blocking, layer));
+	}
+
+	public static void MakeBlueprint1(string name, char key, char character, Color fg, Color bg, string layer, bool blocking = false, int animtime = 500)
+	{
+		MakeBlueprint1(name, key, new char[] { character }, fg, bg, layer, blocking, animtime);
+	}
+
 
 	public static LevelElementBlueprint? GetBlueprint(char key)
 	{
@@ -191,7 +143,9 @@ class Level
 		{
 			DebugLogger.Log($"Level file exists: {filePath}");
 			Random randomBorder = new Random();
-			List<string> lines = File.ReadAllLines(filePath).ToList();
+			using var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+			using var reader = new StreamReader(stream);
+			List<string> lines = reader.ReadToEnd().Split('\n').ToList();
 			DebugLogger.Log($"Level file loaded: {lines.Count} lines");
 			
 			//pad left and right

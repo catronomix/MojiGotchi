@@ -5,7 +5,7 @@ using System.IO;
 
 static class DebugLogger
 {
-    static string debugFile = Path.Combine(AppContext.BaseDirectory, "debug.log");
+    private static string debugFile = Path.Combine(AppContext.BaseDirectory, "debug.log");
     private static bool log = true;
 
     static DebugLogger()
@@ -20,9 +20,16 @@ static class DebugLogger
                 {
                     Directory.CreateDirectory(directory);
                 }
-                File.WriteAllText(debugFile, "");
+                // File.WriteAllText(debugFile, ""); //disabled for educational purposes, re-enable later
+                using StreamWriter logwriter = new StreamWriter(debugFile, false);
+                logwriter.WriteLine("MojiGotchi debug log started");
+                logwriter.WriteLine("----------------------------");
             }
-            catch { }
+            catch
+            {
+                Console.WriteLine("unable to initialize debug log");
+                throw;
+            }
         }
     }
 
@@ -31,9 +38,14 @@ static class DebugLogger
         if (log){
             try
             {
-                File.AppendAllText(debugFile, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] {message}\n");
+                // // File.AppendAllText(debugFile, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] {message}\n"); //disabled for educational purposes
+                using StreamWriter logwriter = new StreamWriter(debugFile, true);
+                logwriter.Write($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] {message}\n");
             }
-            catch { }
+            catch
+            {
+                Console.WriteLine("unable to write to debug log (" + message + ")");
+            }
         }
         
     }

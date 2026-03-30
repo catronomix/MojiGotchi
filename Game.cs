@@ -128,8 +128,7 @@ class Game
 		DrawPet();
 		DrawLevelLayer(_level.MidLayer, _level.MidSprite);
 		DrawLevelLayer(_level.TopLayer, _level.TopSprite);
-
-
+		DrawPetBubble();
 		DrawStatus();
 		_renderer.RenderScreen();
 
@@ -276,6 +275,7 @@ class Game
 	{
 		if (_pet != null && _currentModal == null)
 		{
+			_pet.Communicate();
 			Sprite? petSprite = _pet.GetSprite(); // Capture the sprite once
 			if (petSprite != null)
 			{
@@ -284,7 +284,21 @@ class Game
 				// We subtract petSprite.Size / 2 to make (0,0) the center of the pet.
 				Vec2 drawPos = Vec2.Add(_camera.GetAbsCenter(), _pet.Position.Sum(-1,-1));
 				_renderer.DrawSprite(petSprite, drawPos, _viewport);
+				//draw message bubble	
 			}
+		}
+	}
+
+	void DrawPetBubble()
+	{
+		if (_pet != null && _currentModal == null)
+		{
+			Sprite? bubble = _pet.MessageBubble.GetSprite();
+			if (bubble != null)
+				{
+					Vec2 drawPos = Vec2.Add(_camera.GetAbsCenter(), _pet.Position.Sum(-1,-1));
+					_renderer.DrawSprite(bubble, drawPos.Sum(-bubble.Size.X / 2+1, -3), _viewport);
+				}
 		}
 	}
 
@@ -359,22 +373,9 @@ class Game
 				_pet.Wander();
 				
 				//keep pet inside level
-				if (_pet.Position.X < -_level.RelativeCenter.X)
-				{
-					_pet.Position = new Vec2(-_level.RelativeCenter.X, _pet.Position.Y);
-				}
-				if (_pet.Position.X > _level.RelativeCenter.X)
-				{
-					_pet.Position = new Vec2(_level.RelativeCenter.X, _pet.Position.Y);
-				}
-				if (_pet.Position.Y < -_level.RelativeCenter.Y)
-				{
-					_pet.Position = new Vec2(_pet.Position.X, -_level.RelativeCenter.Y);
-				}
-				if (_pet.Position.Y > _level.RelativeCenter.Y)
-				{
-					_pet.Position = new Vec2(_pet.Position.X, _level.RelativeCenter.Y);
-				}
+				int x = Math.Clamp(_pet.Position.X, -_level.RelativeCenter.X, _level.RelativeCenter.X);
+				int y = Math.Clamp(_pet.Position.Y, -_level.RelativeCenter.Y, _level.RelativeCenter.Y);
+				_pet.Position = new Vec2(x, y);
 
 				//keep pet from moving into solid objects
 				if (_level != null)

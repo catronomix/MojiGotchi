@@ -14,10 +14,12 @@ class Program
 		Game _game = new Game();             // Declare as local variable
 		
 		bool running = true;
+		//need to differentiate between game mode and editor mode
 		while (running)
 		{
 			running = Loop(_game);
 		}
+
 	}
 
 	private static bool Loop(Game game)

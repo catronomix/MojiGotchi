@@ -165,7 +165,6 @@ public struct Vec2
     {
         return new Vec2(-A.X, -A.Y);
     }
-
 }
 
 class SimpleRect
