@@ -56,6 +56,7 @@ class Game
 	private Modal? _currentModal;
 	private Help _help;
 	private HighScores _highScores;
+	private LanguageChoice _languageChoice;
 
 	// Initialize the game
 	public Game()
@@ -72,6 +73,7 @@ class Game
 		//init modals
 		_help = new Help();
 		_highScores = new HighScores();
+		_languageChoice = new LanguageChoice();
 		_currentModal = null;
 
 		//gameplay
@@ -105,6 +107,12 @@ class Game
 		// Call CheckWindow once at the end of the constructor to ensure all
 		// dimensions are correctly set for the first render.
 		CheckWindow(true);
+	}
+
+	public void ChooseLanguage()
+	{
+		_languageChoice.UpdatePage(_viewport.Size);
+		_currentModal = _languageChoice;
 	}
 
 	public bool Step()

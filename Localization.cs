@@ -88,3 +88,42 @@ public static class LM //shorthand for localizationmanager
 	
 }
 
+public class LanguageChoice : Modal
+{
+	
+	public LanguageChoice() : base("Choose Language", Color.DarkCyan, Color.Cyan)
+	{
+		
+	}
+
+	public void UpdatePage(Vec2 size)
+	{
+		SetSpriteBg(size);
+		ClearContentSprite(size);
+
+		string messagestring = "Language setting not found, defaulting to English.\nYou can change this in options.json.\nPress [ESC] to close this window]\n";
+		messagestring += "Taalinstalling niet gevonden, standaardtaal is Engels.\nJe kan dit wijzigen in options.json\nDruk op [ESC] om dit venster te sluiten]";
+
+		string[] message = messagestring.Split('\n');
+
+
+		//turn message into sprite
+		for (int i = 0; i < Math.Min(message.Length, size.Y - 5); i++)
+		{
+
+			Sprite lineSprite = new Sprite(new Vec2(message[i].Length, 1));
+
+			for (int x = 0; x < message[i].Length; x++)
+			{
+				// write aligned horizontally
+				lineSprite.WriteCell(new Vec2(x, 0), new ScreenCell 
+				{ 
+					Character = message[i][x], 
+					Color = Color.White, 
+					BgColor = this.BgColor
+				});
+			}
+			AddContent(lineSprite, new Vec2(size.X / 2 - message[i].Length / 2, i*2 + 4));
+		}
+	}
+}

@@ -16,9 +16,9 @@ class Program
 		ConsoleHelper.EnableUTF8();
 
 		DebugLogger.Enable();
-		LoadGameOptions();
-
-		Game _game = new Game();             // Declare as local variable
+		
+		Game _game = new Game();         // Declare as local variable
+		LoadGameOptions(_game);
 		
 		bool running = true;
 		//need to differentiate between game mode and editor mode
@@ -36,7 +36,7 @@ class Program
 		return game.Step();
 	}
 
-	private static void LoadGameOptions()
+	private static void LoadGameOptions(Game game)
 	{
 		try
 		{
@@ -55,6 +55,18 @@ class Program
 		if (_gameOptions.TryGetValue("language", out var language))
 		{
 			LM.SetLanguage(language);
+		}
+		else
+		{
+			LM.SetLanguage("en");
+			game.ChooseLanguage();
+			
+			_gameOptions["language"] = "en";
+			var options = new JsonSerializerOptions { WriteIndented = true };
+			string jsonString = JsonSerializer.Serialize(_gameOptions, options);
+			using var stream = new FileStream("options.json", FileMode.Create, FileAccess.Write, FileShare.None);
+			using var writer = new StreamWriter(stream);
+			writer.Write(jsonString);
 		}
 		
 	}
