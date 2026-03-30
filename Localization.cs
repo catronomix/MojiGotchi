@@ -28,7 +28,7 @@ public static class LM //shorthand for localizationmanager
 			using var reader = new StreamReader(stream);
 			string jsonstring = reader.ReadToEnd();
 			_currentStrings.Clear();
-			_currentStrings = OptionsJsonContext.Deserialize(jsonstring);
+			_currentStrings = OptionsJsonContextHelper.Deserialize(jsonstring);
 			
 			_currentLanguage = language;
 			

@@ -2,7 +2,6 @@
 
 using System.Collections.Generic;
 using System.IO;
-using System.Text.Json;
 
 class Program
 {
@@ -17,10 +16,20 @@ class Program
 
 		DebugLogger.Enable();
 		LoadGameOptions();
+		
+		// Load language BEFORE creating Game so menu items can be localized
+		bool isFirstLanguageSetup = !_gameOptions.ContainsKey("language");
+		string language = isFirstLanguageSetup ? "en" : _gameOptions["language"];
+		
+		if (isFirstLanguageSetup)
+		{
+			_gameOptions["language"] = language;
+			SaveGameOptions();
+		}
+		LM.SetLanguage(language);
 
 		//optionally start editor
-		_gameOptions.TryGetValue( "devmode", out var devmode);
-		if (devmode == "true")
+		if (_gameOptions["devmode"] == "true")
 		{
 			Editor _editor = new Editor();
 			bool devloop = true;
@@ -32,10 +41,11 @@ class Program
 
 		//start game
 		Game _game = new Game();         // Declare as local variable
-		_gameOptions.TryGetValue( "language", out var language);
-		if (language == null)
+		
+		// Show language choice modal on first run
+		if (isFirstLanguageSetup)
 		{
-			SetupLanguage(_game);
+			_game.ChooseLanguage();
 		}
 
 		bool running = true;
@@ -66,32 +76,30 @@ class Program
 			using var stream = new FileStream("options.json", FileMode.Open, FileAccess.Read, FileShare.Read);
 			using var reader = new StreamReader(stream);
 			string jsonstring = reader.ReadToEnd();
-			var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true};
-			_gameOptions = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonstring, options) ?? new();
+			_gameOptions = OptionsJsonContextHelper.Deserialize(jsonstring);
+			foreach (KeyValuePair<string, string> kv in _gameOptions)
+			{
+				DebugLogger.Log($"Game option loaded: {kv.Key}: {kv.Value}");
+			}
 		}
 		catch (Exception ex)
 		{
 			DebugLogger.Log($"Exception loading game options: {ex.Message}");
+			_gameOptions = new Dictionary<string, string>();
 		}
 
-		
-		if (_gameOptions.TryGetValue("language", out var language))
+		// Ensure default values exist
+		if (!_gameOptions.ContainsKey("devmode"))
 		{
-			LM.SetLanguage(language);
+			_gameOptions["devmode"] = "false";
 		}
-		else
-		{
-			LM.SetLanguage("en");
-		}
-		
 	}
 
 	private static void SaveGameOptions()
 	{
 		try
 		{
-			var options = new JsonSerializerOptions { WriteIndented = true };
-			string jsonString = JsonSerializer.Serialize(_gameOptions, options);
+			string jsonString = OptionsJsonContextHelper.Serialize(_gameOptions);
 			using var stream = new FileStream("options.json", FileMode.Create, FileAccess.Write, FileShare.None);
 			using var writer = new StreamWriter(stream);
 			writer.Write(jsonString);	
@@ -102,10 +110,4 @@ class Program
 		}
 	}
 
-	private static void SetupLanguage(Game game)
-	{
-		_gameOptions["language"] = "en";
-		SaveGameOptions();
-		game.ChooseLanguage();
-	}
 }

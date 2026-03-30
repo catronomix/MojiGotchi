@@ -11,6 +11,9 @@ if (Test-Path $outputDir) { Remove-Item -Recurse -Force $outputDir }
 # --- Execute Build ---
 dotnet publish -r $architecture -c Release --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=true -p:TrimMode=link -p:EnableCompressionInSingleFile=true -o $outputDir
 
+# --- Remove Debug Files ---
+Get-ChildItem -Path $outputDir -Filter "*.pdb" -Recurse | Remove-Item -Force
+
 # --- Create Zip File ---
 if ($?) {
     # Remove existing zip file if it exists

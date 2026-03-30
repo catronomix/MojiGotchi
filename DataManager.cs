@@ -135,7 +135,7 @@ static class DataManager
 				// Create with a header for tab-delimited data
 				using var stream = new FileStream(highScoreFile, FileMode.CreateNew, FileAccess.Write, FileShare.None);
 				using var writer = new StreamWriter(stream);
-				writer.WriteLine(highScoreFile, "Name\tAge\tDateOfDeath");
+				writer.WriteLine("Name\tAge\tDateOfDeath");
 				DebugLogger.Log("Highscore file created");
 			}
 			catch (Exception ex)
