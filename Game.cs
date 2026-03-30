@@ -75,16 +75,16 @@ class Game
 		_currentModal = null;
 
 		//gameplay
-		_menu.AddItem("Voeden", SetAction(ActionType.FEED), false);
-		_menu.AddItem("Spelen", SetAction(ActionType.PLAY), false);
-		_menu.AddItem("Aaien", SetAction(ActionType.PET), false);
-		_menu.AddItem("Wekken", SetAction(ActionType.WAKE), false);
+		_menu.AddItem(LM.Get("menu_feed"), SetAction(ActionType.FEED), false);
+		_menu.AddItem(LM.Get("menu_play"), SetAction(ActionType.PLAY), false);
+		_menu.AddItem(LM.Get("menu_pet"), SetAction(ActionType.PET), false);
+		_menu.AddItem(LM.Get("menu_wake"), SetAction(ActionType.WAKE), false);
 
 		//management
-		_menu.AddItem("Nieuw spel", SetAction(ActionType.NEWPET));
-		_menu.AddItem("Afsluiten", SetAction(ActionType.QUIT));
-		_menu.AddItem("Topscore", SetAction(ActionType.TOPSCORE));
-		_menu.AddItem("Help", SetAction(ActionType.HELP));
+		_menu.AddItem(LM.Get("menu_newgame"), SetAction(ActionType.NEWPET));
+		_menu.AddItem(LM.Get("menu_quit"), SetAction(ActionType.QUIT));
+		_menu.AddItem(LM.Get("menu_topscore"), SetAction(ActionType.TOPSCORE));
+		_menu.AddItem(LM.Get("menu_help"), SetAction(ActionType.HELP));
 
 		_menu.SelectFirstEnabled();
 		//load saved pet from file
@@ -101,7 +101,7 @@ class Game
 		
 		_camera = new Camera(_level, _pet, deadzone, _viewport); 
 
-		_persistentStatus = "Welkom bij MojiGotchi!";
+		_persistentStatus = LM.Get("status_welcome"); // Welcome
 		// Call CheckWindow once at the end of the constructor to ensure all
 		// dimensions are correctly set for the first render.
 		CheckWindow(true);
@@ -347,14 +347,11 @@ class Game
 			}
 			else // Pet is alive, update stats display
 			{
-				_persistentStatus = "Je zorgt voor " + _pet.Name
-				+ "    ["
-				+ "Verzadiging:" + _pet.Saturation.Value + "/" + _pet.Saturation.Max
-				+ " Humeur:" + _pet.Mood.Value + "/" + _pet.Mood.Max
-				+ " Energie:" + _pet.Energy.Value + "/" + _pet.Energy.Max
-				+ " Slaap:" + _pet.Sleepyness.Value + "/" + _pet.Sleepyness.Max
-				+ (_pet.IsSleeping ? " (Slaapt)" : "")
-				+ "]";
+				_persistentStatus = LM.Get("status_caring", [_pet.Name]) + " | "
+				+ LM.Get("status_stats", [_pet.Saturation.Value, _pet.Saturation.Max,
+				_pet.Mood.Value, _pet.Mood.Max, _pet.Energy.Value, _pet.Energy.Max,
+				_pet.Sleepyness.Value, _pet.Sleepyness.Max,]) + 
+				(_pet.IsSleeping ? " | " + LM.Get("status_sleeping") : "");
 			}
 			_lastStatUpdate = DateTime.Now;
 
@@ -423,7 +420,7 @@ class Game
 					game._pet.RandomizePetColor();
 					game.UpdateMenuAvailability([ActionType.FEED, ActionType.PLAY, ActionType.PET, ActionType.WAKE], true);
 					game.UpdateMenuAvailability([ActionType.NEWPET], false);
-					game._persistentStatus = "Je zorgt voor " + game._pet.Name;
+					game._persistentStatus = LM.Get("status_caring", [game._pet.Name]);
 					game._menu.SelectFirstEnabled();
 					SoundManager.Play("newgame.wav");
 				};

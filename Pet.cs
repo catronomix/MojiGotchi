@@ -231,7 +231,7 @@ public class Pet : Entity //Pet inherits from Entity class
 		_animationState = AnimEating;
 		SoundManager.Play("eat.wav");
 		MessageBubble.SetMessage("Omnomnom", 1000, true);
-		return "Je hebt " + _name + " eten gegeven.";
+		return LM.Get("pet_action_feed", [_name]);
 	}
 
 	public string Play()
@@ -242,7 +242,7 @@ public class Pet : Entity //Pet inherits from Entity class
 		_animationState = AnimPlaying;
 		SoundManager.Play("play.wav");
 		MessageBubble.SetMessage("Wheeeee!", 1000, true);
-		return "Je hebt met " + _name + " gespeeld.";
+		return LM.Get("pet_action_play", [_name]);
 	}
 
 	public string PetPet() // Renamed to avoid conflict with class name 'Pet'
@@ -253,7 +253,7 @@ public class Pet : Entity //Pet inherits from Entity class
 		//not implemented yet
 		// _animationState = AnimationState.HAPPY;
 		SoundManager.Play("petpet.wav");
-		return "Je hebt " + _name + " geaaid. Lief!";
+		return LM.Get("pet_action_pet", [_name]);
 	}
 
 	public string WakeUp() // Renamed for clarity
@@ -265,7 +265,7 @@ public class Pet : Entity //Pet inherits from Entity class
 		_animationState = AnimWakeup;
 		MessageBubble.SetMessage("Ugh..", 1000, true);
 		SoundManager.Play("wakeup.wav");
-		return "Je hebt " + _name + " wakker gemaakt.";
+		return LM.Get("pet_action_wake", [_name]);
 	}
 
 	public string UpdateAllStats()
@@ -318,25 +318,25 @@ public class Pet : Entity //Pet inherits from Entity class
 		{
 			//pet has died from depression
 			IsAlive = false;
-			return _name + " is gestorven van depressie op de leeftijd van " + ageString;
+			return LM.Get("death_message_depression", [_name, ageString]);
 		}
 		if (Energy.Value <= Energy.Min)
 		{
 			//pet has died from exhaustion
 			IsAlive = false;
-			return _name + " is gestorven van uitputting op de leeftijd van " + ageString;
+			return LM.Get("death_message_exhaustion", [_name, ageString]);
 		}
 		if (Saturation.Value <= Saturation.Min)
 		{
 			//pet has died from hunger
 			IsAlive = false;
-			return _name + " is gestorven van de honger op de leeftijd van " + ageString;
+			return LM.Get("death_message_hunger", [_name, ageString]);
 		}
 		if (Saturation.Value >= Saturation.Max)
 		{
 			//pet has died from overfeeding
 			IsAlive = false;
-			return _name + " is gestorven door zich te overeten op de leeftijd van " + ageString;
+			return LM.Get("death_message_overfeeding", [_name, ageString]);
 		}
 
 		return "";
@@ -367,29 +367,29 @@ public class Pet : Entity //Pet inherits from Entity class
 		//check for hunger
 		if (Saturation.Value <= Saturation.Min + 1)
 		{
-			MessageBubble.SetMessage("Honger!",Color.Red, Color.LightYellow);
+			MessageBubble.SetMessage(LM.Get("pet_say_hungry"), Color.Red, Color.LightYellow);
 		}
 
 		//check for too full
 		if (Saturation.Value >= Saturation.Max - 1)
 		{
-			MessageBubble.SetMessage("Ufff..",Color.Red, Color.LightYellow);
+			MessageBubble.SetMessage(LM.Get("pet_say_toofull"), Color.Red, Color.LightYellow);
 		}
 
 		//check for bad mood
 		if (Mood.Value <= Mood.Min + 2)
 		{
-			MessageBubble.SetMessage("Ughhhh..",Color.Red, Color.LightYellow);
+			MessageBubble.SetMessage(LM.Get("pet_say_badmood"), Color.Red, Color.LightYellow);
 		}
 		if (Mood.Value <= Mood.Min + 1)
 		{
-			MessageBubble.SetMessage("Aaaargh!",Color.Red, Color.LightYellow);
+			MessageBubble.SetMessage(LM.Get("pet_say_verybadmood"),Color.Red, Color.LightYellow);
 		}
 
 		//check for energy
 		if (Energy.Value <= Energy.Min + 1)
 		{
-			MessageBubble.SetMessage("Ik kan niet meer!",Color.Red, Color.LightYellow);
+			MessageBubble.SetMessage(LM.Get("pet_say_exhausted"),Color.Red, Color.LightYellow);
 		}
 	}
 }

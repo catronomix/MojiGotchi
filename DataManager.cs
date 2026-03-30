@@ -138,14 +138,10 @@ static class DataManager
 				writer.WriteLine(highScoreFile, "Name\tAge\tDateOfDeath");
 				DebugLogger.Log("Highscore file created");
 			}
-			catch (IOException ex)
-			{
-				DebugLogger.Log("Highscore file found");
-			}
 			catch (Exception ex)
 			{
 				// Log or handle the error appropriately
-				Console.WriteLine($"Error creating high score file: {ex.Message}");
+				Console.WriteLine($"HighScore file inaccesible: {ex.Message}");
 				return false;
 			}
 		}

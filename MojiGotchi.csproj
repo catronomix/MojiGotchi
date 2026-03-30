@@ -8,6 +8,8 @@
 	</PropertyGroup>
 	<ItemGroup>
     <None Update="PetSprites.json" CopyToOutputDirectory="PreserveNewest" />
+	<None Update="localization*.json" CopyToOutputDirectory="PreserveNewest" />
+	<None Update="options.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="level1.txt" CopyToOutputDirectory="PreserveNewest" />
     <None Update="*.wav" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>

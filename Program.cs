@@ -1,7 +1,13 @@
 ﻿namespace MojiGotchi;
 
+using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
+
 class Program
 {
+	private static Dictionary<string, string> _gameOptions = new();
+
 	private static void Main(string[] args)
 	{
 		ConsoleHelper.SetWindowSize(122,40);
@@ -9,7 +15,8 @@ class Program
 		ConsoleHelper.HideCursor();
 		ConsoleHelper.EnableUTF8();
 
-		DebugLogger.Enable(); 
+		DebugLogger.Enable();
+		LoadGameOptions();
 
 		Game _game = new Game();             // Declare as local variable
 		
@@ -27,5 +34,28 @@ class Program
 		// Directly call Renderer.Resize and pass its boolean result to game.Step
 		
 		return game.Step();
+	}
+
+	private static void LoadGameOptions()
+	{
+		try
+		{
+			using var stream = new FileStream("options.json", FileMode.Open, FileAccess.Read, FileShare.Read);
+			using var reader = new StreamReader(stream);
+			string jsonstring = reader.ReadToEnd();
+			var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true};
+			_gameOptions = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonstring, options) ?? new();
+		}
+		catch (Exception ex)
+		{
+			DebugLogger.Log($"Exception loading game options: {ex.Message}");
+		}
+
+		
+		if (_gameOptions.TryGetValue("language", out var language))
+		{
+			LM.SetLanguage(language);
+		}
+		
 	}
 }
