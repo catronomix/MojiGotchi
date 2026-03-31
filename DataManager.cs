@@ -55,7 +55,7 @@ static class DataManager
 			if (myPet != null)
 			{
 				myPet = UpdateDateTimes(myPet);
-				myPet.Animations = JsonParser.LoadPetAnimations("PetSprites.json", 500);
+				myPet.Animations = JsonParser.LoadAnimations("PetSprites.json", 500);
 				myPet.ApplyColorToAnimations();
 			}
 			return myPet;

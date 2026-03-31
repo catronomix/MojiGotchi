@@ -159,7 +159,7 @@ public class Pet : Entity //Pet inherits from Entity class
 		_lastWaked = DateTime.MinValue;
 
 		//setup animations list
-		_animations = JsonParser.LoadPetAnimations("PetSprites.json", 500);
+		_animations = JsonParser.LoadAnimations("PetSprites.json", 500);
 		SetAnimation(AnimDefault);
 
 		//position in the level, relative to world origin

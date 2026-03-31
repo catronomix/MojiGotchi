@@ -9,6 +9,7 @@ class Editor : Game
 
 	//have a cursor
 	private Cursor? _cursor;
+	private bool _editingmode;
 
 	// Initialize the editor
 	public Editor()
@@ -27,9 +28,9 @@ class Editor : Game
 		EditorHelp _help = new EditorHelp("Editor Help", Color.DarkGray, Color.White);
 
 		//editor
-		_menu.AddItem(LM.Get("editor_menu_revert"), SetAction(ActionType.EDITOR_LOAD), false);
-		_menu.AddItem(LM.Get("editor_menu_save"), SetAction(ActionType.EDITOR_SAVE), false);
-		_menu.AddItem(LM.Get("editor_menu_edit"), SetAction(ActionType.EDITOR_EDIT), false);
+		_menu.AddItem(LM.Get("editor_menu_revert"), SetAction(ActionType.EDITOR_LOAD));
+		_menu.AddItem(LM.Get("editor_menu_save"), SetAction(ActionType.EDITOR_SAVE));
+		_menu.AddItem(LM.Get("editor_menu_edit"), SetAction(ActionType.EDITOR_EDIT));
 
 		//modals
 		_menu.AddItem(LM.Get("menu_help"), SetAction(ActionType.EDITOR_HELP));
@@ -47,10 +48,11 @@ class Editor : Game
 
 		_camera = new Camera(_level, _cursor, deadzone, _viewport); 
 
-		_persistentStatus = LM.Get("status_welcome"); // Welcome
+		_persistentStatus = LM.Get("status_welcome_editor"); // Welcome
 		// Call CheckWindow once at the end of the constructor to ensure all
 		// dimensions are correctly set for the first render.
 		CheckWindow(true);
+		_editingmode = false;
 	}
 
 	public new bool Step()
@@ -71,8 +73,8 @@ class Editor : Game
 		DrawLevelLayer(_level.BottomLayer, _level.BottomSprite);
 		DrawLevelLayer(_level.MidLayer, _level.MidSprite);
 		DrawLevelLayer(_level.TopLayer, _level.TopSprite);
-		DrawCursor();
 		DrawStatus();
+		DrawCursor();
 		_renderer.RenderScreen();
 
 		/*--------------------INPUT--------------------*/
@@ -128,7 +130,7 @@ class Editor : Game
 
 	void DrawCursor()
 	{
-		if (_cursor != null && _currentModal == null)
+		if (_cursor != null && _editingmode == true)
 		{
 			Sprite? cursorSprite = _cursor.GetSprite(); // Capture the sprite once
 			if (cursorSprite != null)
@@ -164,6 +166,19 @@ class Editor : Game
 				logic = (editor) =>
 				{
 					//todo
+				};
+				break;
+			case ActionType.EDITOR_SAVE:
+				logic = (editor) =>
+				{
+					//todo
+				};
+				break;
+			case ActionType.EDITOR_EDIT:
+				logic = (editor) =>
+				{
+					_editingmode = true;
+					_menu.Disable();
 				};
 				break;
 			case ActionType.EDITOR_QUIT:
@@ -209,15 +224,16 @@ class EditorAction : GameAction
 	}
 }
 
-public class Cursor: Pet
+public class Cursor: Entity
 {
     
     //constructor
     public Cursor()
     {
-        
+        _animations = JsonParser.LoadAnimations("CursorSprites.json", 200);
+        SetAnimation(AnimDefault);
+        _position = new Vec2(0,0);
     }
-
 }
 
 public class EditorHelp: Modal

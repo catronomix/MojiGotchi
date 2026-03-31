@@ -34,7 +34,7 @@ static class JsonParser
         };
     }
 
-    public static Dictionary<string, Animation>? LoadPetAnimations(string filepath, int frametime)
+    public static Dictionary<string, Animation>? LoadAnimations(string filepath, int frametime)
     {
         DebugLogger.Log($"LoadPetAnimations called with path: {filepath}");
         var loadedAnimations = new Dictionary<string, Animation>();

@@ -1,0 +1,63 @@
+{
+  "Sprite": {
+    "grid_size": {
+      "rows": 3,
+      "cols": 3
+    },
+    "Frames": [
+      {
+        "cells": [ 
+          { "char": "╔", "fg": "Blue", "bg": "Grey" }, { "char": "═", "fg": "Blue", "bg": "Grey" }, { "char": "╗", "fg": "Blue", "bg": "Grey" },
+          { "char": "║", "fg": "Blue", "bg": "Gray" }, { "char": "\u0000", "fg": "Black", "bg": "Black" }, { "char": "║", "fg": "Blue", "bg": "Grey" },
+          { "char": "╚", "fg": "Blue", "bg": "Grey" }, { "char": "═", "fg": "Blue", "bg": "Grey" }, { "char": "╝", "fg": "Blue", "bg": "Grey" }
+        ]
+      },
+      {
+        "cells": [ 
+          { "char": "╔", "fg": "Yellow", "bg": "Grey" }, { "char": "═", "fg": "Yellow", "bg": "Grey" }, { "char": "╗", "fg": "Yellow", "bg": "Grey" },
+          { "char": "║", "fg": "Yellow", "bg": "Gray" }, { "char": "\u0000", "fg": "Black", "bg": "Black" }, { "char": "║", "fg": "Yellow", "bg": "Grey" },
+          { "char": "╚", "fg": "Yellow", "bg": "Grey" }, { "char": "═", "fg": "Yellow", "bg": "Grey" }, { "char": "╝", "fg": "Yellow", "bg": "Grey" }
+        ]
+      },
+      {
+        "cells": [ 
+          { "char": "o", "fg": "Orange", "bg": "Grey" }, { "char": "═", "fg": "Orange", "bg": "Grey" }, { "char": "o", "fg": "Orange", "bg": "Grey" },
+          { "char": "║", "fg": "Orange", "bg": "Gray" }, { "char": "\u0000", "fg": "Black", "bg": "Black" }, { "char": "║", "fg": "Orange", "bg": "Grey" },
+          { "char": "o", "fg": "Orange", "bg": "Grey" }, { "char": "═", "fg": "Orange", "bg": "Grey" }, { "char": "o", "fg": "Orange", "bg": "Grey" }
+        ]
+      },
+      {
+        "cells": [ 
+          { "char": "╔", "fg": "Red", "bg": "Grey" }, { "char": "═", "fg": "Red", "bg": "Grey" }, { "char": "╗", "fg": "Red", "bg": "Grey" },
+          { "char": "║", "fg": "Red", "bg": "Gray" }, { "char": "\u0000", "fg": "Black", "bg": "Black" }, { "char": "║", "fg": "Red", "bg": "Grey" },
+          { "char": "╚", "fg": "Red", "bg": "Grey" }, { "char": "═", "fg": "Red", "bg": "Grey" }, { "char": "╝", "fg": "Red", "bg": "Grey" }
+        ]
+      },
+      {
+        "cells": [ 
+          { "char": "╔", "fg": "Magenta", "bg": "Grey" }, { "char": "v", "fg": "Magenta", "bg": "Grey" }, { "char": "╗", "fg": "Magenta", "bg": "Grey" },
+          { "char": ">", "fg": "Magenta", "bg": "Gray" }, { "char": "\u0000", "fg": "Black", "bg": "Black" }, { "char": "<", "fg": "Magenta", "bg": "Grey" },
+          { "char": "╚", "fg": "Magenta", "bg": "Grey" }, { "char": "^", "fg": "Magenta", "bg": "Grey" }, { "char": "╝", "fg": "Magenta", "bg": "Grey" }
+        ]
+      }
+    ],
+    "Animations": [
+      {
+        "state": "DEFAULT",
+        "frames": [0]
+      },
+      {
+        "state": "SELECT",
+        "frames": [1,2]
+      },
+      {
+        "state": "DELETE",
+        "frames": [3,4]
+      },
+      {
+        "state": "ENTITY",
+        "frames": [0]
+      }
+    ]
+  }
+}
