@@ -10,6 +10,7 @@ class Editor : Game
 	//have a cursor
 	private Cursor? _cursor;
 	private bool _editingmode;
+	protected EditorHelp _editorHelp; // New field for editor-specific help modal
 
 	// Initialize the editor
 	public Editor()
@@ -26,7 +27,7 @@ class Editor : Game
 		//init modals
 		_currentModal = null;
 		EditorHelp _help = new EditorHelp("Editor Help", Color.DarkGray, Color.White);
-
+		_editorHelp = new EditorHelp("Editor Help", Color.DarkGray, Color.White); // Initialize editor-specific help
 		//editor
 		_menu.AddItem(LM.Get("editor_menu_revert"), SetAction(ActionType.EDITOR_LOAD));
 		_menu.AddItem(LM.Get("editor_menu_save"), SetAction(ActionType.EDITOR_SAVE));
@@ -145,82 +146,55 @@ class Editor : Game
 	}
 
 	//editor actions
-	private GameAction SetAction(ActionType type)
+	protected new GameAction SetAction(ActionType type)
 	{
-		Action<Editor> logic;
+		Action<Game> logic; // Change to Action<Game>
 		switch (type)
 		{
 			case ActionType.EDITOR_LOAD:
-				logic = (editor) =>
+				logic = (game) =>
 				{
+					Editor editor = (Editor)game; // Cast to Editor
 					//todo
 				};
 				break;
 			case ActionType.EDITOR_SAVE:
-				logic = (editor) =>
+				logic = (game) =>
 				{
-					//todo
-				};
-                break;
-			case ActionType.EDITOR_EDIT:
-				logic = (editor) =>
-				{
-					//todo
-				};
-				break;
-			case ActionType.EDITOR_SAVE:
-				logic = (editor) =>
-				{
+					Editor editor = (Editor)game; // Cast to Editor
 					//todo
 				};
 				break;
 			case ActionType.EDITOR_EDIT:
-				logic = (editor) =>
+				logic = (game) =>
 				{
+					Editor editor = (Editor)game; // Cast to Editor
 					_editingmode = true;
-					_menu.Disable();
+					editor._menu.Disable(); // Use editor._menu
 				};
 				break;
 			case ActionType.EDITOR_QUIT:
-				logic = (editor) =>
+				logic = (game) =>
 				{
-					base._isRunning = false;
+					Editor editor = (Editor)game; // Cast to Editor
+					editor._isRunning = false; // Use editor._isRunning
 				};
 				break;
 			case ActionType.EDITOR_HELP:
-				logic = (editor) =>
+				logic = (game) =>
 				{
-					editor._help.UpdatePage(_viewport.Size);
-					base._currentModal = _help;
-					_menu.Disable();
+					Editor editor = (Editor)game; // Cast to Editor
+					editor._editorHelp.UpdatePage(editor._viewport.Size); // Use editor._editorHelp
+					editor._currentModal = editor._editorHelp; // Assign editor._editorHelp to inherited _currentModal
+					editor._menu.Disable(); // Use editor._menu
 				};
 				break;
 			
 			default:
-				logic = (editor) => { }; // Default action does nothing
+				logic = (game) => { }; // Default action does nothing, already Action<Game>
 				break;
 		}
 		return new GameAction(type, logic);
-	}
-}
-
-class EditorAction : GameAction
-{
-	
-	private Action<Editor> _logic;
-
-	public EditorAction(ActionType type, Action<Editor> logic): base(type, logic)
-	{
-		_myActionType = type;
-		_logic = logic;
-	}
-
-	public void Use(Editor editor)
-	{
-		if (_logic != null)
-		{
-			_logic(editor);
-		}
 	}
 }
 

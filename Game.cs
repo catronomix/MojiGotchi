@@ -420,7 +420,7 @@ class Game
 	}
 
 	//game actions
-	private GameAction SetAction(ActionType type)
+	protected GameAction SetAction(ActionType type)
 	{
 		Action<Game> logic;
 		switch (type)
