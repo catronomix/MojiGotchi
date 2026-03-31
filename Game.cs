@@ -100,6 +100,7 @@ class Game
 	{
 		_languageChoice.UpdatePage(_viewport.Size);
 		_currentModal = _languageChoice;
+		_menu.Disable();
 	}
 
 	public bool Step()
@@ -200,27 +201,42 @@ class Game
 		if (Console.KeyAvailable)
 		{
 			ConsoleKeyInfo key = Console.ReadKey(true);
-			switch (key.Key)
+			if (_menu.Enabled) //menu is active
 			{
-				case ConsoleKey.UpArrow:
-					//menu selection up
-					_menu.SelectUp();
-					break;
-				case ConsoleKey.DownArrow:
-					//menu selection down
-					_menu.SelectDown();
-					break;
-				case ConsoleKey.Enter:
-					//confirm menu selection
-					GameAction action = _menu.MenuItems[_menu.SelectedIndex].Action;
-					action.Use(this);
-					break;
+				switch (key.Key)
+				{
+					case ConsoleKey.UpArrow:
+						//menu selection up
+						_menu.SelectUp();
+						break;
+					case ConsoleKey.DownArrow:
+						//menu selection down
+						_menu.SelectDown();
+						break;
+					case ConsoleKey.Enter:
+						//confirm menu selection
+						GameAction action = _menu.MenuItems[_menu.SelectedIndex].Action;
+						action.Use(this);
+						break;
+					case ConsoleKey.Escape:
+						//close any modal if modal is open
+						CloseModal();
+						break;
+					default:
+						break;
+				}
+			}
+			else //menu is disabled
+			{
+				switch (key.Key)
+				{
 				case ConsoleKey.Escape:
-					//close any modal if modal is open
-					CloseModal();
-					break;
-				default:
-					break;
+						//close any modal if modal is open
+						CloseModal();
+						break;
+					default:
+						break;
+				}
 			}
 		}
 	}
@@ -245,24 +261,26 @@ class Game
 
 	protected void DrawMenuItems()
 	{
-		int index = 0;
-		int selected = _menu.SelectedIndex;
-		foreach (MenuItem item in _menu.MenuItems)
-		{
-			Sprite mySprite = item.Sprite;
-			// add > and < markers around active menu item by updating char in sprite data
-			if (index == selected)
+		if (_menu.Enabled){
+			int index = 0;
+			int selected = _menu.SelectedIndex;
+			foreach (MenuItem item in _menu.MenuItems)
 			{
-				mySprite.Data[1, 1].Character = '>';
-				if (mySprite.Size.X >= 2) mySprite.Data[1, mySprite.Size.X - 2].Character = '<';
+				Sprite mySprite = item.Sprite;
+				// add > and < markers around active menu item by updating char in sprite data
+				if (index == selected)
+				{
+					mySprite.Data[1, 1].Character = '>';
+					if (mySprite.Size.X >= 2) mySprite.Data[1, mySprite.Size.X - 2].Character = '<';
+				}
+				else
+				{
+					mySprite.Data[1, 1].Character = ' ';
+					if (mySprite.Size.X >= 2) mySprite.Data[1, mySprite.Size.X - 2].Character = ' ';
+				}
+				_renderer.DrawSprite(mySprite, new Vec2(_menuBgRect.Pos.X + 1, _menuBgRect.Pos.Y + index * 4 + 1));
+				index++;
 			}
-			else
-			{
-				mySprite.Data[1, 1].Character = ' ';
-				if (mySprite.Size.X >= 2) mySprite.Data[1, mySprite.Size.X - 2].Character = ' ';
-			}
-			_renderer.DrawSprite(mySprite, new Vec2(_menuBgRect.Pos.X + 1, _menuBgRect.Pos.Y + index * 4 + 1));
-			index++;
 		}
 	}
 
@@ -470,6 +488,7 @@ class Game
 				{
 					game._highScores.UpdatePage(_viewport.Size);
 					game._currentModal = _highScores;
+					_menu.Disable();
 				};
 				break;
 			case ActionType.HELP:
@@ -477,6 +496,7 @@ class Game
 				{
 					game._help.UpdatePage(_viewport.Size);
 					game._currentModal = _help;
+					_menu.Enable();
 				};
 				break;
 			default:
@@ -489,6 +509,7 @@ class Game
 	protected void CloseModal()
 	{
 		_currentModal = null;
+		_menu.Enable();
 	}
 
 	protected void DrawLevelLayer(List<LevelElement> layer, Sprite? layerSprite)

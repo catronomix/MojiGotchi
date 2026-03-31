@@ -50,7 +50,5 @@ ACTIES:
 			// Add content with a small margin (x=2) and vertical offset
 			AddContent(lineSprite, new Vec2(4, i + 2));
 		}
-
-		
 	}
 }

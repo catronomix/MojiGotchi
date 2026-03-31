@@ -22,7 +22,9 @@ class Editor : Game
 		//init menu
 		_menu = new Menu(_menuWidth, Color.Gray, Color.Yellow);
 
+		//init modals
 		_currentModal = null;
+		EditorHelp _help = new EditorHelp("Editor Help", Color.DarkGray, Color.White);
 
 		//editor
 		_menu.AddItem(LM.Get("editor_menu_revert"), SetAction(ActionType.EDITOR_LOAD), false);
@@ -31,6 +33,8 @@ class Editor : Game
 
 		//modals
 		_menu.AddItem(LM.Get("menu_help"), SetAction(ActionType.EDITOR_HELP));
+		_menu.AddItem(LM.Get("menu_quit"), SetAction(ActionType.EDITOR_QUIT));
+
 
 		_menu.SelectFirstEnabled();
 		//load saved pet from file
@@ -40,12 +44,7 @@ class Editor : Game
 		_level = new Level(); // This is now empty, we need to load a level
 		_level.LoadFromFile("level1.txt"); // Load the level from the text file
 		SimpleRect deadzone = new SimpleRect(new Vec2(-4, -2), new Vec2(8, 4));
-		if (_cursor != null)
-		{
-			UpdateMenuAvailability([ActionType.NEWPET], false);
-			_menu.SelectFirstEnabled();
-		}
-		
+
 		_camera = new Camera(_level, _cursor, deadzone, _viewport); 
 
 		_persistentStatus = LM.Get("status_welcome"); // Welcome
@@ -70,9 +69,9 @@ class Editor : Game
 		_camera.UpdateCamera();
 
 		DrawLevelLayer(_level.BottomLayer, _level.BottomSprite);
-		DrawCursor();
 		DrawLevelLayer(_level.MidLayer, _level.MidSprite);
 		DrawLevelLayer(_level.TopLayer, _level.TopSprite);
+		DrawCursor();
 		DrawStatus();
 		_renderer.RenderScreen();
 
@@ -87,27 +86,42 @@ class Editor : Game
 		if (Console.KeyAvailable)
 		{
 			ConsoleKeyInfo key = Console.ReadKey(true);
-			switch (key.Key)
+			if (_menu.Enabled) //menu is active
 			{
-				case ConsoleKey.UpArrow:
-					//menu selection up
-					_menu.SelectUp();
-					break;
-				case ConsoleKey.DownArrow:
-					//menu selection down
-					_menu.SelectDown();
-					break;
-				case ConsoleKey.Enter:
-					//confirm menu selection
-					GameAction action = _menu.MenuItems[_menu.SelectedIndex].Action;
-					action.Use(this);
-					break;
-				case ConsoleKey.Escape:
-					//close any modal if modal is open
-					CloseModal();
-					break;
-				default:
-					break;
+				switch (key.Key)
+				{
+					case ConsoleKey.UpArrow:
+						//menu selection up
+						_menu.SelectUp();
+						break;
+					case ConsoleKey.DownArrow:
+						//menu selection down
+						_menu.SelectDown();
+						break;
+					case ConsoleKey.Enter:
+						//confirm menu selection
+						GameAction action = _menu.MenuItems[_menu.SelectedIndex].Action;
+						action.Use(this);
+						break;
+					case ConsoleKey.Escape:
+						//close any modal if modal is open
+						CloseModal();
+						break;
+					default:
+						break;
+				}
+			}
+			else //menu is disabled
+			{
+				switch (key.Key)
+				{
+					case ConsoleKey.Escape:
+						//close any modal if modal is open
+						CloseModal();
+						break;
+					default:
+						break;
+				}
 			}
 		}
 	}
@@ -131,10 +145,22 @@ class Editor : Game
 	//editor actions
 	private GameAction SetAction(ActionType type)
 	{
-		Action<Game> logic;
+		Action<Editor> logic;
 		switch (type)
 		{
 			case ActionType.EDITOR_LOAD:
+				logic = (editor) =>
+				{
+					//todo
+				};
+				break;
+			case ActionType.EDITOR_SAVE:
+				logic = (editor) =>
+				{
+					//todo
+				};
+                break;
+			case ActionType.EDITOR_EDIT:
 				logic = (editor) =>
 				{
 					//todo
@@ -145,12 +171,41 @@ class Editor : Game
 				{
 					base._isRunning = false;
 				};
-                break;
+				break;
+			case ActionType.EDITOR_HELP:
+				logic = (editor) =>
+				{
+					editor._help.UpdatePage(_viewport.Size);
+					base._currentModal = _help;
+					_menu.Disable();
+				};
+				break;
+			
 			default:
 				logic = (editor) => { }; // Default action does nothing
 				break;
 		}
 		return new GameAction(type, logic);
+	}
+}
+
+class EditorAction : GameAction
+{
+	
+	private Action<Editor> _logic;
+
+	public EditorAction(ActionType type, Action<Editor> logic): base(type, logic)
+	{
+		_myActionType = type;
+		_logic = logic;
+	}
+
+	public void Use(Editor editor)
+	{
+		if (_logic != null)
+		{
+			_logic(editor);
+		}
 	}
 }
 
@@ -163,4 +218,46 @@ public class Cursor: Pet
         
     }
 
+}
+
+public class EditorHelp: Modal
+{
+	private string _helpText = @"
+EDITOR HELP PAGINA
+------------------
+
+Nog in te vullen";
+
+	//constructor
+	public EditorHelp(string title, Color bgcolor, Color edgecolor) : base(title, bgcolor, edgecolor)
+	{
+		
+	}
+
+	public void UpdatePage(Vec2 size)
+	{
+		SetSpriteBg(size);
+		ClearContentSprite(size);
+		string[] lines = _helpText.Split('\n');
+
+		for (int i = 0; i < lines.Length; i++)
+		{
+			string line = lines[i].TrimEnd('\r');
+			if (string.IsNullOrEmpty(line)) continue;
+
+			Sprite lineSprite = new Sprite(new Vec2(line.Length, 1));
+			for (int x = 0; x < line.Length; x++)
+			{
+				lineSprite.WriteCell(new Vec2(x, 0), new ScreenCell
+				{
+					Character = line[x],
+					Color = Color.White,
+					BgColor = base.BgColor
+				});
+			}
+
+			// Add content with a small margin (x=2) and vertical offset
+			AddContent(lineSprite, new Vec2(4, i + 2));
+		}
+	}
 }
