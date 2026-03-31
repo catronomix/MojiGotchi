@@ -3,7 +3,7 @@ namespace MojiGotchi;
 class Camera
 {
 	private readonly SimpleRect _deadzone;
-	private Pet? _pet;
+	private Entity? _target;
 	private Level _level;
 	private Vec2 _camPos;
 	public Vec2 CamPos
@@ -15,39 +15,39 @@ class Camera
 	}
 	private SimpleRect _viewport;
 
-	public Camera(Level level, Pet? pet, SimpleRect deadzone, SimpleRect viewport)
+	public Camera(Level level, Entity? entity, SimpleRect deadzone, SimpleRect viewport)
 	{
 		_deadzone = deadzone; //in worldspace
 		_camPos = new Vec2(0, 0); //in worldspace
-		_pet = pet;
+		_target = entity;
 		_level = level;
 		_viewport = viewport;
 	}
 
 	public void SetPet (Pet? pet)
 	{
-		_pet = pet;
+		_target = pet;
 	}
 
 	public void UpdateCamera()
 	{
-		if (_pet != null && _level != null)
+		if (_target != null && _level != null)
 		{
 			Vec2 offset = new Vec2(0,0);
 			//check if pet is outside of deadzone
-			if (_pet.Position.X < _deadzone.Left)
+			if (_target.Position.X < _deadzone.Left)
 			{
 				offset.X --;
 			}
-			else if (_pet.Position.X > _deadzone.Right)
+			else if (_target.Position.X > _deadzone.Right)
 			{
 				offset.X ++;
 			}
-			if (_pet.Position.Y < _deadzone.Top)
+			if (_target.Position.Y < _deadzone.Top)
 			{
 				offset.Y --;
 			}
-			else if (_pet.Position.Y > _deadzone.Bottom)
+			else if (_target.Position.Y > _deadzone.Bottom)
 			{
 				offset.Y ++;
 			}

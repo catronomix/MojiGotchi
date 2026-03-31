@@ -151,7 +151,9 @@ class Menu
 	public Color Color { get; private set; } // Foreground color for the menu container
 	public List<MenuItem> MenuItems { get; private set; }
 	public int SelectedIndex { get; private set; }
+	public bool Enabled { get; private set; }
 
+	// Constructor
 	public Menu(int width, Color bgColor, Color color)
 	{
 		Width = width;
@@ -161,6 +163,7 @@ class Menu
 
 		// Set selected item to the first if available
 		SelectedIndex = 0;
+		Enabled = true;
 	}
 
 	public void AddItem(string title, GameAction action, bool enabled = true)
@@ -208,6 +211,16 @@ class Menu
 		{
 			SelectedIndex++;
 		}
+	}
+
+	public void Enable()
+	{
+		Enabled = true;
+	}
+
+	public void Disable()
+	{
+		Enabled = false;
 	}
 
 }
