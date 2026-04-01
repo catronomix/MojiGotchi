@@ -4,7 +4,7 @@ namespace MojiGotchi;
 class MenuItem
 {
 	private string _title;
-	public string Title
+	internal string Title
 	{
 		get{
 			return _title;
@@ -16,14 +16,14 @@ class MenuItem
 	}
 	
 	private bool _enabled;
-	public bool Enabled
+	internal bool Enabled
 	{
 		get{
 			return _enabled;
 		}
 	}
 	private GameAction _action;
-	public GameAction Action
+	internal GameAction Action
 	{
 		get
 		{
@@ -37,7 +37,7 @@ class MenuItem
 
 	private Sprite _enabledSprite;
 	private Sprite _disabledSprite;
-	public Sprite Sprite
+	internal Sprite Sprite
 	{
 		get
 		{
@@ -49,7 +49,7 @@ class MenuItem
 	private Color _defaultBgColor = Color.DarkGreen;
 	private Color _disabledFgColor = Color.DarkGray;
 
-	public MenuItem(string title, GameAction action, int width)
+	internal MenuItem(string title, GameAction action, int width)
 	{
 		_title = title;
 		_action = action;
@@ -131,12 +131,12 @@ class MenuItem
 		}
 	}
 
-	public void Enable()
+	internal void Enable()
 	{
 		_enabled = true;
 	}
 
-	public void Disable()
+	internal void Disable()
 	{
 		_enabled = false;
 	}
@@ -146,15 +146,15 @@ class MenuItem
 //Menu class
 class Menu
 {
-	public int Width { get; private set; }
-	public Color BgColor { get; private set; }
-	public Color Color { get; private set; } // Foreground color for the menu container
-	public List<MenuItem> MenuItems { get; private set; }
-	public int SelectedIndex { get; private set; }
-	public bool Enabled { get; private set; }
+	internal int Width { get; private set; }
+	internal Color BgColor { get; private set; }
+	internal Color Color { get; private set; } // Foreground color for the menu container
+	internal List<MenuItem> MenuItems { get; private set; }
+	internal int SelectedIndex { get; private set; }
+	internal bool Enabled { get; private set; }
 
 	// Constructor
-	public Menu(int width, Color bgColor, Color color)
+	internal Menu(int width, Color bgColor, Color color)
 	{
 		Width = width;
 		BgColor = bgColor;
@@ -166,7 +166,7 @@ class Menu
 		Enabled = true;
 	}
 
-	public void AddItem(string title, GameAction action, bool enabled = true)
+	internal void AddItem(string title, GameAction action, bool enabled = true)
 	{
 		MenuItems.Add(new MenuItem(title, action, Width - 2));
 		if (!enabled)
@@ -176,7 +176,7 @@ class Menu
 	}
 
 	// Moves the selection down to the next enabled menu item.
-	public void SelectDown()
+	internal void SelectDown()
 	{
 		int currentSelection = SelectedIndex;
 		for (int i = currentSelection + 1; i < MenuItems.Count; i++)
@@ -191,7 +191,7 @@ class Menu
 	}
 
 	// Moves the selection up to the previous enabled menu item.
-	public void SelectUp()
+	internal void SelectUp()
 	{
 		int currentSelection = SelectedIndex;
 		for (int i = currentSelection - 1; i >= 0; i--)
@@ -205,7 +205,7 @@ class Menu
 		}
 	}
 
-	public void SelectFirstEnabled()
+	internal void SelectFirstEnabled()
 	{
 		while (SelectedIndex < MenuItems.Count && !MenuItems[SelectedIndex].Enabled)
 		{
@@ -213,12 +213,12 @@ class Menu
 		}
 	}
 
-	public void Enable()
+	internal void Enable()
 	{
 		Enabled = true;
 	}
 
-	public void Disable()
+	internal void Disable()
 	{
 		Enabled = false;
 	}

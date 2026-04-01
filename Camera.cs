@@ -6,7 +6,7 @@ class Camera
 	private Entity? _target;
 	private Level _level;
 	private Vec2 _camPos;
-	public Vec2 CamPos
+	internal Vec2 CamPos
 	{
 		get
 		{
@@ -15,7 +15,7 @@ class Camera
 	}
 	private SimpleRect _viewport;
 
-	public Camera(Level level, Entity? entity, SimpleRect deadzone, SimpleRect viewport)
+	internal Camera(Level level, Entity? entity, SimpleRect deadzone, SimpleRect viewport)
 	{
 		_deadzone = deadzone; //in worldspace
 		_camPos = new Vec2(0, 0); //in worldspace
@@ -24,12 +24,12 @@ class Camera
 		_viewport = viewport;
 	}
 
-	public void SetPet (Pet? pet)
+	internal void SetPet (Pet? pet)
 	{
 		_target = pet;
 	}
 
-	public void UpdateCamera()
+	internal void UpdateCamera()
 	{
 		if (_target != null && _level != null)
 		{
@@ -56,7 +56,7 @@ class Camera
 		}
 	}
 	
-	public Vec2 GetAbsCenter()
+	internal Vec2 GetAbsCenter()
 	{
 		return Vec2.Subtract(_viewport.AbsCenter, _camPos);
 	}

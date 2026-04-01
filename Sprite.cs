@@ -1,9 +1,9 @@
 namespace MojiGotchi;
 
-public class Sprite
+internal class Sprite
 {
 	private Vec2 _size;
-	public Vec2 Size
+	internal Vec2 Size
 	{
 		get
 		{
@@ -12,7 +12,7 @@ public class Sprite
 	}
 
 	private ScreenCell[,] _data = new ScreenCell[0,0];
-	public ScreenCell[,] Data
+	internal ScreenCell[,] Data
 	{
 		get
 		{
@@ -24,13 +24,13 @@ public class Sprite
 		}
 	}
 
-	public Sprite(Vec2 size)
+	internal Sprite(Vec2 size)
 	{
 		_size = size;
 		Data = new ScreenCell[size.Y, size.X];
 	}
 
-	public bool WriteCell(Vec2 pos, ScreenCell cell)
+	internal bool WriteCell(Vec2 pos, ScreenCell cell)
 	{
 		if (pos.X >= 0 && pos.X < _size.X && pos.Y >= 0 && pos.Y < _size.Y)
 		{
@@ -45,10 +45,10 @@ public class Sprite
 	
 }
 
-public class Animation
+internal class Animation
 {
 	private List<Sprite>? _frames = null;
-	public List<Sprite>? Frames
+	internal List<Sprite>? Frames
 	{
 		get
 		{
@@ -60,19 +60,19 @@ public class Animation
 	private DateTime _lastFrameTime;
 
 	//constructor
-	public Animation(int framedurationms)
+	internal Animation(int framedurationms)
 	{
 		_frameDurationMs = framedurationms;
 		_currentFrame = 0;
 		_lastFrameTime = DateTime.Now;
 	}
 
-	public void OffsetTime(float offset)
+	internal void OffsetTime(float offset)
 	{
 		_lastFrameTime -= TimeSpan.FromMilliseconds(offset);
 	}
 
-	public void addFrame(Sprite frame)
+	internal void addFrame(Sprite frame)
 	{
 		//check if this is the first time a frame is added
 		if (_frames == null)
@@ -85,7 +85,7 @@ public class Animation
 		}
 	}
 
-	public Sprite? GetSprite(int offset = 0) // Changed return type to nullable Sprite?
+	internal Sprite? GetSprite(int offset = 0) // Changed return type to nullable Sprite?
 	{
 		// If _frames is null or empty, there are no frames to return.
 		if (_frames == null || _frames.Count == 0)
@@ -107,7 +107,7 @@ public class Animation
 		return _frames[offsetcurrent];
 	}
 
-	public void AdvanceFrames(int numframes)
+	internal void AdvanceFrames(int numframes)
 	{
 		if(_frames != null)
 		{
@@ -115,7 +115,7 @@ public class Animation
 		}
 	}
 
-	public Animation Clone()
+	internal Animation Clone()
     {
         return (Animation)this.MemberwiseClone();
     }

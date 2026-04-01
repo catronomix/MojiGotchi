@@ -1,13 +1,13 @@
 namespace MojiGotchi;
 
-public class HighScores : Modal
+internal class HighScores : Modal
 {
-	public HighScores() : base("High Scores", Color.DarkMagenta, Color.Red)
+	internal HighScores() : base("High Scores", Color.DarkMagenta, Color.Red)
 	{
 
 	}
 
-	public void UpdatePage(Vec2 size)
+	internal void UpdatePage(Vec2 size)
 	{
 		SetSpriteBg(size);
 		ClearContentSprite(size);

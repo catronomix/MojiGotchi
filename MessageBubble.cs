@@ -1,8 +1,8 @@
 namespace MojiGotchi;
 
-public class MessageBubble
+internal class MessageBubble
 {	
-	public string Text { get; set; }
+	internal string Text { get; set; }
 	private Color _textColor;
 	private Color _bgColor;
 	private DateTime _lastSet;
@@ -11,7 +11,7 @@ public class MessageBubble
 
     private Sprite? _mySprite;
 	
-	public MessageBubble(Color fgcolor, Color bgcolor)
+	internal MessageBubble(Color fgcolor, Color bgcolor)
 	{
 		Text = "";
 		_textColor = fgcolor;
@@ -22,12 +22,12 @@ public class MessageBubble
         _mySprite = null;
 	}
 
-	public void SetMessage(string message, int expireMs = 2000, bool force = false)
+	internal void SetMessage(string message, int expireMs = 2000, bool force = false)
 	{
 		SetMessage(message, _textColor, _bgColor, expireMs, force);
 	}	
 
-	public void SetMessage(string message, Color fgcolor, Color bgcolor,int expireMs = 2000, bool force= false)
+	internal void SetMessage(string message, Color fgcolor, Color bgcolor,int expireMs = 2000, bool force= false)
 	{
 		if (Text != message || force) //only use force on single fires!
 		{
@@ -45,7 +45,7 @@ public class MessageBubble
 		}
 	}
 
-	public Sprite? GetSprite()
+	internal Sprite? GetSprite()
 	{
         if (_active){
             bool available = _expires > DateTime.Now;

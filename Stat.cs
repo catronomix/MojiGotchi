@@ -1,10 +1,10 @@
 namespace MojiGotchi;
 
-public class Stat
+internal class Stat
 {
 	//type
 	private StatType _type;
-	public StatType Type
+	internal StatType Type
 	{
 		get
 		{
@@ -17,7 +17,7 @@ public class Stat
 	}
 	//value
 	private int _value;
-	public int Value
+	internal int Value
 	{
 		get
 		{
@@ -30,7 +30,7 @@ public class Stat
 	}
 
 	private int _minValue;
-	public int Min
+	internal int Min
 	{
 		get
 		{
@@ -43,7 +43,7 @@ public class Stat
 	}
 
 	private int _maxValue;
-	public int Max
+	internal int Max
 	{
 		get
 		{
@@ -55,7 +55,7 @@ public class Stat
 		}
 	}
 	private int _defaultValue;
-	public int Default
+	internal int Default
 	{
 		get
 		{
@@ -68,7 +68,7 @@ public class Stat
 	}
 	//last updated timestamp
 	private DateTime _lastUpdated;
-	public DateTime LastUpdated
+	internal DateTime LastUpdated
 	{
 		get
 		{
@@ -81,7 +81,7 @@ public class Stat
 	}
 
 	private int _updateInterval; // in seconds
-	public int UpdateInterval
+	internal int UpdateInterval
 	{
 		get
 		{
@@ -94,8 +94,8 @@ public class Stat
 	}
 
 	//constructors
-	public Stat(){}
-	public Stat(StatType type,int updateinterval = 10, int defaultValue = 5, int maxValue = 10, int minValue = 0)
+	internal Stat(){}
+	internal Stat(StatType type,int updateinterval = 10, int defaultValue = 5, int maxValue = 10, int minValue = 0)
 	{
 		_type = type;
 		_value = defaultValue;
@@ -106,7 +106,7 @@ public class Stat
 		_updateInterval = updateinterval;
 	}
 
-	public void Raise(int amount = 1)
+	internal void Raise(int amount = 1)
 	{
 		if (_value < _maxValue)
 		{
@@ -115,7 +115,7 @@ public class Stat
 		}
 	}
 
-	public void Lower(int amount = 1)
+	internal void Lower(int amount = 1)
 	{
 		if (_value > _minValue)
 		{
@@ -124,7 +124,7 @@ public class Stat
 		}
 	
 	}
-	public void Reset()
+	internal void Reset()
 	{
 		_value = _defaultValue;
 		_lastUpdated = DateTime.Now;

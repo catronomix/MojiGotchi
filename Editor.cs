@@ -2,7 +2,7 @@ namespace MojiGotchi;
 
 
 
-public enum Focus
+internal enum Focus
 {
 	MENU,
 	CURSOR,
@@ -22,7 +22,7 @@ class Editor : Game
 	private Focus _focus;
 
 	// Initialize the editor
-	public Editor()
+	internal Editor()
 	{
 		// Set area sizes
 		base._menuWidth = 21;
@@ -70,7 +70,7 @@ class Editor : Game
 		_editingmode = false;
 	}
 
-	public new bool Step()
+	internal new bool Step()
 	{
 		//Check window resized
 		CheckWindow();
@@ -280,11 +280,11 @@ class Editor : Game
 	}
 }
 
-public class Cursor: Entity
+internal class Cursor: Entity
 {
     
     //constructor
-    public Cursor()
+    internal Cursor()
     {
         _animations = JsonParser.LoadAnimations("CursorSprites.json", 200);
         SetAnimation(AnimDefault);
@@ -292,17 +292,17 @@ public class Cursor: Entity
     }
 }
 
-public class EditorHelp: Modal
+internal class EditorHelp: Modal
 {
 	private string _helpText = LM.Get("editor_helptext");
 
 	//constructor
-	public EditorHelp(string title, Color bgcolor, Color edgecolor) : base(title, bgcolor, edgecolor)
+	internal EditorHelp(string title, Color bgcolor, Color edgecolor) : base(title, bgcolor, edgecolor)
 	{
 		
 	}
 
-	public void UpdatePage(Vec2 size)
+	internal void UpdatePage(Vec2 size)
 	{
 		SetSpriteBg(size);
 		ClearContentSprite(size);

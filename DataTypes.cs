@@ -1,7 +1,7 @@
 namespace MojiGotchi;
 
 //actions enum for menus
-public enum ActionType
+internal enum ActionType
 {
 	NEWPET,
 	QUIT,
@@ -20,45 +20,45 @@ public enum ActionType
 
 public struct Color
 {
-    public byte R { get; set; }
-    public byte G { get; set; }
-    public byte B { get; set; }
+    internal byte R { get; set; }
+    internal byte G { get; set; }
+    internal byte B { get; set; }
 
     //presets
-    public static readonly Color Black = new Color("#000000");
-    public static readonly Color DarkBlue = new Color("#000f50");
-    public static readonly Color DarkGreen = new Color("#004d26");
-    public static readonly Color DarkCyan = new Color("#004b47");
-    public static readonly Color DarkRed = new Color("#460000");
-    public static readonly Color DarkMagenta = new Color("#490022");
-    public static readonly Color DarkYellow = new Color("#8b8200");
-    public static readonly Color Gray = new Color("#8a8a8a");
-    public static readonly Color DarkGray = new Color("#222222");
-    public static readonly Color Blue = new Color("#001fd1");
-    public static readonly Color Green = new Color("#00ee34");
-    public static readonly Color Cyan = new Color("#00ffff");
-    public static readonly Color Red = new Color("#f10e0e");
-    public static readonly Color Magenta = new Color("#ee0485");
-    public static readonly Color Yellow = new Color("#ffc400");
-    public static readonly Color White = new Color("#ffffff");
-    public static readonly Color LightBlue = new Color("#add8e6");
-    public static readonly Color LightGreen = new Color("#98fb98");
-    public static readonly Color LightCyan = new Color("#b0e0e6");
-    public static readonly Color LightRed = new Color("#ff6347");
-    public static readonly Color LightGray = new Color("#c7c7c7");
-    public static readonly Color LightYellow = new Color("#ffff99");
-    public static readonly Color BabyPink = new Color("#f8a6ba");
-    public static readonly Color BabyBrown = new Color("#703615");
-    public static readonly Color BabyWhite = new Color("#f5ece7");
-    public static readonly Color GrassGreen = new Color("#00a700");
-    public static readonly Color GroundGreen = new Color("#007700");
-    public static readonly Color BushGreen = new Color("#1b691b");
-    public static readonly Color WoodLight = new Color("#aa752e");
-    public static readonly Color WoodDark = new Color("#855517");
-    public static readonly Color WaterLight = new Color("#76c9d4");
-    public static readonly Color WaterDark = new Color("#4e9ca7");
+    internal static readonly Color Black = new Color("#000000");
+    internal static readonly Color DarkBlue = new Color("#000f50");
+    internal static readonly Color DarkGreen = new Color("#004d26");
+    internal static readonly Color DarkCyan = new Color("#004b47");
+    internal static readonly Color DarkRed = new Color("#460000");
+    internal static readonly Color DarkMagenta = new Color("#490022");
+    internal static readonly Color DarkYellow = new Color("#8b8200");
+    internal static readonly Color Gray = new Color("#8a8a8a");
+    internal static readonly Color DarkGray = new Color("#222222");
+    internal static readonly Color Blue = new Color("#001fd1");
+    internal static readonly Color Green = new Color("#00ee34");
+    internal static readonly Color Cyan = new Color("#00ffff");
+    internal static readonly Color Red = new Color("#f10e0e");
+    internal static readonly Color Magenta = new Color("#ee0485");
+    internal static readonly Color Yellow = new Color("#ffc400");
+    internal static readonly Color White = new Color("#ffffff");
+    internal static readonly Color LightBlue = new Color("#add8e6");
+    internal static readonly Color LightGreen = new Color("#98fb98");
+    internal static readonly Color LightCyan = new Color("#b0e0e6");
+    internal static readonly Color LightRed = new Color("#ff6347");
+    internal static readonly Color LightGray = new Color("#c7c7c7");
+    internal static readonly Color LightYellow = new Color("#ffff99");
+    internal static readonly Color BabyPink = new Color("#f8a6ba");
+    internal static readonly Color BabyBrown = new Color("#703615");
+    internal static readonly Color BabyWhite = new Color("#f5ece7");
+    internal static readonly Color GrassGreen = new Color("#00a700");
+    internal static readonly Color GroundGreen = new Color("#007700");
+    internal static readonly Color BushGreen = new Color("#1b691b");
+    internal static readonly Color WoodLight = new Color("#aa752e");
+    internal static readonly Color WoodDark = new Color("#855517");
+    internal static readonly Color WaterLight = new Color("#76c9d4");
+    internal static readonly Color WaterDark = new Color("#4e9ca7");
 
-    public Color(byte r, byte g, byte b)
+    internal Color(byte r, byte g, byte b)
     {
         R = r;
         G = g;
@@ -66,7 +66,7 @@ public struct Color
     }
 
     //hex support
-    public Color(string hex)
+    internal Color(string hex)
     {
         hex = hex.Replace("#", "");
         if (hex.Length == 6 && hex.All(char.IsAsciiHexDigit)){
@@ -83,7 +83,7 @@ public struct Color
     }
 
 
-    public static bool Equals(Color a, Color b)
+    internal static bool Equals(Color a, Color b)
     {
         return a.R == b.R && a.G == b.G && a.B == b.B;
     }
@@ -91,11 +91,11 @@ public struct Color
 
 public struct ScreenCell
 {
-    public char Character;
-    public Color Color;
-    public Color BgColor;
+    internal char Character;
+    internal Color Color;
+    internal Color BgColor;
 
-    public const char SkipChar = '\0';
+    internal const char SkipChar = '\0';
 
     public ScreenCell()
     {
@@ -104,7 +104,7 @@ public struct ScreenCell
         BgColor = Color.Black;
     }
 
-    public ScreenCell(char character, Color color, Color bgcolor)
+    internal ScreenCell(char character, Color color, Color bgcolor)
     {
         Character = character;
         Color = color;
@@ -115,71 +115,71 @@ public struct ScreenCell
 public struct Vec2
 {
     // Change these from fields to properties
-    public int X { get; set; }
-    public int Y { get; set; }
+    internal int X { get; set; }
+    internal int Y { get; set; }
 
-    public Vec2(int x, int y)
+    internal Vec2(int x, int y)
     {
         X = x;
         Y = y;
     }
 
-    public Vec2 Sum(int x, int y)
+    internal Vec2 Sum(int x, int y)
     {
         return new Vec2(X + x, Y + y);
     }
     
-    public Vec2 Multiply(int scalar)
+    internal Vec2 Multiply(int scalar)
     {
         return new Vec2(X * scalar, Y * scalar);
     }
 
-    public Vec2 Divide(int scalar)
+    internal Vec2 Divide(int scalar)
     {
         return new Vec2(X / scalar, Y / scalar);
     }
 
 
     // Vec2 static math functions
-    static public bool Equals(Vec2 A, Vec2 B)
+    static internal bool Equals(Vec2 A, Vec2 B)
     {
         return A.X == B.X && A.Y == B.Y;
     }
 
-    static public Vec2 Add(Vec2 A, Vec2 B)
+    static internal Vec2 Add(Vec2 A, Vec2 B)
     {
         return new Vec2(A.X + B.X, A.Y + B.Y);
     }
 
-    static public Vec2 Subtract(Vec2 A, Vec2 B)
+    static internal Vec2 Subtract(Vec2 A, Vec2 B)
     {
         return new Vec2(A.X - B.X, A.Y - B.Y);
     }
 
-    static public Vec2 Multiply(Vec2 A, int scalar)
+    static internal Vec2 Multiply(Vec2 A, int scalar)
     {
         return new Vec2(A.X * scalar, A.Y * scalar);
     }
 
-    static public Vec2 Divide(Vec2 A, int scalar)
+    static internal Vec2 Divide(Vec2 A, int scalar)
     {
         return new Vec2(A.X / scalar, A.Y / scalar);
     }
 
     //taxicab distance
-    static public int Taxicab(Vec2 A, Vec2 B)
+    static internal int Taxicab(Vec2 A, Vec2 B)
     {
         return Math.Abs(A.X - B.X) + Math.Abs(A.Y - B.Y);
     }
 
     // Chebyshev distance
-    static public int Chebyshev(Vec2 A, Vec2 B)
+    static internal int Chebyshev(Vec2 A, Vec2 B)
     {
         return Math.Max(Math.Abs(A.X - B.X), Math.Abs(A.Y - B.Y));
     }
 
     //invert values
-    static public Vec2 Invert(Vec2 A)
+    static internal Vec2 Invert(Vec2 A)
     {
         return new Vec2(-A.X, -A.Y);
     }
@@ -198,7 +198,7 @@ class SimpleRect
     private Vec2 _size; // Represents Width and Height
     protected bool _isDirty; //if rect is changed after creation
 
-    public Vec2 Pos
+    internal Vec2 Pos
     {
         get
         {
@@ -214,7 +214,7 @@ class SimpleRect
         }
     }
 
-    public Vec2 Size
+    internal Vec2 Size
     {
         get
         {
@@ -230,7 +230,7 @@ class SimpleRect
         }
     }
 
-    public Vec2 BottomRight
+    internal Vec2 BottomRight
     {
         get
         {
@@ -239,28 +239,28 @@ class SimpleRect
     }
 
     //some ints for convenience
-    public int Left
+    internal int Left
     {
         get
         {
             return Pos.X;
         }
     }
-    public int Top
+    internal int Top
     {
         get
         {
             return Pos.Y;
         }
     }
-    public int Right
+    internal int Right
     {
         get
         {
             return BottomRight.X;
         }
     }
-    public int Bottom
+    internal int Bottom
     {
         get
         {
@@ -268,7 +268,7 @@ class SimpleRect
         }
     }
 
-    public SimpleRect(Vec2 pos, Vec2 size)
+    internal SimpleRect(Vec2 pos, Vec2 size)
     {
         // _isDirty is already true by default, ensuring the sprite is generated on first GetSprite() call.
         _pos = pos;
@@ -276,7 +276,7 @@ class SimpleRect
         _isDirty = true;
     }
 
-    public SimpleRect(SimpleRect other)
+    internal SimpleRect(SimpleRect other)
     {
         // _isDirty is already true by default, ensuring the sprite is generated on first GetSprite() call.
         _pos = other.Pos;
@@ -285,14 +285,14 @@ class SimpleRect
     }
 
     //helper properties for setting width and setting height by making new Vec2 for size
-    public int Width { get => Size.X; set { Size = new Vec2(value, Size.Y); } }
-    public int Height { get => Size.Y; set { Size = new Vec2(Size.X, value); } }
-    public Vec2 RelativeCenter {get => _size.Divide(2);}
-    public Vec2 AbsCenter {get => new Vec2(Left + Width / 2, Top + Height / 2);}
+    internal int Width { get => Size.X; set { Size = new Vec2(value, Size.Y); } }
+    internal int Height { get => Size.Y; set { Size = new Vec2(Size.X, value); } }
+    internal Vec2 RelativeCenter {get => _size.Divide(2);}
+    internal Vec2 AbsCenter {get => new Vec2(Left + Width / 2, Top + Height / 2);}
 }
 
 // for testing: a rectangle class
-class Rect : SimpleRect // Changed to public class for broader access if needed.
+class Rect : SimpleRect // Changed to internal class for broader access if needed.
 {
     private int _borderWidth;
     private int _borderHeight;
@@ -302,17 +302,17 @@ class Rect : SimpleRect // Changed to public class for broader access if needed.
     private char _character;
 
 
-    public int BorderWidth { get => _borderWidth; set { if (_borderWidth != value) { _borderWidth = value; _isDirty = true; } } }
-    public int BorderHeight { get => _borderHeight; set { if (_borderHeight != value) { _borderHeight = value; _isDirty = true; } } }
-    public Color FgColor { get => _fgColor; set { if (!Color.Equals(_fgColor, value)) { _fgColor = value; _isDirty = true; } } }
-    public Color BorderBgColor { get => _borderBgColor; set { if (!Color.Equals(_borderBgColor, value)) { _borderBgColor = value; _isDirty = true; } } }
-    public Color BgColor { get => _bgColor; set { if (!Color.Equals(_bgColor, value)) { _bgColor = value; _isDirty = true; } } }
-    public char Character { get => _character; set { if (_character != value) { _character = value; _isDirty = true; } } }
+    internal int BorderWidth { get => _borderWidth; set { if (_borderWidth != value) { _borderWidth = value; _isDirty = true; } } }
+    internal int BorderHeight { get => _borderHeight; set { if (_borderHeight != value) { _borderHeight = value; _isDirty = true; } } }
+    internal Color FgColor { get => _fgColor; set { if (!Color.Equals(_fgColor, value)) { _fgColor = value; _isDirty = true; } } }
+    internal Color BorderBgColor { get => _borderBgColor; set { if (!Color.Equals(_borderBgColor, value)) { _borderBgColor = value; _isDirty = true; } } }
+    internal Color BgColor { get => _bgColor; set { if (!Color.Equals(_bgColor, value)) { _bgColor = value; _isDirty = true; } } }
+    internal char Character { get => _character; set { if (_character != value) { _character = value; _isDirty = true; } } }
     
 
     private Sprite? _cachedSprite;
 
-    public Rect(Vec2 pos, Vec2 size, int borderwidth, int borderheight, Color fgColor, Color borderBgColor, Color bgColor, char character) : base (pos, size)
+    internal Rect(Vec2 pos, Vec2 size, int borderwidth, int borderheight, Color fgColor, Color borderBgColor, Color bgColor, char character) : base (pos, size)
     {
         // Assign directly to backing fields during construction.
         _borderWidth = borderwidth;    // Thickness of left/right borders
@@ -323,12 +323,12 @@ class Rect : SimpleRect // Changed to public class for broader access if needed.
         _character = character;
     }
 
-    public SimpleRect GetSimple()
+    internal SimpleRect GetSimple()
     {
         return new SimpleRect(Pos, Size);
     }
 
-    public Sprite GetSprite()
+    internal Sprite GetSprite()
     {
         // Regenerate sprite only if properties have changed (_isDirty is true),
         // or if there's no cached sprite yet,
@@ -372,7 +372,7 @@ class Rect : SimpleRect // Changed to public class for broader access if needed.
 class GameAction
 {
     private	ActionType _myActionType;
-    public ActionType MyActionType
+    internal ActionType MyActionType
     {
         get
         {
@@ -382,13 +382,13 @@ class GameAction
 
     private Action<Game> _logic;
 
-    public GameAction(ActionType type, Action<Game> logic)
+    internal GameAction(ActionType type, Action<Game> logic)
     {
         _myActionType = type;
         _logic = logic;
     }
     
-    public void Use(Game game)
+    internal void Use(Game game)
     {
         if (_logic != null)
         {
@@ -397,10 +397,10 @@ class GameAction
     }
 }
 
-public static class AnimRandom
+internal static class AnimRandom
 {
     private static Random _random = new Random();
-    public static int GetRandom(int min, int max)
+    internal static int GetRandom(int min, int max)
     {
         return _random.Next(min, max);
     }

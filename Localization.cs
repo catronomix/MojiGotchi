@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 
-public static class LM //shorthand for localizationmanager
+internal static class LM //shorthand for localizationmanager
 {
 	private static Dictionary<string, string> _currentStrings = new();
 	private static string _currentLanguage = ""; //default to none so we always load once on game start
 
-	public static void SetLanguage(string language)
+	internal static void SetLanguage(string language)
 	{
 
 		if (_currentLanguage == language) return; // check if changing
@@ -41,7 +41,7 @@ public static class LM //shorthand for localizationmanager
 		
 	}
 
-	public static string Get(string key)
+	internal static string Get(string key)
 	{
 		if (_currentStrings.TryGetValue(key, out var value))
 		{
@@ -55,7 +55,7 @@ public static class LM //shorthand for localizationmanager
 		
 	}
 
-	public static string Get(string key, params object?[] args)
+	internal static string Get(string key, params object?[] args)
     {
         if (!_currentStrings.TryGetValue(key, out var value))
         {
@@ -78,22 +78,22 @@ public static class LM //shorthand for localizationmanager
         }
     }
 
-	public static string CurrentLang()
+	internal static string CurrentLang()
 	{
 		return _currentLanguage;
 	}
 	
 }
 
-public class LanguageChoice : Modal
+internal class LanguageChoice : Modal
 {
 	
-	public LanguageChoice() : base("Choose Language", Color.DarkCyan, Color.Cyan)
+	internal LanguageChoice() : base("Choose Language", Color.DarkCyan, Color.Cyan)
 	{
 		
 	}
 
-	public void UpdatePage(Vec2 size)
+	internal void UpdatePage(Vec2 size)
 	{
 		SetSpriteBg(size);
 		ClearContentSprite(size);

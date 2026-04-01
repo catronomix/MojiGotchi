@@ -10,7 +10,7 @@ class Renderer
 	private StringBuilder _stringBuilder = new StringBuilder();
 	private Color _programBgColor;
 
-	public Renderer(Color programBgColor)
+	internal Renderer(Color programBgColor)
 	{
 		_consoleWidth = Console.WindowWidth;
 		_consoleHeight = Console.WindowHeight;
@@ -18,10 +18,10 @@ class Renderer
 		_programBgColor = programBgColor;
 	}
 
-	public int ConsoleWidth => _consoleWidth;
-	public int ConsoleHeight => _consoleHeight;
+	internal int ConsoleWidth => _consoleWidth;
+	internal int ConsoleHeight => _consoleHeight;
 
-	public bool Resize(int newWidth, int newHeight, bool force = false)
+	internal bool Resize(int newWidth, int newHeight, bool force = false)
 	{
 		if (force) { _consoleWidth = 1; _consoleHeight = 1; }
 		if (newWidth != _consoleWidth || newHeight != _consoleHeight)
@@ -35,7 +35,7 @@ class Renderer
 		return false;
 	}
 
-	public void ClearBuffer()
+	internal void ClearBuffer()
 	{
 		var backgroundCell = new ScreenCell(' ', Color.White, _programBgColor);
 		for (int y = 0; y < _consoleHeight; y++)
@@ -47,7 +47,7 @@ class Renderer
 		}
 	}
 
-	public void RenderScreen()
+	internal void RenderScreen()
 	{
 		_stringBuilder.Clear();
 		_stringBuilder.Append("\x1b[H");
@@ -78,7 +78,7 @@ class Renderer
 		Console.Write(_stringBuilder.ToString());
 	}
 
-	public void DrawSprite(Sprite? sprite, Vec2 position, SimpleRect? crop = null)
+	internal void DrawSprite(Sprite? sprite, Vec2 position, SimpleRect? crop = null)
 	{
 		if (sprite == null) return;
 		
@@ -136,7 +136,7 @@ class Renderer
 		}
 	}
 
-	public void DrawText(string text, Vec2 position, Color fgColor, Color bgColor)
+	internal void DrawText(string text, Vec2 position, Color fgColor, Color bgColor)
 	{
 		for (int i = 0; i < text.Length; i++)
 		{
@@ -151,7 +151,7 @@ class Renderer
 		}
 	}
 
-	public void DrawText(string text, Vec2 position, Color fgColor)
+	internal void DrawText(string text, Vec2 position, Color fgColor)
 	{
 		for (int i = 0; i < text.Length; i++)
 		{
