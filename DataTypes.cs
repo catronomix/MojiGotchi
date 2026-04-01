@@ -183,6 +183,13 @@ public struct Vec2
     {
         return new Vec2(-A.X, -A.Y);
     }
+
+    //get string
+    public readonly override string ToString()
+    {
+        return $"X:{X},Y:{Y}";
+    }
+
 }
 
 class SimpleRect

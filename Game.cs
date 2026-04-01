@@ -120,10 +120,10 @@ class Game
 		//update camera before drawing game
 		_camera.UpdateCamera();
 
-		DrawLevelLayer(_level.BottomLayer, _level.BottomSprite);
+		DrawLevelLayer(_level.Layers[0]);
 		DrawPet();
-		DrawLevelLayer(_level.MidLayer, _level.MidSprite);
-		DrawLevelLayer(_level.TopLayer, _level.TopSprite);
+		DrawLevelLayer(_level.Layers[1]);
+		DrawLevelLayer(_level.Layers[2]);
 		DrawPetBubble();
 		DrawStatus();
 		_renderer.RenderScreen();
@@ -315,7 +315,7 @@ class Game
 		}
 	}
 
-	protected void DrawStatus()
+	protected void DrawStatus(int spacing = 2)
 	{
 		// Clear transient status if it has expired
 		if (DateTime.Now > _transientStatusExpires)
@@ -332,14 +332,14 @@ class Game
 
 		// Draw persistent status on line 2.
 		// The ANSI codes embedded in _persistentStatus will handle coloring.
-		int persistentY = _statusBgRect.Pos.Y + 2;
+		int persistentY = _statusBgRect.Pos.Y + spacing;
 		int persistentX = _statusBgRect.Pos.X + _statusBgRect.Width / 2 - _persistentStatus.Length / 2;
 		_renderer.DrawText(_persistentStatus, new Vec2(persistentX, persistentY), Color.White);
 
 		// Draw transient status on line 4.
 		if (!string.IsNullOrEmpty(_transientStatus))
 		{
-			int transientY = _statusBgRect.Pos.Y + 4;
+			int transientY = _statusBgRect.Pos.Y + 2 * spacing;
 			int transientX = _statusBgRect.Pos.X + _statusBgRect.Width / 2 - _transientStatus.Length / 2;
 			_renderer.DrawText(_transientStatus, new Vec2(transientX, transientY), Color.LightYellow);
 		}
@@ -390,8 +390,9 @@ class Game
 				//keep pet from moving into solid objects
 				if (_level != null)
 				{
-					foreach(LevelElement element in _level.MidLayer)
+					foreach(LevelElement element in _level.Layers[1].Elements)
 					{
+						if (element == null) continue; //skip empty cells
 						if (element.IsBlocking)
 						{
 							// check if colliding
@@ -512,14 +513,17 @@ class Game
 		_menu.Enable();
 	}
 
-	protected void DrawLevelLayer(List<LevelElement> layer, Sprite? layerSprite)
+	protected void DrawLevelLayer(LevelLayer layer, bool update = true)
 	{
-		if (_level == null || layerSprite == null || _currentModal != null) return;
+		if (_level == null || layer == null || _currentModal != null) return;
 
 		// Level.SetSprite fills the layerSprite (which is level-sized)
-		Level.SetSprite(layer, layerSprite);
+		if (update)
+		{
+			layer.UpdateSprite();
+		}		
 		Vec2 drawPos = Vec2.Subtract(_camera.GetAbsCenter(), _level.RelativeCenter);
-		_renderer.DrawSprite(layerSprite, drawPos, _viewport);
+		_renderer.DrawSprite(layer.Sprite, drawPos, _viewport);
 	}
 
 	protected Vec2 ElementPosInWorldSpace(LevelElement element)

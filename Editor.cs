@@ -12,14 +12,11 @@ public enum Focus
 
 class Editor : Game
 {
-	// Set area sizes
-	private new int _menuWidth = 21;
-	private new int _statusHeight = 5;
-
 	//have a cursor
 	private Cursor? _cursor;
 	private bool _editingmode;
 	protected EditorHelp _editorHelp; // New field for editor-specific help modal
+	private LevelElement? _selectedElement;
 
 	//be able to focus controls
 	private Focus _focus;
@@ -27,7 +24,10 @@ class Editor : Game
 	// Initialize the editor
 	public Editor()
 	{
-		base._renderer = new Renderer(programBgColor);
+		// Set area sizes
+		base._menuWidth = 21;
+		base._statusHeight = 5;
+
 		// Initialize Rects for drawing the editor's menu, status bar and play area
 		_menuBgRect = new Rect(new Vec2(0, 0), new Vec2(_menuWidth, 1), 1, 1, Color.Yellow, Color.DarkGray, Color.DarkGray, '.');
 		_statusBgRect = new Rect(new Vec2(_menuWidth, 0), new Vec2(1, _statusHeight), 0, 1, Color.White, Color.DarkGray, Color.Black, '.');
@@ -51,8 +51,10 @@ class Editor : Game
 
 
 		_menu.SelectFirstEnabled();
-		//load saved pet from file
+		
+		//has cursor
 		_cursor = new Cursor();
+		_selectedElement = null;
         
 		BlueprintManager.Initialize(); // Initialize blueprints before loading a level
 		_level = new Level(); // This is now empty, we need to load a level
@@ -61,7 +63,7 @@ class Editor : Game
 
 		_camera = new Camera(_level, _cursor, deadzone, _viewport); 
 
-		_persistentStatus = LM.Get("status_welcome_editor"); // Welcome
+		_persistentStatus = LM.Get("editor_status_welcome"); // Welcome
 		// Call CheckWindow once at the end of the constructor to ensure all
 		// dimensions are correctly set for the first render.
 		CheckWindow(true);
@@ -83,11 +85,12 @@ class Editor : Game
 		//update camera before drawing editor
 		_camera.UpdateCamera();
 
-		DrawLevelLayer(_level.BottomLayer, _level.BottomSprite);
-		DrawLevelLayer(_level.MidLayer, _level.MidSprite);
-		DrawLevelLayer(_level.TopLayer, _level.TopSprite);
-		DrawStatus();
+		DrawLevelLayer(_level.Layers[0]);
+		DrawLevelLayer(_level.Layers[1]);
+		DrawLevelLayer(_level.Layers[2]);
+		DrawStatus(1);
 		DrawCursor();
+		DrawGlyphs();
 		_renderer.RenderScreen();
 
 		/*--------------------INPUT--------------------*/
@@ -133,18 +136,22 @@ class Editor : Game
 					case ConsoleKey.UpArrow:
 						//cursor up
 						_cursor.Move(new Vec2(0, -1));
+						CursorInfo();
 						break;
 					case ConsoleKey.DownArrow:
 						//cursor down
 						_cursor.Move(new Vec2(0, 1));
+						CursorInfo();
 						break;
 					case ConsoleKey.LeftArrow:
 						//cursor left
 						_cursor.Move(new Vec2(-1, 0));
+						CursorInfo();
 						break;
 					case ConsoleKey.RightArrow:
 						//cursor right
 						_cursor.Move(new Vec2(1, 0));
+						CursorInfo();
 						break;
 					default:
 						break;
@@ -152,6 +159,7 @@ class Editor : Game
 						_menu.Enable();
 						_focus = Focus.MENU;
 						_editingmode = false;
+						_persistentStatus = LM.Get("status_welcome_editor"); // Welcome
 						break;
 				}
 			}
@@ -183,6 +191,38 @@ class Editor : Game
 				Vec2 drawPos = Vec2.Add(_camera.GetAbsCenter(), _cursor.Position.Sum(-1,-1));
 				_renderer.DrawSprite(cursorSprite, drawPos, _viewport);
 			}
+		}
+	}
+
+	private void CursorInfo()
+	{
+		if (_cursor != null && _editingmode == true)
+		{
+			Vec2 worldpos = Vec2.Add(_cursor.Position, _level.RelativeCenter);
+			_persistentStatus = "";
+			LevelElement? e = null;
+			for (int i = 2; i >= 0; i--) //top down
+			{
+				e = _level.Layers[i].Elements[worldpos.X, worldpos.Y];
+				if (e != null)
+				{
+					_persistentStatus = $"[ ]{LM.Get("selected")}:{e.Name.PadRight(8)}| {LM.Get("pos")}: {e.Position.ToString().PadRight(7)}| {LM.Get("layer")}: {Level.LayerNames[e.Depth].PadRight(6)} | [{(e.IsBlocking ? "X" : " ")}] {LM.Get("blocking")}";
+					_selectedElement = e;
+					return;
+				}
+				//if we find nothing
+				_persistentStatus = "";
+				_selectedElement = null;
+			}
+		}
+	}
+
+	private void DrawGlyphs()
+	{
+		if (_selectedElement != null)
+		{
+			int glyphx = _statusBgRect.RelativeCenter.X - _persistentStatus.Length / 2 + 1;
+			_renderer.DrawSprite(_selectedElement.GetSprite(), _statusBgRect.Pos.Sum(glyphx, 1));
 		}
 	}
 
@@ -254,11 +294,7 @@ public class Cursor: Entity
 
 public class EditorHelp: Modal
 {
-	private string _helpText = @"
-EDITOR HELP PAGINA
-------------------
-
-Nog in te vullen";
+	private string _helpText = LM.Get("editor_helptext");
 
 	//constructor
 	public EditorHelp(string title, Color bgcolor, Color edgecolor) : base(title, bgcolor, edgecolor)

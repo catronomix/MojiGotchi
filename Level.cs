@@ -1,5 +1,3 @@
-using System.IO;
-
 namespace MojiGotchi;
 
 // Defines the template for a level element. Each blueprint is mapped to a character
@@ -9,14 +7,14 @@ public class LevelElementBlueprint
 	public string Name { get; }
 	public Animation Animation { get; }
 	public bool IsBlocking { get; }
-	public string Layer { get; }
+	public int Depth { get; }
 
-	public LevelElementBlueprint(string name, Animation animation, bool isBlocking, string layer)
+	public LevelElementBlueprint(string name, Animation animation, bool isBlocking, int depth)
 	{
 		Name = name;
 		Animation = animation;
 		IsBlocking = isBlocking;
-		Layer = layer;
+		Depth = depth;
 	}
 }
 
@@ -33,48 +31,48 @@ public static class BlueprintManager
 		// Define blueprints here. Each character in your level file will map to one of these.
 
 		// '═' horizontal wall
-		MakeBlueprint1("WallH", '=', '═', Color.White, Color.DarkRed, "MidLayer", true, 1000);
+		MakeBlueprint1("WallH", '=', '═', Color.White, Color.DarkRed, 1, true, 1000);
 
 		// '║' vertical wall
-		MakeBlueprint1("WallV", '|', '║', Color.White, Color.DarkRed, "MidLayer", true, 1000);
+		MakeBlueprint1("WallV", '|', '║', Color.White, Color.DarkRed, 1, true, 1000);
 
 		// '╔' topleft corner wall
-		MakeBlueprint1("CornerTL", '<', '╔', Color.White, Color.DarkRed, "MidLayer", true, 1000);
+		MakeBlueprint1("CornerTL", '<', '╔', Color.White, Color.DarkRed, 1, true, 1000);
 
 		// '╗' topright corner wall
-		MakeBlueprint1("CornerTR", '>', '╗', Color.White, Color.DarkRed, "MidLayer", true, 1000);
+		MakeBlueprint1("CornerTR", '>', '╗', Color.White, Color.DarkRed, 1, true, 1000);
 
 		// '╚' bottomleft corner wall
-		MakeBlueprint1("CornerBL", '(', '╚', Color.White, Color.DarkRed, "MidLayer", true, 1000);
+		MakeBlueprint1("CornerBL", '(', '╚', Color.White, Color.DarkRed, 1, true, 1000);
 
 		// '╝' bottomright corner wall
-		MakeBlueprint1("CornerBR", ')', '╝', Color.White, Color.DarkRed, "MidLayer", true, 1000);
+		MakeBlueprint1("CornerBR", ')', '╝', Color.White, Color.DarkRed, 1, true, 1000);
 
 		// '#' floor tile
-		MakeBlueprint1("Floor", '#', '#', Color.DarkYellow, Color.Yellow, "BottomLayer", false, 1000);
+		MakeBlueprint1("Floor", '#', '#', Color.DarkYellow, Color.Yellow, 0, false, 1000);
 
 		// '%' window
-		MakeBlueprint1("Window", '%', '▒', Color.LightBlue, Color.Blue, "MidLayer", true, 1000);
+		MakeBlueprint1("Window", '%', '▒', Color.LightBlue, Color.Blue, 1, true, 1000);
 
 		// 'D' door
-		MakeBlueprint1("Door", 'D', '•', Color.Gray, Color.DarkRed, "BottomLayer", false, 1000);
+		MakeBlueprint1("Door", 'D', '•', Color.Gray, Color.DarkRed, 0, false, 1000);
 
 		// ',' grass
-		MakeBlueprint1("Grass", ',', new char[] { '\\', '|', '/' }, Color.GrassGreen, Color.GroundGreen, "BottomLayer", false, 1000);
+		MakeBlueprint1("Grass", ',', new char[] { '\\', '|', '/' }, Color.GrassGreen, Color.GroundGreen, 0, false, 1000);
 
 		// 'B', 'b' bush
-		MakeBlueprint1("MidBush", 'B', new char[] { '@', 'O' }, Color.BushGreen, Color.DarkGreen, "MidLayer", true, 500);
-		MakeBlueprint1("TopBush", 'b', new char[] { '@', 'O' }, Color.BushGreen, Color.DarkGreen, "TopLayer", false, 500);
+		MakeBlueprint1("MidBush", 'B', new char[] { '@', 'O' }, Color.BushGreen, Color.DarkGreen, 1, true, 500);
+		MakeBlueprint1("TopBush", 'b', new char[] { '@', 'O' }, Color.BushGreen, Color.DarkGreen, 2, false, 500);
 
 		// 'W', 'w' wood
-		MakeBlueprint1("MidWood", 'W', '#', Color.WoodLight, Color.WoodDark, "MidLayer", true, 500);
-		MakeBlueprint1("TopWood", 'w', '#', Color.WoodLight, Color.WoodDark, "TopLayer", false, 500);
+		MakeBlueprint1("MidWood", 'W', '#', Color.WoodLight, Color.WoodDark, 1, true, 500);
+		MakeBlueprint1("TopWood", 'w', '#', Color.WoodLight, Color.WoodDark, 2, false, 500);
 
 		// '~' Water
-		MakeBlueprint1("Water", '~', new char[] { '~', '-' }, Color.WaterLight, Color.WaterDark, "MidLayer", true, 400);
+		MakeBlueprint1("Water", '~', new char[] { '~', '-' }, Color.WaterLight, Color.WaterDark, 1, true, 400);
 	}
 
-	public static void MakeBlueprint1(string name, char key, char[] chars, Color fg, Color bg, string layer, bool blocking = false, int animtime = 500)
+	public static void MakeBlueprint1(string name, char key, char[] chars, Color fg, Color bg, int depth, bool blocking = false, int animtime = 500)
 	{
 		var anim = new Animation(animtime);
 		foreach (char c in chars)
@@ -83,12 +81,12 @@ public static class BlueprintManager
 			sprite.WriteCell(new Vec2(0, 0), new ScreenCell(c, fg, bg));
 			anim.addFrame(sprite);
 		}
-		_blueprints.Add(key, new LevelElementBlueprint(name, anim, blocking, layer));
+		_blueprints.Add(key, new LevelElementBlueprint(name, anim, blocking, depth));
 	}
 
-	public static void MakeBlueprint1(string name, char key, char character, Color fg, Color bg, string layer, bool blocking = false, int animtime = 500)
+	public static void MakeBlueprint1(string name, char key, char character, Color fg, Color bg, int depth, bool blocking = false, int animtime = 500)
 	{
-		MakeBlueprint1(name, key, new char[] { character }, fg, bg, layer, blocking, animtime);
+		MakeBlueprint1(name, key, new char[] { character }, fg, bg, depth, blocking, animtime);
 	}
 
 
@@ -102,12 +100,9 @@ public static class BlueprintManager
 // Represents a level/room in the game, composed of various LevelElements organized into layers.
 class Level
 {
-	public List<LevelElement> BottomLayer { get; private set; }
-	public List<LevelElement> MidLayer { get; private set; }
-	public List<LevelElement> TopLayer { get; private set; }
-	public Sprite? BottomSprite { get; private set; }
-	public Sprite? MidSprite { get; private set; }
-	public Sprite? TopSprite { get; private set; }
+	public LevelLayer[] Layers;
+	public static readonly string[] LayerNames = ["Bottom", "Mid", "Top"];
+	
 	private Vec2 _size;
 	public Vec2 Size
 	{
@@ -131,9 +126,9 @@ class Level
 
 	public Level()
 	{
-		BottomLayer = new List<LevelElement>();
-		MidLayer = new List<LevelElement>();
-		TopLayer = new List<LevelElement>();
+		Layers = new LevelLayer[3];
+		_size = new Vec2(0, 0);
+		_relativeCenter = new Vec2(0, 0);
 	}
 
 	public void LoadFromFile(string filePath, int borderv = 10, int borderh = 30)
@@ -175,10 +170,12 @@ class Level
 			//update size for padding
 			_size.X = lines[0].Length;
 			_size.Y = lines.Count;
-			//set sprite sizes
-			BottomSprite = new Sprite(_size);
-			MidSprite = new Sprite(_size);
-			TopSprite = new Sprite(_size);
+
+			//initialize layer arrays
+			for(int i = 0; i < Layers.Length; i++)
+			{
+				Layers[i] = new LevelLayer(LayerNames[i], i, _size);
+			}
 
 			for (int y = 0; y < lines.Count; y++)
 			{
@@ -193,6 +190,7 @@ class Level
 						var element = new LevelElement(blueprint.IsBlocking);
 						element.Name = blueprint.Name;
 						element.Position = new Vec2(x, y); // Position in the level grid
+						element.SetDepth(blueprint.Depth);
 
 						//offset animation on creation
 						Animation animation = blueprint.Animation.Clone();
@@ -200,24 +198,20 @@ class Level
 
 						element.Animations = new Dictionary<string, Animation> { { Entity.AnimDefault, animation } };
 
-						// Add to the correct layer based on the blueprint
-						if (blueprint.Layer == "BottomLayer")
-						{
-							BottomLayer.Add(element);
-						}
-						else if (blueprint.Layer == "MidLayer")
-						{
-							MidLayer.Add(element);
-						}
-						else if (blueprint.Layer == "TopLayer")
-						{
-							TopLayer.Add(element);
-						}
+						Layers[blueprint.Depth].Elements[x,y] = element;
 					}
 				}
 			}
 			//update world origin
 			_relativeCenter = _size.Divide(2);
+
+			// Level.SetSprite fills the layerSprite (which is level-sized)
+			// Do this only when the sprite has changed
+			foreach(LevelLayer layer in Layers)
+			{
+				layer.UpdateSprite();
+			}
+
 			DebugLogger.Log($"Level loaded successfully. Size: {_size.X}x{_size.Y}");
 		}
 		else
@@ -226,12 +220,44 @@ class Level
 		}
 	}
 
-	//draw elements to layer sprite
-	public static void SetSprite(List<LevelElement> layer, Sprite targetSprite)
+}
+
+public class LevelLayer
+{
+	public LevelElement[,] Elements { get; private set; }
+	public string LayerName { get; private set; }
+	public Sprite? Sprite { get; private set; }
+	public int Depth { get; private set; }
+	public Vec2 Size { get; private set; }
+
+	public LevelLayer(string layername, int depth, Vec2 size)
 	{
-		// Iterate over each element in the provided layer
-		foreach (var element in layer)
+		Elements = new LevelElement[size.X, size.Y];
+		LayerName = layername;
+		Depth = depth;
+		Size = size;
+		Sprite = null;
+	}
+
+	//draw elements to layer sprite
+	public void UpdateSprite()
+	{
+		if (Elements == null)
 		{
+			DebugLogger.Log("Could not generate layer sprite: No elements in layer!");
+			return;
+		}
+
+		Sprite targetsprite = new Sprite(new Vec2(Elements.GetLength(0), Elements.GetLength(1)));
+
+		// Iterate over each element in the provided layer
+		foreach (var element in Elements)
+		{
+			//skip non-existing elements
+			if (element == null)
+			{
+				continue;
+			}
 			// Get the element's current sprite. This is dynamic and will get the correct
 			// frame if the element is animated.
 			Sprite? elementSprite = element.GetSprite();
@@ -246,25 +272,33 @@ class Level
 				{
 					for (int x = 0; x < elementSprite.Size.X; x++)
 					{
-						// Calculate the destination coordinates on the large target sprite
+						// Calculate the destination coordinates on the layer sprite
 						int targetX = elementPos.X + x;
 						int targetY = elementPos.Y + y;
 
 						// Draw the cell onto the target sprite. The WriteCell method handles boundary checks.
-						targetSprite.WriteCell(new Vec2(targetX, targetY), elementSprite.Data[y, x]);
+						targetsprite.WriteCell(new Vec2(targetX, targetY), elementSprite.Data[y, x]);
 					}
 				}
 			}
 		}
+		Sprite = targetsprite;
 	}
 }
 
 public class LevelElement : Entity
 {
-	public bool IsBlocking { get; }
+	public bool IsBlocking { get; set;}
+	public int Depth { get; private set; }
 
-	public LevelElement(bool blocking = false) : base()
+	public LevelElement(bool blocking = false, int depth = 1) : base()
 	{
 		IsBlocking = blocking;
+		Depth = depth;
+	}
+
+	public void SetDepth(int depth)
+	{
+		Depth = Math.Clamp(depth, 0, 2);
 	}
 }

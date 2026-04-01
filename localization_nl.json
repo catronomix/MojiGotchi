@@ -1,4 +1,6 @@
 {
+  "yes": "ja",
+  "no": "nee",
   "menu_feed": "Voeden",
   "menu_play": "Spelen",
   "menu_pet": "Aaien",
@@ -25,5 +27,14 @@
   "pet_action_feed": "Je hebt {0} eten gegeven.",
   "pet_action_play": "Je hebt met {0} gespeeld.",
   "pet_action_pet": "Je hebt {0} geaaid.",
-  "pet_action_wake": "Je hebt {0} wakker gemaakt."
+  "pet_action_wake": "Je hebt {0} wakker gemaakt.",
+  "editor_status_welcome": "MojiGotchi Level Editor",
+  "editor_menu_revert": "Herladen",
+  "editor_menu_save": "Opslaan",
+  "editor_menu_edit": "Bewerken",
+  "editor_helptext": "EDITOR HELP PAGINA\n------------------\n\nNog in te vullen.",
+  "selected": "selectie",
+  "pos": "pos",
+  "layer": "laag",
+  "blocking": "solide"
 }

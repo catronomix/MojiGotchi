@@ -14,6 +14,7 @@ public class Entity
 			_name = value;
 		}
 	}
+	
 	// Animation state constants
 	public const string AnimDefault = "DEFAULT";
 	private int _animOffset;
