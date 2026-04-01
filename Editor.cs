@@ -1,6 +1,15 @@
 namespace MojiGotchi;
 
 
+
+public enum Focus
+{
+	MENU,
+	CURSOR,
+	BROWSER,
+	MODAL
+}
+
 class Editor : Game
 {
 	// Set area sizes
@@ -11,6 +20,9 @@ class Editor : Game
 	private Cursor? _cursor;
 	private bool _editingmode;
 	protected EditorHelp _editorHelp; // New field for editor-specific help modal
+
+	//be able to focus controls
+	private Focus _focus;
 
 	// Initialize the editor
 	public Editor()
@@ -114,7 +126,36 @@ class Editor : Game
 						break;
 				}
 			}
-			else //menu is disabled
+			else if (_cursor != null && _focus == Focus.CURSOR) //cursor is active
+			{
+				switch (key.Key)
+				{
+					case ConsoleKey.UpArrow:
+						//cursor up
+						_cursor.Move(new Vec2(0, -1));
+						break;
+					case ConsoleKey.DownArrow:
+						//cursor down
+						_cursor.Move(new Vec2(0, 1));
+						break;
+					case ConsoleKey.LeftArrow:
+						//cursor left
+						_cursor.Move(new Vec2(-1, 0));
+						break;
+					case ConsoleKey.RightArrow:
+						//cursor right
+						_cursor.Move(new Vec2(1, 0));
+						break;
+					default:
+						break;
+					case ConsoleKey.Escape:
+						_menu.Enable();
+						_focus = Focus.MENU;
+						_editingmode = false;
+						break;
+				}
+			}
+			else if (_currentModal != null) //modal is active
 			{
 				switch (key.Key)
 				{
@@ -170,7 +211,8 @@ class Editor : Game
 				{
 					Editor editor = (Editor)game; // Cast to Editor
 					_editingmode = true;
-					editor._menu.Disable(); // Use editor._menu
+					editor._menu.Disable();
+					editor._focus = Focus.CURSOR;
 				};
 				break;
 			case ActionType.EDITOR_QUIT:
