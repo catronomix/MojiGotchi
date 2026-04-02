@@ -1,15 +1,17 @@
 namespace MojiGotchi;
 
+using System.Text.Json.Serialization;
+
 // Defines the template for a level element. Each blueprint is mapped to a character
 // in a level text file and contains all the information needed to create an instance of that element.
-internal class LevelElementBlueprint
+public class LevelElementBlueprint
 {
-	internal string Name { get; }
-	internal Animation Animation { get; }
-	internal bool IsBlocking { get; }
-	internal int Depth { get; }
+	public string Name { get; }
+	public Animation Animation { get; }
+	public bool IsBlocking { get; }
+	public int Depth { get; }
 
-	internal LevelElementBlueprint(string name, Animation animation, bool isBlocking, int depth)
+	public LevelElementBlueprint(string name, Animation animation, bool isBlocking, int depth)
 	{
 		Name = name;
 		Animation = animation;
@@ -19,13 +21,13 @@ internal class LevelElementBlueprint
 }
 
 // A static manager that holds all the defined LevelElementBlueprints.
-internal static class BlueprintManager
+public static class BlueprintManager
 {
 	private static readonly Dictionary<char, LevelElementBlueprint> _blueprints = new();
 
 
 	// Initializes all the blueprints for the game. This should be called once at startup.
-	internal static void Initialize()
+	public static void Initialize()
 	{
 		_blueprints.Clear();
 		// Define blueprints here. Each character in your level file will map to one of these.
@@ -72,7 +74,7 @@ internal static class BlueprintManager
 		MakeBlueprint1("Water", '~', new char[] { '~', '-' }, Color.WaterLight, Color.WaterDark, 1, true, 400);
 	}
 
-	internal static void MakeBlueprint1(string name, char key, char[] chars, Color fg, Color bg, int depth, bool blocking = false, int animtime = 500)
+	public static void MakeBlueprint1(string name, char key, char[] chars, Color fg, Color bg, int depth, bool blocking = false, int animtime = 500)
 	{
 		var anim = new Animation(animtime);
 		foreach (char c in chars)
@@ -84,13 +86,13 @@ internal static class BlueprintManager
 		_blueprints.Add(key, new LevelElementBlueprint(name, anim, blocking, depth));
 	}
 
-	internal static void MakeBlueprint1(string name, char key, char character, Color fg, Color bg, int depth, bool blocking = false, int animtime = 500)
+	public static void MakeBlueprint1(string name, char key, char character, Color fg, Color bg, int depth, bool blocking = false, int animtime = 500)
 	{
 		MakeBlueprint1(name, key, new char[] { character }, fg, bg, depth, blocking, animtime);
 	}
 
 
-	internal static LevelElementBlueprint? GetBlueprint(char key)
+	public static LevelElementBlueprint? GetBlueprint(char key)
 	{
 		_blueprints.TryGetValue(key, out var blueprint);
 		return blueprint;
@@ -98,40 +100,29 @@ internal static class BlueprintManager
 }
 
 // Represents a level/room in the game, composed of various LevelElements organized into layers.
-internal class Level
+public class Level : SimpleRect
 {
-	internal LevelLayer[] Layers;
-	internal static readonly string[] LayerNames = ["Bottom", "Mid", "Top"];
 	
-	private Vec2 _size;
-	internal Vec2 Size
-	{
-		get
-		{
-			return _size;
-		}
-	}
-
-	private Vec2 _relativeCenter;
-	internal Vec2 RelativeCenter
-	{
-		get
-		{
-			return _relativeCenter;
-		}
-	}
+	
+	public LevelLayer[] Layers;
+	public static readonly string[] LayerNames = ["Bottom", "Mid", "Top"];
 
 	//for randomizing animations
+	[JsonIgnore] // Randomizer is not part of the serialized state
 	Random randomizer = new Random();
 
-	internal Level()
+	//spawn point
+	
+	public Vec2 SpawnPoint { get; set;}
+
+	//constructor
+	public Level(): base(new Vec2(0, 0), new Vec2(0, 0))
 	{
 		Layers = new LevelLayer[3];
-		_size = new Vec2(0, 0);
-		_relativeCenter = new Vec2(0, 0);
+		SpawnPoint = new Vec2(0,0);
 	}
 
-	internal void LoadFromFile(string filePath, int borderv = 10, int borderh = 30)
+	public void LoadFromFile(string filePath, int borderv = 10, int borderh = 30)
 	{
 		DebugLogger.Log($"LoadFromFile called with path: {filePath}");
 		if (File.Exists(filePath))
@@ -189,8 +180,8 @@ internal class Level
 					{
 						var element = new LevelElement(blueprint.IsBlocking);
 						element.Name = blueprint.Name;
-						element.Position = new Vec2(x, y); // Position in the level grid
-						element.SetDepth(blueprint.Depth);
+						element.Pos = new Vec2(x, y); // Pos in the level grid
+						element.Depth = blueprint.Depth;
 
 						//offset animation on creation
 						Animation animation = blueprint.Animation.Clone();
@@ -202,8 +193,6 @@ internal class Level
 					}
 				}
 			}
-			//update world origin
-			_relativeCenter = _size.Divide(2);
 
 			// Level.SetSprite fills the layerSprite (which is level-sized)
 			// Do this only when the sprite has changed
@@ -222,15 +211,20 @@ internal class Level
 
 }
 
-internal class LevelLayer
+public class LevelLayer
 {
-	internal LevelElement[,] Elements { get; private set; }
-	internal string LayerName { get; private set; }
-	internal Sprite? Sprite { get; private set; }
-	internal int Depth { get; private set; }
-	internal Vec2 Size { get; private set; }
+	
+	public LevelElement[,] Elements { get; set; }
+	
+	public string LayerName { get; set; }
+	[JsonIgnore] // Sprite is derived and should not be serialized
+	public Sprite? Sprite { get; set; }
+	
+	public int Depth { get; set; }
+	
+	public Vec2 Size { get; set; }
 
-	internal LevelLayer(string layername, int depth, Vec2 size)
+	public LevelLayer(string layername, int depth, Vec2 size)
 	{
 		Elements = new LevelElement[size.X, size.Y];
 		LayerName = layername;
@@ -240,7 +234,7 @@ internal class LevelLayer
 	}
 
 	//draw elements to layer sprite
-	internal void UpdateSprite()
+	public void UpdateSprite()
 	{
 		if (Elements == null)
 		{
@@ -265,7 +259,7 @@ internal class LevelLayer
 			if (elementSprite != null)
 			{
 				// Get the element's top-left position within the level grid
-				Vec2 elementPos = element.Position;
+				Vec2 elementPos = element.Pos;
 
 				// Iterate over the cells of the element's sprite
 				for (int y = 0; y < elementSprite.Size.Y; y++)
@@ -286,19 +280,27 @@ internal class LevelLayer
 	}
 }
 
-internal class LevelElement : Entity
+public class LevelElement : Entity
 {
-	internal bool IsBlocking { get; set;}
-	internal int Depth { get; private set; }
+	
+	public bool IsBlocking { get; set;}
 
-	internal LevelElement(bool blocking = false, int depth = 1) : base()
+	private int _depth;
+	
+	public int Depth {
+		get
+		{
+			return _depth;
+		}
+		set
+		{
+			_depth = Math.Clamp(_depth, 0, 2);
+		}
+	}
+
+	public LevelElement(bool blocking = false, int depth = 1) : base()
 	{
 		IsBlocking = blocking;
 		Depth = depth;
-	}
-
-	internal void SetDepth(int depth)
-	{
-		Depth = Math.Clamp(depth, 0, 2);
 	}
 }

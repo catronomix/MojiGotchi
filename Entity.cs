@@ -1,9 +1,11 @@
 namespace MojiGotchi;
+using System.Text.Json.Serialization;
 
-internal class Entity
+public class Entity
 {
     protected string _name;
-	internal string Name
+	
+	public string Name
 	{
 		get
 		{
@@ -16,13 +18,12 @@ internal class Entity
 	}
 	
 	// Animation state constants
-	internal const string AnimDefault = "DEFAULT";
+	public const string AnimDefault = "DEFAULT";
 	private int _animOffset;
 
 	//Animations list
 	protected Dictionary<string, Animation>? _animations;
-	[System.Text.Json.Serialization.JsonIgnore]
-	internal Dictionary<string, Animation>? Animations
+	public Dictionary<string, Animation>? Animations
 	{
 		get
 		{
@@ -33,26 +34,44 @@ internal class Entity
 			_animations = value;
 		}
 	}
-	protected Vec2 _position;
-    internal Vec2 Position //relative to the center of the game area
+	protected Vec2 _pos;
+	
+    public Vec2 Pos //relative to the center of the game area
 	{
 		get
 		{
-			return _position;
+			return _pos;
 		}
 		set
 		{
 			//check for out of bounds
-			// _position.X = Math.Clamp(value.X, 0, Console.WindowWidth);
-			// _position.Y = Math.Clamp(value.Y, 0, Console.WindowHeight);
+			// _pos.X = Math.Clamp(value.X, 0, Console.WindowWidth);
+			// _pos.Y = Math.Clamp(value.Y, 0, Console.WindowHeight);
 			//entities can exist off-screen
-			_position = value;
+			_pos = value;
 		}
 	}
-    protected string _animationState;
+    protected string _animationState; // Keep the protected field as backing
+
+	 // Apply JsonInclude to the public property
+	public string AnimationState // New public property for serialization
+	{
+		get
+		{
+			return _animationState;
+		}
+		set
+		{
+			_animationState = value;
+		}
+	}
+
+	//hitbox
+	[JsonIgnore]
+	public Vec2[,]? Hitbox { get; private set;}
 
     //constructor
-    internal Entity()
+    public Entity()
     {
         _name = "";
 		//setup animations list
@@ -61,25 +80,45 @@ internal class Entity
 		_animOffset = AnimRandom.GetRandom(0, 16);
 
 		//position in the level
-		_position = new Vec2(-100,-100); //invalid value to have new entities be hidden by default
+		_pos = new Vec2(-9999,-9999); //invalid value to have new entities be hidden by default
+
+		//default hitbox
+		Hitbox = null;
+
     }
 
-    internal Sprite? GetSprite()
+    public Sprite? GetSprite()
 	{
 		if (_animations != null && _animations.TryGetValue(_animationState, out var animation))
 		{
-			return animation.GetSprite(_animOffset);
+			Sprite? sprite = animation.GetSprite(_animOffset);
+			if (sprite != null)
+			{
+				Hitbox = new Vec2[sprite.Size.X, sprite.Size.Y];
+				for (int y = 0; y < sprite.Size.Y; y++)
+				{
+					for (int x = 0; x < sprite.Size.X; x++)
+					{
+						Hitbox[x, y] = new Vec2(x, y);
+					}
+				}
+			}
+			else
+			{
+				Hitbox = null;
+			}
+			return sprite;
 		}
 		return null;
 	}
    
-    internal void Move(Vec2 amount)
+    public void Move(Vec2 amount)
     {
-        _position.X += amount.X;
-        _position.Y += amount.Y;
+        _pos.X += amount.X;
+        _pos.Y += amount.Y;
     }
 
-	internal void Move(int direction)
+	public void Move(int direction)
 	{
 		Vec2 amount = new Vec2(0,0);
 		//move clockwise from 0 to 7
@@ -98,7 +137,7 @@ internal class Entity
 		Move(amount);
 	}
 
-	internal void SetAnimation(string state)
+	public void SetAnimation(string state)
 	{
 		_animationState = state;
 	}

@@ -46,7 +46,7 @@ class Game
 	protected LanguageChoice _languageChoice;
 
 	// Initialize the game
-	internal Game()
+	public Game()
 	{
 		_renderer = new Renderer(programBgColor);
 		// Initialize Rects for drawing the game's menu, status bar and play area
@@ -81,9 +81,12 @@ class Game
 		BlueprintManager.Initialize(); // Initialize blueprints before loading a level
 		_level = new Level(); // This is now empty, we need to load a level
 		_level.LoadFromFile("level1.txt"); // Load the level from the text file
+		_level.SpawnPoint = new Vec2(2, -3);
+		
 		SimpleRect deadzone = new SimpleRect(new Vec2(-4, -2), new Vec2(8, 4));
 		if (_pet != null)
 		{
+			_pet.Pos = _level.SpawnPoint;
 			UpdateMenuAvailability([ActionType.NEWPET], false);
 			_menu.SelectFirstEnabled();
 		}
@@ -96,14 +99,14 @@ class Game
 		CheckWindow(true);
 	}
 
-	internal void ChooseLanguage()
+	public void ChooseLanguage()
 	{
 		_languageChoice.UpdatePage(_viewport.Size);
 		_currentModal = _languageChoice;
 		_menu.Disable();
 	}
 
-	internal bool Step()
+	public bool Step()
 	{
 		//Check window resized
 		CheckWindow();
@@ -297,10 +300,10 @@ class Game
 			Sprite? petSprite = _pet.GetSprite(); // Capture the sprite once
 			if (petSprite != null)
 			{
-				// 2. Calculate Top-Left based on Pet's World Position and its Pivot (center)
+				// 2. Calculate Top-Left based on Pet's World Pos and its Pivot (center)
 				// Pet position (0,0) is world center.
 				// We subtract petSprite.Size / 2 to make (0,0) the center of the pet.
-				Vec2 drawPos = Vec2.Add(_camera.GetAbsCenter(), _pet.Position.Sum(-1,-1));
+				Vec2 drawPos = Vec2.Add(_camera.GetAbsCenter(), _pet.Pos.Sum(-1,-1));
 				_renderer.DrawSprite(petSprite, drawPos, _viewport);
 				//draw message bubble	
 			}
@@ -314,7 +317,7 @@ class Game
 			Sprite? bubble = _pet.MessageBubble.GetSprite();
 			if (bubble != null)
 				{
-					Vec2 drawPos = Vec2.Add(_camera.GetAbsCenter(), _pet.Position.Sum(-1,-1));
+					Vec2 drawPos = Vec2.Add(_camera.GetAbsCenter(), _pet.Pos.Sum(-1,-1));
 					_renderer.DrawSprite(bubble, drawPos.Sum(-bubble.Size.X / 2+1, -3), _viewport);
 				}
 		}
@@ -384,36 +387,49 @@ class Game
 			{
 				UpdateMenuAvailability([ActionType.WAKE], false);
 				UpdateMenuAvailability([ActionType.FEED, ActionType.PLAY, ActionType.PET], true);
-				Vec2 lastpetpos = _pet.Position;
-				_pet.Wander(_level);
-				
-				//keep pet inside level
-				int x = Math.Clamp(_pet.Position.X, -_level.RelativeCenter.X, _level.RelativeCenter.X);
-				int y = Math.Clamp(_pet.Position.Y, -_level.RelativeCenter.Y, _level.RelativeCenter.Y);
-				_pet.Position = new Vec2(x, y);
-
-				//keep pet from moving into solid objects
-				if (_level != null)
-				{
-					foreach(LevelElement element in _level.Layers[1].Elements)
-					{
-						if (element == null) continue; //skip empty cells
-						if (element.IsBlocking)
-						{
-							// check if colliding
-							// The pet's collision point is its center cell, which is _pet.Position + (1,1)
-							if(Vec2.Chebyshev(ElementPosInWorldSpace(element), _pet.Position) < 2)
-							{
-								_pet.Position = lastpetpos;
-							}
-						}
-					}
-				}
+				Vec2 lastpetpos = _pet.Pos;
+				_pet.Wander();
+				ConstrainEntity(_pet, _level);
+				CheckCollision(_pet, lastpetpos, new Vec2(1,1));				
 			}
 		}
 	}
 
-	void KillPet()
+	void ConstrainEntity(Entity entity, SimpleRect rect)
+	{
+		
+		int x = Math.Clamp(entity.Pos.X, -rect.RelativeCenter.X, rect.RelativeCenter.X);
+		int y = Math.Clamp(entity.Pos.Y, -rect.RelativeCenter.Y, rect.RelativeCenter.Y);
+		rect.Pos = new Vec2(x, y);
+	}
+
+	void CheckCollision(Entity entity, Vec2 lastpos, Vec2? pivot)
+	{
+		//keep entity from moving into solid objects
+		if (_level != null && entity.Hitbox != null)
+		{
+			foreach (Vec2? cell in entity.Hitbox)
+			{
+				if (cell != null)
+				{
+					Vec2 worldpos = Vec2.Add(entity.Pos, _level.RelativeCenter);
+					worldpos = Vec2.Add(worldpos, (Vec2)cell);
+					if (pivot != null)
+					{
+						worldpos = Vec2.Subtract(worldpos, (Vec2)pivot);
+					}
+					LevelElement element = _level.Layers[1].Elements[worldpos.X, worldpos.Y];
+					if (element != null && element.IsBlocking)
+					{
+						entity.Pos = lastpos;
+					}
+				}
+				
+			}
+		}
+	}
+
+		void KillPet()
 	{
 		_pet = null;
 		//update menu
@@ -485,7 +501,14 @@ class Game
 			case ActionType.QUIT:
 				logic = (game) =>
 				{
-					if (game._pet != null) { DataManager.SavePet(game._pet); } else { DataManager.DeleteSave(); }
+					if (game._pet != null)
+					{ 
+						DataManager.SavePet(game._pet);
+					}
+					else
+					{
+						DataManager.DeleteSave();
+					}
 					game._isRunning = false;
 				};
 				break;
@@ -534,6 +557,6 @@ class Game
 	protected Vec2 ElementPosInWorldSpace(LevelElement element)
 	{
 		if (_level == null) return new Vec2(0, 0);
-		return Vec2.Subtract(element.Position, _level.RelativeCenter);
+		return Vec2.Subtract(element.Pos, _level.RelativeCenter);
 	}
 }

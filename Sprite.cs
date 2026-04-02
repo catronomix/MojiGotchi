@@ -1,9 +1,11 @@
 namespace MojiGotchi;
 
-internal class Sprite
+using System.Text.Json.Serialization;
+
+public class Sprite
 {
 	private Vec2 _size;
-	internal Vec2 Size
+	public Vec2 Size
 	{
 		get
 		{
@@ -11,8 +13,9 @@ internal class Sprite
 		}
 	}
 
+	[JsonIgnore]
 	private ScreenCell[,] _data = new ScreenCell[0,0];
-	internal ScreenCell[,] Data
+	public ScreenCell[,] Data
 	{
 		get
 		{
@@ -24,13 +27,13 @@ internal class Sprite
 		}
 	}
 
-	internal Sprite(Vec2 size)
+	public Sprite(Vec2 size)
 	{
 		_size = size;
 		Data = new ScreenCell[size.Y, size.X];
 	}
 
-	internal bool WriteCell(Vec2 pos, ScreenCell cell)
+	public bool WriteCell(Vec2 pos, ScreenCell cell)
 	{
 		if (pos.X >= 0 && pos.X < _size.X && pos.Y >= 0 && pos.Y < _size.Y)
 		{
@@ -45,10 +48,10 @@ internal class Sprite
 	
 }
 
-internal class Animation
+public class Animation
 {
 	private List<Sprite>? _frames = null;
-	internal List<Sprite>? Frames
+	public List<Sprite>? Frames
 	{
 		get
 		{
@@ -60,19 +63,19 @@ internal class Animation
 	private DateTime _lastFrameTime;
 
 	//constructor
-	internal Animation(int framedurationms)
+	public Animation(int framedurationms)
 	{
 		_frameDurationMs = framedurationms;
 		_currentFrame = 0;
 		_lastFrameTime = DateTime.Now;
 	}
 
-	internal void OffsetTime(float offset)
+	public void OffsetTime(float offset)
 	{
 		_lastFrameTime -= TimeSpan.FromMilliseconds(offset);
 	}
 
-	internal void addFrame(Sprite frame)
+	public void addFrame(Sprite frame)
 	{
 		//check if this is the first time a frame is added
 		if (_frames == null)
@@ -85,7 +88,7 @@ internal class Animation
 		}
 	}
 
-	internal Sprite? GetSprite(int offset = 0) // Changed return type to nullable Sprite?
+	public Sprite? GetSprite(int offset = 0) // Changed return type to nullable Sprite?
 	{
 		// If _frames is null or empty, there are no frames to return.
 		if (_frames == null || _frames.Count == 0)
@@ -107,7 +110,7 @@ internal class Animation
 		return _frames[offsetcurrent];
 	}
 
-	internal void AdvanceFrames(int numframes)
+	public void AdvanceFrames(int numframes)
 	{
 		if(_frames != null)
 		{
@@ -115,7 +118,7 @@ internal class Animation
 		}
 	}
 
-	internal Animation Clone()
+	public Animation Clone()
     {
         return (Animation)this.MemberwiseClone();
     }

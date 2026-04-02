@@ -2,7 +2,7 @@ namespace MojiGotchi;
 
 
 
-internal enum Focus
+public enum Focus
 {
 	MENU,
 	CURSOR,
@@ -22,7 +22,7 @@ class Editor : Game
 	private Focus _focus;
 
 	// Initialize the editor
-	internal Editor()
+	public Editor()
 	{
 		// Set area sizes
 		base._menuWidth = 21;
@@ -70,7 +70,7 @@ class Editor : Game
 		_editingmode = false;
 	}
 
-	internal new bool Step()
+	public new bool Step()
 	{
 		//Check window resized
 		CheckWindow();
@@ -185,10 +185,10 @@ class Editor : Game
 			Sprite? cursorSprite = _cursor.GetSprite(); // Capture the sprite once
 			if (cursorSprite != null)
 			{
-				// 2. Calculate Top-Left based on Cursor's World Position and its Pivot (center)
+				// 2. Calculate Top-Left based on Cursor's World Pos and its Pivot (center)
 				// Cursor position (0,0) is world center.
 				// We subtract cursorSprite.Size / 2 to make (0,0) the center of the pet.
-				Vec2 drawPos = Vec2.Add(_camera.GetAbsCenter(), _cursor.Position.Sum(-1,-1));
+				Vec2 drawPos = Vec2.Add(_camera.GetAbsCenter(), _cursor.Pos.Sum(-1,-1));
 				_renderer.DrawSprite(cursorSprite, drawPos, _viewport);
 			}
 		}
@@ -198,7 +198,7 @@ class Editor : Game
 	{
 		if (_cursor != null && _editingmode == true)
 		{
-			Vec2 worldpos = Vec2.Add(_cursor.Position, _level.RelativeCenter);
+			Vec2 worldpos = Vec2.Add(_cursor.Pos, _level.RelativeCenter);
 			_persistentStatus = "";
 			LevelElement? e = null;
 			for (int i = 2; i >= 0; i--) //top down
@@ -206,7 +206,7 @@ class Editor : Game
 				e = _level.Layers[i].Elements[worldpos.X, worldpos.Y];
 				if (e != null)
 				{
-					_persistentStatus = $"[ ]{LM.Get("selected")}:{e.Name.PadRight(8)}| {LM.Get("pos")}: {e.Position.ToString().PadRight(7)}| {LM.Get("layer")}: {Level.LayerNames[e.Depth].PadRight(6)} | [{(e.IsBlocking ? "X" : " ")}] {LM.Get("blocking")}";
+					_persistentStatus = $"[ ]{LM.Get("selected")}:{e.Name.PadRight(8)}| {LM.Get("pos")}: {e.Pos.ToString().PadRight(7)}| {LM.Get("layer")}: {Level.LayerNames[e.Depth].PadRight(6)} | [{(e.IsBlocking ? "X" : " ")}] {LM.Get("blocking")}";
 					_selectedElement = e;
 					return;
 				}
@@ -280,29 +280,29 @@ class Editor : Game
 	}
 }
 
-internal class Cursor: Entity
+public class Cursor: Entity
 {
     
     //constructor
-    internal Cursor()
+    public Cursor()
     {
         _animations = JsonParser.LoadAnimations("CursorSprites.json", 200);
         SetAnimation(AnimDefault);
-        _position = new Vec2(0,0);
+        _pos = new Vec2(0,0);
     }
 }
 
-internal class EditorHelp: Modal
+public class EditorHelp: Modal
 {
 	private string _helpText = LM.Get("editor_helptext");
 
 	//constructor
-	internal EditorHelp(string title, Color bgcolor, Color edgecolor) : base(title, bgcolor, edgecolor)
+	public EditorHelp(string title, Color bgcolor, Color edgecolor) : base(title, bgcolor, edgecolor)
 	{
 		
 	}
 
-	internal void UpdatePage(Vec2 size)
+	public void UpdatePage(Vec2 size)
 	{
 		SetSpriteBg(size);
 		ClearContentSprite(size);
