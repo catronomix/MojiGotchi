@@ -7,7 +7,7 @@ static class DataManager
 {
 	static string saveFile = Path.Combine(AppContext.BaseDirectory, "savegame.json");
 	static string highScoreFile = "highscores.txt"; // Changed to .txt for flat file
-	internal static bool SavePet(Pet myPet)
+	public static bool SavePet(Pet myPet)
 	{
 		bool success = false;
 		DebugLogger.Log("SavePet called");
@@ -40,7 +40,7 @@ static class DataManager
 		
 	}
 
-	internal static Pet? LoadPet()
+	public static Pet? LoadPet()
 	{
 		try
 		{
@@ -66,7 +66,7 @@ static class DataManager
 		}
 	}
 
-	internal static Pet UpdateDateTimes(Pet myPet)
+	public static Pet UpdateDateTimes(Pet myPet)
 	{
 		// Calculate the time that has passed since the game was saved
 		TimeSpan elapsedTime = DateTime.Now - myPet.SaveTime;
@@ -87,7 +87,7 @@ static class DataManager
 		return myPet;
 	}
 
-	internal static bool EnsureSaveFileExists()
+	public static bool EnsureSaveFileExists()
 {
 	try
 	{
@@ -116,7 +116,7 @@ static class DataManager
 	}
 }
 
-	internal static void DeleteSave()
+	public static void DeleteSave()
 	{
 		if (File.Exists(saveFile))
 		{
@@ -126,7 +126,7 @@ static class DataManager
 	}
 
 	// Ensures the high score file exists, creating it with a header if not.
-	internal static bool EnsureHighScoreFileExists()
+	public static bool EnsureHighScoreFileExists()
 	{
 		if (!File.Exists(highScoreFile))
 		{
@@ -148,7 +148,7 @@ static class DataManager
 		return true;
 	}
 
-	internal static void AddHighScore(Pet myPet)
+	public static void AddHighScore(Pet myPet)
 	{
 		if (myPet == null) return; // Defensive check
 
@@ -166,7 +166,7 @@ static class DataManager
 		File.AppendAllText(highScoreFile, newEntry + "\n");
 	}
 
-	internal static List<string[]> GetHighScores()
+	public static List<string[]> GetHighScores()
 	{
 		if (!EnsureHighScoreFileExists())
 		{
@@ -201,7 +201,7 @@ static class DataManager
 		return highScores;
 	}
 
-	static internal string GetAgeString(TimeSpan ageSpan)
+	static public string GetAgeString(TimeSpan ageSpan)
 	{
 		int days = ageSpan.Days;
 		int hours = ageSpan.Hours;

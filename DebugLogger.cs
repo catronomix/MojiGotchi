@@ -33,7 +33,7 @@ static class DebugLogger
         }
     }
 
-    internal static void Log(string message)
+    public static void Log(string message)
     {
         if (log){
             try
@@ -50,11 +50,11 @@ static class DebugLogger
         
     }
 
-    internal static void Enable(){
+    public static void Enable(){
         log = true;
     }
 
-    internal static void Disable(){
+    public static void Disable(){
         log = false;
     }
 }

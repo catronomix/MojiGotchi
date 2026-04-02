@@ -46,7 +46,7 @@ class Game
 	protected LanguageChoice _languageChoice;
 
 	// Initialize the game
-	internal Game()
+	public Game()
 	{
 		_renderer = new Renderer(programBgColor);
 		// Initialize Rects for drawing the game's menu, status bar and play area
@@ -96,14 +96,14 @@ class Game
 		CheckWindow(true);
 	}
 
-	internal void ChooseLanguage()
+	public void ChooseLanguage()
 	{
 		_languageChoice.UpdatePage(_viewport.Size);
 		_currentModal = _languageChoice;
 		_menu.Disable();
 	}
 
-	internal bool Step()
+	public bool Step()
 	{
 		//Check window resized
 		CheckWindow();
@@ -198,14 +198,9 @@ class Game
 
 	protected void HandleInput()
 	{
-		if(Console.KeyAvailable)
+		if (Console.KeyAvailable)
 		{
 			ConsoleKeyInfo key = Console.ReadKey(true);
-			while (Console.KeyAvailable)
-			{
-				key = Console.ReadKey(true);
-			}
-			
 			if (_menu.Enabled) //menu is active
 			{
 				switch (key.Key)
@@ -385,7 +380,7 @@ class Game
 				UpdateMenuAvailability([ActionType.WAKE], false);
 				UpdateMenuAvailability([ActionType.FEED, ActionType.PLAY, ActionType.PET], true);
 				Vec2 lastpetpos = _pet.Position;
-				_pet.Wander(_level);
+				_pet.Wander();
 				
 				//keep pet inside level
 				int x = Math.Clamp(_pet.Position.X, -_level.RelativeCenter.X, _level.RelativeCenter.X);
