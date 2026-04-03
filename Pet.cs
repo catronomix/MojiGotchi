@@ -1,5 +1,5 @@
 namespace MojiGotchi;
-internal enum StatType
+public enum StatType
 {
 	SATURATION,
 	ENERGY,
@@ -7,14 +7,14 @@ internal enum StatType
 	SLEEPYNESS
 }
 
-internal class Pet : Entity //Pet inherits from Entity class
+public class Pet : Entity //Pet inherits from Entity class
 {
 	// Animation state constants
-	internal const string AnimEating = "EATING";
-	internal const string AnimPlaying = "PLAYING";
-	internal const string AnimSleeping = "SLEEPING";
-	internal const string AnimWakeup = "WAKEUP";
-	internal const string AnimHappy = "HAPPY";
+	public const string AnimEating = "EATING";
+	public const string AnimPlaying = "PLAYING";
+	public const string AnimSleeping = "SLEEPING";
+	public const string AnimWakeup = "WAKEUP";
+	public const string AnimHappy = "HAPPY";
 
 	private readonly string[] _namelist = new string[]
 	{
@@ -79,39 +79,39 @@ internal class Pet : Entity //Pet inherits from Entity class
 		"Bavo"
 	};
 	
-	internal Stat Saturation { get; set; }
-	internal Stat Energy { get; set; }
-	internal Stat Mood { get; set; }
-	internal Stat Sleepyness { get; set; }
+	public Stat Saturation { get; set; }
+	public Stat Energy { get; set; }
+	public Stat Mood { get; set; }
+	public Stat Sleepyness { get; set; }
 
 	//alive or not?
-	internal bool IsAlive { get; set; }
+	public bool IsAlive { get; set; }
 	//sleep management
-	internal bool IsSleeping { get; set; }
+	public bool IsSleeping { get; set; }
 
 	//timestamps for actions
 	private DateTime _lastFed;
-	internal DateTime LastFed { get => _lastFed; set => _lastFed = value; }
+	public DateTime LastFed { get => _lastFed; set => _lastFed = value; }
 	private DateTime _lastPlayed;
-	internal DateTime LastPlayed { get => _lastPlayed; set => _lastPlayed = value; }
+	public DateTime LastPlayed { get => _lastPlayed; set => _lastPlayed = value; }
 	private DateTime _lastPetted;
-	internal DateTime LastPetted { get => _lastPetted; set => _lastPetted = value; }
+	public DateTime LastPetted { get => _lastPetted; set => _lastPetted = value; }
 	private DateTime _lastWaked;
-	internal DateTime LastWaked { get => _lastWaked; set => _lastWaked = value; }
+	public DateTime LastWaked { get => _lastWaked; set => _lastWaked = value; }
 
 	//birth time
 	private DateTime _birthTime;
-	internal DateTime BirthTime { get => _birthTime; set => _birthTime = value; }
+	public DateTime BirthTime { get => _birthTime; set => _birthTime = value; }
 
 	//save time
 	private DateTime _saveTime;
-	internal DateTime SaveTime { get => _saveTime; set => _saveTime = value; }
+	public DateTime SaveTime { get => _saveTime; set => _saveTime = value; }
 
 	//colors
 	private Color _faceColor;
-	internal Color FaceColor { get => _faceColor; set => _faceColor = value; }
+	public Color FaceColor { get => _faceColor; set => _faceColor = value; }
 	private Color _bodyColor;
-	internal Color BodyColor { get => _bodyColor; set => _bodyColor = value; }
+	public Color BodyColor { get => _bodyColor; set => _bodyColor = value; }
 
 	//pet can wander
 	private Random random;
@@ -134,10 +134,10 @@ internal class Pet : Entity //Pet inherits from Entity class
 	};
 
 	//make it talk :)
-	internal MessageBubble MessageBubble;
+	public MessageBubble MessageBubble;
 
 	//constructor
-	internal Pet() : base()
+	public Pet() : base()
 	{
 		//go wander
 		random = new Random();
@@ -183,14 +183,14 @@ internal class Pet : Entity //Pet inherits from Entity class
 		return _namelist[index];
 	}
 
-	internal void RandomizePetColor()
+	public void RandomizePetColor()
 	{
 		_faceColor = _availableFaceColor[random.Next(_availableFaceColor.Length)];
 		_bodyColor = _availableBodyColor[random.Next(_availableBodyColor.Length)];
 		ApplyColorToAnimations();
 	}
 
-	internal void ApplyColorToAnimations()
+	public void ApplyColorToAnimations()
 	{
 		if (_animations == null)
 		{
@@ -221,7 +221,7 @@ internal class Pet : Entity //Pet inherits from Entity class
 	}
 
 	// Action methods for the pet
-	internal string Feed()
+	public string Feed()
 	{
 		// Example: Feeding reduces hunger and might slightly increase mood
 		Saturation.Raise(); // Or set to a specific value, e.g., _hunger.Reset();
@@ -234,7 +234,7 @@ internal class Pet : Entity //Pet inherits from Entity class
 		return LM.Get("pet_action_feed", [_name]);
 	}
 
-	internal string Play()
+	public string Play()
 	{
 		Energy.Lower(); // Playing uses energy
 		Mood.Raise();   // Playing increases mood
@@ -245,7 +245,7 @@ internal class Pet : Entity //Pet inherits from Entity class
 		return LM.Get("pet_action_play", [_name]);
 	}
 
-	internal string PetPet() // Renamed to avoid conflict with class name 'Pet'
+	public string PetPet() // Renamed to avoid conflict with class name 'Pet'
 	{
 		Mood.Raise(); // Petting increases mood
 		Sleepyness.Raise(); // Playing increases sleeping
@@ -256,7 +256,7 @@ internal class Pet : Entity //Pet inherits from Entity class
 		return LM.Get("pet_action_pet", [_name]);
 	}
 
-	internal string WakeUp() // Renamed for clarity
+	public string WakeUp() // Renamed for clarity
 	{
 		Sleepyness.Lower(3); // Waking up reduces sleeping stat
 		IsSleeping = false;
@@ -268,7 +268,7 @@ internal class Pet : Entity //Pet inherits from Entity class
 		return LM.Get("pet_action_wake", [_name]);
 	}
 
-	internal string UpdateAllStats()
+	public string UpdateAllStats()
 	{
 		TimeSpan age = DateTime.Now - _birthTime;
 		string ageString = DataManager.GetAgeString(age); // Use the new helper method
@@ -342,7 +342,7 @@ internal class Pet : Entity //Pet inherits from Entity class
 		return "";
 	}
 
-	internal void Wander(Level level)
+	public void Wander()
 	{
 		if (!IsSleeping&&  DateTime.Now > _lastFed + TimeSpan.FromMilliseconds(_animationTimeout)
 		&& DateTime.Now > _lastPetted + TimeSpan.FromMilliseconds(_animationTimeout)
@@ -360,10 +360,9 @@ internal class Pet : Entity //Pet inherits from Entity class
 				Move(_wanderDirection);
 			}
 		}
-
 	}
 
-	internal void Communicate()
+	public void Communicate()
 	{
 		//check for hunger
 		if (Saturation.Value <= Saturation.Min + 1)

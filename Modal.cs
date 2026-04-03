@@ -1,10 +1,10 @@
 namespace MojiGotchi;
 
-internal class Modal
+public class Modal
 {
 	//colors
 	private Color _bgColor;
-	internal Color BgColor{
+	public Color BgColor{
 		get
 		{
 			return _bgColor;
@@ -13,13 +13,13 @@ internal class Modal
 	private Color _edgeColor;
 
     private string _title;
-	internal string Title
+	public string Title
 	{
 		get
 		{
 			return _title;
 		}
-		private set // Keep set protected so it's set in constructor but not arbitrarily changed later
+		protected set // Keep set protected so it's set in constructor but not arbitrarily changed later
 		{
 			_title = value;
 		}
@@ -28,7 +28,7 @@ internal class Modal
 	private Sprite? _bgSprite;
 	private Sprite? _contentSprite;
 
-    internal Modal(string title, Color bgColor, Color edgeColor)
+    public Modal(string title, Color bgColor, Color edgeColor)
     {
         _title = title;
 		_bgColor = bgColor;
@@ -37,7 +37,7 @@ internal class Modal
 		_contentSprite = null;
     }
 	
-    internal void SetSpriteBg(Vec2 size)
+    public void SetSpriteBg(Vec2 size)
     {
         Sprite sprite = new Sprite(size);
         ScreenCell[,] data = sprite.Data;
@@ -77,18 +77,18 @@ internal class Modal
 		_bgSprite = sprite;
 	}
 
-	internal Sprite? GetSpriteBg()
+	public Sprite? GetSpriteBg()
 	{
 		return _bgSprite;
 	}
 
-	internal void ClearContentSprite(Vec2 size)
+	public void ClearContentSprite(Vec2 size)
 	{
 		_contentSprite = new Sprite(size);
 	}
 	
 	//a modal can have a sprite drawn over the content sprite to build it up in steps
-	internal void AddContent(Sprite content, Vec2 pos)
+	public void AddContent(Sprite content, Vec2 pos)
 	{
 		//iterate over the sprite's cells and update the content sprite
 		if (_contentSprite == null || content == null) return;
@@ -114,7 +114,7 @@ internal class Modal
 		}
 	}
 
-	internal Sprite? GetSpriteContent()
+	public Sprite? GetSpriteContent()
 	{
 		return _contentSprite;
 	}

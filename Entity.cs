@@ -1,9 +1,9 @@
 namespace MojiGotchi;
 
-internal class Entity
+public class Entity
 {
     protected string _name;
-	internal string Name
+	public string Name
 	{
 		get
 		{
@@ -16,13 +16,13 @@ internal class Entity
 	}
 	
 	// Animation state constants
-	internal const string AnimDefault = "DEFAULT";
+	public const string AnimDefault = "DEFAULT";
 	private int _animOffset;
 
 	//Animations list
 	protected Dictionary<string, Animation>? _animations;
 	[System.Text.Json.Serialization.JsonIgnore]
-	internal Dictionary<string, Animation>? Animations
+	public Dictionary<string, Animation>? Animations
 	{
 		get
 		{
@@ -34,7 +34,7 @@ internal class Entity
 		}
 	}
 	protected Vec2 _position;
-    internal Vec2 Position //relative to the center of the game area
+    public Vec2 Position //relative to the center of the game area
 	{
 		get
 		{
@@ -52,7 +52,7 @@ internal class Entity
     protected string _animationState;
 
     //constructor
-    internal Entity()
+    public Entity()
     {
         _name = "";
 		//setup animations list
@@ -64,7 +64,7 @@ internal class Entity
 		_position = new Vec2(-100,-100); //invalid value to have new entities be hidden by default
     }
 
-    internal Sprite? GetSprite()
+    public Sprite? GetSprite()
 	{
 		if (_animations != null && _animations.TryGetValue(_animationState, out var animation))
 		{
@@ -73,13 +73,13 @@ internal class Entity
 		return null;
 	}
    
-    internal void Move(Vec2 amount)
+    public void Move(Vec2 amount)
     {
         _position.X += amount.X;
         _position.Y += amount.Y;
     }
 
-	internal void Move(int direction)
+	public void Move(int direction)
 	{
 		Vec2 amount = new Vec2(0,0);
 		//move clockwise from 0 to 7
@@ -98,7 +98,7 @@ internal class Entity
 		Move(amount);
 	}
 
-	internal void SetAnimation(string state)
+	public void SetAnimation(string state)
 	{
 		_animationState = state;
 	}

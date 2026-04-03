@@ -1,6 +1,6 @@
 namespace MojiGotchi;
 
-internal class Help : Modal
+public class Help : Modal
 {
 	// help text
 	private string _helpText = @"
@@ -20,12 +20,12 @@ ACTIES:
 - Slaap: Je pet valt vanzelf in slaap als hij moe is.";
 
 
-    internal Help() : base("MojiGotchi - Handleiding", Color.DarkGreen, Color.Green)
+    public Help() : base("MojiGotchi - Handleiding", Color.DarkGreen, Color.Green)
 	{
 		
 	}
 
-	internal void UpdatePage(Vec2 size)
+	public void UpdatePage(Vec2 size)
 	{
 		SetSpriteBg(size);
 		ClearContentSprite(size);
