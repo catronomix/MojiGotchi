@@ -32,58 +32,43 @@ public static class BlueprintManager
 
 		// '═' horizontal wall
 		MakeBlueprint1("WallH", '=', '═', Color.White, Color.DarkRed, 1, true, 1000);
-		MakeBlueprint1("WallH", '=', '═', Color.White, Color.DarkRed, 1, true, 1000);
 
 		// '║' vertical wall
-		MakeBlueprint1("WallV", '|', '║', Color.White, Color.DarkRed, 1, true, 1000);
 		MakeBlueprint1("WallV", '|', '║', Color.White, Color.DarkRed, 1, true, 1000);
 
 		// '╔' topleft corner wall
 		MakeBlueprint1("CornerTL", '<', '╔', Color.White, Color.DarkRed, 1, true, 1000);
-		MakeBlueprint1("CornerTL", '<', '╔', Color.White, Color.DarkRed, 1, true, 1000);
 
 		// '╗' topright corner wall
-		MakeBlueprint1("CornerTR", '>', '╗', Color.White, Color.DarkRed, 1, true, 1000);
 		MakeBlueprint1("CornerTR", '>', '╗', Color.White, Color.DarkRed, 1, true, 1000);
 
 		// '╚' bottomleft corner wall
 		MakeBlueprint1("CornerBL", '(', '╚', Color.White, Color.DarkRed, 1, true, 1000);
-		MakeBlueprint1("CornerBL", '(', '╚', Color.White, Color.DarkRed, 1, true, 1000);
 
 		// '╝' bottomright corner wall
-		MakeBlueprint1("CornerBR", ')', '╝', Color.White, Color.DarkRed, 1, true, 1000);
 		MakeBlueprint1("CornerBR", ')', '╝', Color.White, Color.DarkRed, 1, true, 1000);
 
 		// '#' floor tile
 		MakeBlueprint1("Floor", '#', '#', Color.DarkYellow, Color.Yellow, 0, false, 1000);
-		MakeBlueprint1("Floor", '#', '#', Color.DarkYellow, Color.Yellow, 0, false, 1000);
 
 		// '%' window
-		MakeBlueprint1("Window", '%', '▒', Color.LightBlue, Color.Blue, 1, true, 1000);
 		MakeBlueprint1("Window", '%', '▒', Color.LightBlue, Color.Blue, 1, true, 1000);
 
 		// 'D' door
 		MakeBlueprint1("Door", 'D', '•', Color.Gray, Color.DarkRed, 0, false, 1000);
-		MakeBlueprint1("Door", 'D', '•', Color.Gray, Color.DarkRed, 0, false, 1000);
 
 		// ',' grass
 		MakeBlueprint1("Grass", ',', new char[] { '\\', '|', '/' }, Color.GrassGreen, Color.GroundGreen, 0, false, 1000);
-		MakeBlueprint1("Grass", ',', new char[] { '\\', '|', '/' }, Color.GrassGreen, Color.GroundGreen, 0, false, 1000);
 
 		// 'B', 'b' bush
-		MakeBlueprint1("MidBush", 'B', new char[] { '@', 'O' }, Color.BushGreen, Color.DarkGreen, 1, true, 500);
-		MakeBlueprint1("TopBush", 'b', new char[] { '@', 'O' }, Color.BushGreen, Color.DarkGreen, 2, false, 500);
 		MakeBlueprint1("MidBush", 'B', new char[] { '@', 'O' }, Color.BushGreen, Color.DarkGreen, 1, true, 500);
 		MakeBlueprint1("TopBush", 'b', new char[] { '@', 'O' }, Color.BushGreen, Color.DarkGreen, 2, false, 500);
 
 		// 'W', 'w' wood
 		MakeBlueprint1("MidWood", 'W', '#', Color.WoodLight, Color.WoodDark, 1, true, 500);
 		MakeBlueprint1("TopWood", 'w', '#', Color.WoodLight, Color.WoodDark, 2, false, 500);
-		MakeBlueprint1("MidWood", 'W', '#', Color.WoodLight, Color.WoodDark, 1, true, 500);
-		MakeBlueprint1("TopWood", 'w', '#', Color.WoodLight, Color.WoodDark, 2, false, 500);
 
 		// '~' Water
-		MakeBlueprint1("Water", '~', new char[] { '~', '-' }, Color.WaterLight, Color.WaterDark, 1, true, 400);
 		MakeBlueprint1("Water", '~', new char[] { '~', '-' }, Color.WaterLight, Color.WaterDark, 1, true, 400);
 	}
 
@@ -96,7 +81,6 @@ public static class BlueprintManager
 			sprite.WriteCell(new Vec2(0, 0), new ScreenCell(c, fg, bg));
 			anim.addFrame(sprite);
 		}
-		_blueprints.Add(key, new LevelElementBlueprint(name, anim, blocking, depth));
 		_blueprints.Add(key, new LevelElementBlueprint(name, anim, blocking, depth));
 	}
 
@@ -142,9 +126,6 @@ class Level
 
 	public Level()
 	{
-		Layers = new LevelLayer[3];
-		_size = new Vec2(0, 0);
-		_relativeCenter = new Vec2(0, 0);
 		Layers = new LevelLayer[3];
 		_size = new Vec2(0, 0);
 		_relativeCenter = new Vec2(0, 0);
@@ -216,7 +197,6 @@ class Level
 						element.Name = blueprint.Name;
 						element.Position = new Vec2(x, y); // Position in the level grid
 						element.SetDepth(blueprint.Depth);
-						element.SetDepth(blueprint.Depth);
 
 						//offset animation on creation
 						Animation animation = blueprint.Animation.Clone();
@@ -224,7 +204,6 @@ class Level
 
 						element.Animations = new Dictionary<string, Animation> { { Entity.AnimDefault, animation } };
 
-						Layers[blueprint.Depth].Elements[x,y] = element;
 						Layers[blueprint.Depth].Elements[x,y] = element;
 					}
 				}
@@ -293,11 +272,6 @@ public class LevelLayer
 			{
 				continue;
 			}
-			//skip non-existing elements
-			if (element == null)
-			{
-				continue;
-			}
 			// Get the element's current sprite. This is dynamic and will get the correct
 			// frame if the element is animated.
 			Sprite? elementSprite = element.GetSprite();
@@ -319,12 +293,10 @@ public class LevelLayer
 
 						// Draw the cell onto the target sprite. The WriteCell method handles boundary checks.
 						targetsprite.WriteCell(new Vec2(targetX, targetY), elementSprite.Data[y, x]);
-						targetsprite.WriteCell(new Vec2(targetX, targetY), elementSprite.Data[y, x]);
 					}
 				}
 			}
 		}
-		Sprite = targetsprite;
 		Sprite = targetsprite;
 	}
 }
