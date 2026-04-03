@@ -114,11 +114,7 @@ public static class BlueprintManager
 }
 
 // Represents a level/room in the game, composed of various LevelElements organized into layers.
-<<<<<<< Updated upstream
 class Level
-=======
-public class Level
->>>>>>> Stashed changes
 {
 	public LevelLayer[] Layers;
 	public static readonly string[] LayerNames = ["Bottom", "Mid", "Top"];
