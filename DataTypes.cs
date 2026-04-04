@@ -405,3 +405,19 @@ public static class AnimRandom
         return _random.Next(min, max);
     }
 }
+
+public static class CharSet
+{
+    public static String Numbers = "0123456789";
+}
+
+public static class Randomizer
+{
+    //for randomizing animations
+	private static Random _random = new Random();
+
+    public static Random R()
+    {
+        return _random;
+    }
+}

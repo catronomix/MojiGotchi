@@ -23,6 +23,15 @@ public static class BlueprintManager
 {
 	private static readonly Dictionary<char, LevelElementBlueprint> _blueprints = new();
 
+	public static int NumItems
+	{
+		get
+		{
+			return _blueprints.Count;
+		}
+	}
+
+
 
 	// Initializes all the blueprints for the game. This should be called once at startup.
 	public static void Initialize()
@@ -95,6 +104,46 @@ public static class BlueprintManager
 		_blueprints.TryGetValue(key, out var blueprint);
 		return blueprint;
 	}
+
+	public static LevelElement? GetElement(char key, Vec2 pos)
+	{
+		LevelElementBlueprint? blueprint = GetBlueprint(key);
+		if (blueprint != null)
+		{
+			var element = new LevelElement(blueprint.IsBlocking);
+			element.Name = blueprint.Name;
+			element.Position = new Vec2(pos.X, pos.Y); // Position in the level grid
+			element.SetDepth(blueprint.Depth);
+
+			//offset animation on creation
+			Animation animation = blueprint.Animation.Clone();
+			animation.OffsetTime((float)Randomizer.R().NextDouble()*1000.0f);
+
+			element.Animations = new Dictionary<string, Animation> { { Entity.AnimDefault, animation } };
+			return element;
+		}
+		return null;
+	}
+
+	public static Dictionary<char, LevelElement> GetBlueprintElements(int start = 0, int count = -1)
+	{
+		var result = new Dictionary<char, LevelElement>();
+		var keys = _blueprints.Keys.ToList();
+
+		int actualCount = count == -1 ? keys.Count - start : count;
+		int end = Math.Min(start + actualCount, keys.Count);
+
+		for (int i = start; i < end; i++)
+		{
+			char key = keys[i];
+			var bp = _blueprints[key];
+			var element = new LevelElement(bp.IsBlocking, bp.Depth);
+			element.Name = bp.Name;
+			element.Animations = new Dictionary<string, Animation> { { Entity.AnimDefault, bp.Animation } };
+			result.Add(key, element);
+		}
+		return result;
+	}
 }
 
 // Represents a level/room in the game, composed of various LevelElements organized into layers.
@@ -121,9 +170,6 @@ class Level
 		}
 	}
 
-	//for randomizing animations
-	Random randomizer = new Random();
-
 	public Level()
 	{
 		Layers = new LevelLayer[3];
@@ -137,7 +183,6 @@ class Level
 		if (File.Exists(filePath))
 		{
 			DebugLogger.Log($"Level file exists: {filePath}");
-			Random randomBorder = new Random();
 			using var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
 			using var reader = new StreamReader(stream);
 			List<string> lines = reader.ReadToEnd().Split('\n').ToList();
@@ -148,8 +193,8 @@ class Level
 			{
 				for (int j = 0; j < borderh; j++)
 				{
-					string pre = randomBorder.Next(10) > 0 ? "B" : ",";
-					string post = randomBorder.Next(10) > 0 ? "B" : ",";
+					string pre = Randomizer.R().Next(10) > 0 ? "B" : ",";
+					string post = Randomizer.R().Next(10) > 0 ? "B" : ",";
 					lines[i] = pre + lines[i] + post;
 				}
 			}
@@ -161,7 +206,7 @@ class Level
 				string emptyline = "";
 				for (int j = 0; j < lines[0].Length; j++)
 				{
-					emptyline += randomBorder.Next(10) > 0 ? "B" : ",";
+					emptyline += Randomizer.R().Next(10) > 0 ? "B" : ",";
 				}
 				lines.Insert(0, emptyline);
 				lines.Add(emptyline);
@@ -188,23 +233,10 @@ class Level
 				for (int x = 0; x < lines[y].Length; x++)
 				{
 					char key = lines[y][x];
-					if (key == '.') continue; // dots are empty/transparent
-
-					LevelElementBlueprint? blueprint = BlueprintManager.GetBlueprint(key);
-					if (blueprint != null)
+					LevelElement? element = BlueprintManager.GetElement(key, new Vec2(x,y));
+					if (element != null)
 					{
-						var element = new LevelElement(blueprint.IsBlocking);
-						element.Name = blueprint.Name;
-						element.Position = new Vec2(x, y); // Position in the level grid
-						element.SetDepth(blueprint.Depth);
-
-						//offset animation on creation
-						Animation animation = blueprint.Animation.Clone();
-						animation.OffsetTime((float)randomizer.NextDouble()*1000.0f);
-
-						element.Animations = new Dictionary<string, Animation> { { Entity.AnimDefault, animation } };
-
-						Layers[blueprint.Depth].Elements[x,y] = element;
+						Layers[element.Depth].Elements[x,y] = element;
 					}
 				}
 			}

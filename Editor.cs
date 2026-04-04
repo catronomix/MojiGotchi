@@ -1,7 +1,5 @@
 namespace MojiGotchi;
 
-
-
 public enum Focus
 {
 	MENU,
@@ -10,13 +8,26 @@ public enum Focus
 	MODAL
 }
 
+public enum EditingMode
+{
+	DISABLED,
+	INSERTSINGLE,
+	INSERTRECTSTART,
+	INSERTRECTEND,
+	FILL,
+	DELETE
+}
+
 class Editor : Game
 {
 	//have a cursor
 	private Cursor? _cursor;
-	private bool _editingmode;
+	private EditingMode _editingmode;
 	protected EditorHelp _editorHelp; // New field for editor-specific help modal
 	private LevelElement? _selectedElement;
+
+	//have a blueprint bar
+	BlueprintBar _blueprintBar;
 
 	//be able to focus controls
 	private Focus _focus;
@@ -55,6 +66,9 @@ class Editor : Game
 		//has cursor
 		_cursor = new Cursor();
 		_selectedElement = null;
+
+		//has blueprint bar
+		_blueprintBar = new BlueprintBar();
         
 		BlueprintManager.Initialize(); // Initialize blueprints before loading a level
 		_level = new Level(); // This is now empty, we need to load a level
@@ -67,7 +81,7 @@ class Editor : Game
 		// Call CheckWindow once at the end of the constructor to ensure all
 		// dimensions are correctly set for the first render.
 		CheckWindow(true);
-		_editingmode = false;
+		_editingmode = EditingMode.DISABLED;
 	}
 
 	public new bool Step()
@@ -158,9 +172,14 @@ class Editor : Game
 					case ConsoleKey.Escape:
 						_menu.Enable();
 						_focus = Focus.MENU;
-						_editingmode = false;
+						_editingmode = EditingMode.DISABLED;
 						_persistentStatus = LM.Get("status_welcome_editor"); // Welcome
 						break;
+				}
+				//blueprint bar
+				if(CharSet.Numbers.Contains(key.KeyChar))
+				{
+					//BlueprintBar.Select(key.KeyChar)
 				}
 			}
 			else if (_currentModal != null) //modal is active
@@ -180,7 +199,7 @@ class Editor : Game
 
 	void DrawCursor()
 	{
-		if (_cursor != null && _editingmode == true)
+		if (_cursor != null && _editingmode != EditingMode.DISABLED)
 		{
 			Sprite? cursorSprite = _cursor.GetSprite(); // Capture the sprite once
 			if (cursorSprite != null)
@@ -196,7 +215,7 @@ class Editor : Game
 
 	private void CursorInfo()
 	{
-		if (_cursor != null && _editingmode == true)
+		if (_cursor != null && _editingmode != EditingMode.DISABLED)
 		{
 			Vec2 worldpos = Vec2.Add(_cursor.Position, _level.RelativeCenter);
 			_persistentStatus = "";
@@ -224,6 +243,17 @@ class Editor : Game
 			int glyphx = _statusBgRect.RelativeCenter.X - _persistentStatus.Length / 2 + 1;
 			_renderer.DrawSprite(_selectedElement.GetSprite(), _statusBgRect.Pos.Sum(glyphx, 1));
 		}
+
+		if (_editingmode > 0 && _editingmode < EditingMode.DELETE)
+		{
+			Sprite barsprite = _blueprintBar.GetSprite();
+			if (barsprite != null)
+			{
+				int xpos = _menuWidth + _viewport.RelativeCenter.X -barsprite.Size.X / 2;
+				int ypos = _viewport.Bottom - 2;
+				_renderer.DrawSprite(barsprite, new Vec2(xpos, ypos));
+			}
+		}
 	}
 
 	//editor actions
@@ -250,7 +280,7 @@ class Editor : Game
 				logic = (game) =>
 				{
 					Editor editor = (Editor)game; // Cast to Editor
-					_editingmode = true;
+					_editingmode = EditingMode.INSERTSINGLE;
 					editor._menu.Disable();
 					editor._focus = Focus.CURSOR;
 				};
@@ -271,7 +301,6 @@ class Editor : Game
 					editor._menu.Disable(); // Use editor._menu
 				};
 				break;
-			
 			default:
 				logic = (game) => { }; // Default action does nothing, already Action<Game>
 				break;
@@ -280,7 +309,7 @@ class Editor : Game
 	}
 }
 
-public class Cursor: Entity
+class Cursor: Entity
 {
     
     //constructor
@@ -292,7 +321,69 @@ public class Cursor: Entity
     }
 }
 
-public class EditorHelp: Modal
+class BlueprintBar
+{
+	private Dictionary<char, LevelElement> _elements;
+	public LevelElement? _selectedElement;
+	public char _selectedChar;
+	private const int _numSlots = 9; //length of bar in number of slots
+	private int _selectedSlot;
+
+	//graphics
+	private Sprite _sprite;
+
+	internal BlueprintBar()
+	{
+		_elements = new();
+		_selectedElement = null;
+		_selectedChar = '.';
+		_selectedSlot = -1;
+		_sprite = new Sprite(new Vec2(_numSlots, 1));
+		Update();
+	}
+
+	void Update(int start = 0)
+	{
+		_elements = BlueprintManager.GetBlueprintElements(start, _numSlots);
+		int i = 0;
+		foreach (var entry in _elements)
+		{
+			var sprite = entry.Value.GetSprite();
+			if (sprite != null){
+				ScreenCell cell = sprite.Data[0,0];
+				_sprite.Data[i,0] = cell;
+			}
+		}
+	}
+
+	public Sprite GetSprite()
+	{
+		return _sprite;
+	}
+
+	void NextRow(){
+		int start = Math.Clamp(_selectedSlot + _numSlots, 0, BlueprintManager.NumItems);
+		Update(start);
+	}
+
+	void PrevRow(){
+		int start = Math.Clamp(_selectedSlot - _numSlots, 0, BlueprintManager.NumItems);
+		Update(start);
+	}
+
+	void Select(char key) //key here is numeric index of the blueprint bar
+	{
+		int index = (int)char.GetNumericValue(key) - 1;
+		if (index >= 0 && index < _elements.Count)
+		{
+			var entry = _elements.ElementAt(index);
+			_selectedChar = entry.Key;
+			_selectedElement = entry.Value;
+		}
+	}
+}
+
+class EditorHelp: Modal
 {
 	private string _helpText = LM.Get("editor_helptext");
 
