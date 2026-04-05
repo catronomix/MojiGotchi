@@ -336,7 +336,7 @@ class Game
 		// Draw persistent status on line 2.
 		// The ANSI codes embedded in _persistentStatus will handle coloring.
 		int persistentY = _statusBgRect.Pos.Y + spacing;
-		int persistentX = _statusBgRect.Pos.X + _statusBgRect.Width / 2 - _persistentStatus.Length / 2;
+		int persistentX = _statusBgRect.AbsCenter.X - _persistentStatus.Length / 2;
 		_renderer.DrawText(_persistentStatus, new Vec2(persistentX, persistentY), Color.White);
 
 		// Draw transient status on line 4.

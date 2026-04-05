@@ -106,7 +106,7 @@ class Editor : Game
 		DrawLevelLayer(_level.Layers[0]);
 		DrawLevelLayer(_level.Layers[1]);
 		DrawLevelLayer(_level.Layers[2]);
-		DrawStatus(1);
+		DrawStatus();
 		DrawCursor();
 		DrawGlyphs();
 		_renderer.RenderScreen();
@@ -117,29 +117,85 @@ class Editor : Game
 		return _isRunning;
 	}
 
+	new void DrawStatus(int spacing = 1){
+		if (_editingmode > 0){ //when editor is active
+			String persistentstring = LM.Get("selected")+" [ ] | ";
+
+			persistentstring += LM.Get("editor_editmode")+": ";
+			if (_editingmode == EditingMode.INSERTSINGLE){
+				persistentstring += LM.Get("editor_editmode_single");
+			}
+			else if(_editingmode == EditingMode.INSERTRECTSTART || _editingmode == EditingMode.INSERTRECTEND){
+				persistentstring += LM.Get("editor_editmode_rect");
+			}
+			else if(_editingmode == EditingMode.FILL){
+				persistentstring += LM.Get("editor_editmode_fill");
+			}
+			else if(_editingmode == EditingMode.DELETE){
+				persistentstring += LM.Get("editor_editmode_delete");
+			}
+			persistentstring += "| "+ LM.Get("editor_activelayer") + ": "+ Level.LayerNames[_activeLayer];
+
+			_persistentStatus = persistentstring;
+		}
+		//rest of game status
+		base.DrawStatus(spacing);
+	}
+
+	private void DrawGlyphs()
+	{
+		if (_editingmode != EditingMode.DISABLED && _selectedElement != null)
+		{
+			int glyphx = _statusBgRect.RelativeCenter.X - _transientStatus.Length / 2 + 1;
+			_renderer.DrawSprite(_selectedElement.GetSprite(), _statusBgRect.Pos.Sum(glyphx, 2));
+		}
+
+		if (_editingmode > 0 && _editingmode < EditingMode.DELETE)
+		{
+			Sprite barsprite = _blueprintBar.GetSprite();
+			if (barsprite != null)
+			{
+				int xpos = _menuWidth + _viewport.RelativeCenter.X -barsprite.Size.X / 2;
+				int ypos = _viewport.Bottom - 3;
+				_renderer.DrawSprite(barsprite, new Vec2(xpos, ypos));
+			}
+			if (_blueprintBar.SelectedElement != null)
+			{
+				int xpos = _statusBgRect.Left + _statusBgRect.RelativeCenter.X - _persistentStatus.Length / 2 + LM.Get("selected").Length -3;
+				int ypos = _statusBgRect.Top + 1;
+				_renderer.DrawSprite(_blueprintBar.SelectedElement.GetSprite(), new Vec2(xpos, ypos));
+			}
+		}
+		
+	}
+	
+
 	new void HandleInput()
 	{
 		if (Console.KeyAvailable)
 		{
 			ConsoleKeyInfo key = Console.ReadKey(true);
+			while(Console.KeyAvailable){
+				key = Console.ReadKey(true);
+			}
 			if (_menu.Enabled) //menu is active
 			{
-				switch (key.Key)
+				switch (key.Key, key.KeyChar)
 				{
-					case ConsoleKey.UpArrow:
+					case (ConsoleKey.UpArrow, _):
 						//menu selection up
 						_menu.SelectUp();
 						break;
-					case ConsoleKey.DownArrow:
+					case (ConsoleKey.DownArrow, _):
 						//menu selection down
 						_menu.SelectDown();
 						break;
-					case ConsoleKey.Enter:
+					case (ConsoleKey.Enter, _):
 						//confirm menu selection
 						GameAction action = _menu.MenuItems[_menu.SelectedIndex].Action;
 						action.Use(this);
 						break;
-					case ConsoleKey.Escape:
+					case (ConsoleKey.Escape, _):
 						//close any modal if modal is open
 						CloseModal();
 						break;
@@ -149,37 +205,46 @@ class Editor : Game
 			}
 			else if (_cursor != null && _focus == Focus.CURSOR) //cursor is active
 			{
-				switch (key.Key)
+				switch (key.Key, key.KeyChar)
 				{
-					case ConsoleKey.UpArrow:
+					case (ConsoleKey.UpArrow, _):
 						//cursor up
 						_cursor.Move(new Vec2(0, -1));
 						CursorInfo();
 						break;
-					case ConsoleKey.DownArrow:
+					case (ConsoleKey.DownArrow, _):
 						//cursor down
 						_cursor.Move(new Vec2(0, 1));
 						CursorInfo();
 						break;
-					case ConsoleKey.LeftArrow:
+					case (ConsoleKey.LeftArrow, _):
 						//cursor left
 						_cursor.Move(new Vec2(-1, 0));
 						CursorInfo();
 						break;
-					case ConsoleKey.RightArrow:
+					case (ConsoleKey.RightArrow, _):
 						//cursor right
 						_cursor.Move(new Vec2(1, 0));
 						CursorInfo();
 						break;
-					case ConsoleKey.Enter:
+					case (ConsoleKey.Spacebar, _):
 						//run cursor action
 						CursorAction();
 						break;
-					case ConsoleKey.Escape:
+					case (ConsoleKey.Escape, _):
 						_menu.Enable();
 						_focus = Focus.MENU;
 						_editingmode = EditingMode.DISABLED;
 						_persistentStatus = LM.Get("status_welcome_editor"); // Welcome
+						break;
+					case (_ , '['):
+						_blueprintBar.NextRow();
+						break;
+					case (_ , ']'):
+						_blueprintBar.PrevRow();
+						break;
+					case (ConsoleKey.Tab, _):
+						ChangeActiveLayer();
 						break;
 					default:
 						break;
@@ -245,40 +310,20 @@ class Editor : Game
 		if (_cursor != null && _editingmode != EditingMode.DISABLED)
 		{
 			Vec2 worldpos = Vec2.Add(_cursor.Position, _level.RelativeCenter);
-			_persistentStatus = "";
+			SetTransientStatus("",100);
 			LevelElement? e = null;
 			for (int i = 2; i >= 0; i--) //top down
 			{
 				e = _level.Layers[i].Elements[worldpos.X, worldpos.Y];
 				if (e != null)
 				{
-					_persistentStatus = $"[ ]{LM.Get("selected")}:{e.Name.PadRight(8)}| {LM.Get("pos")}: {e.Position.ToString().PadRight(7)}| {LM.Get("layer")}: {Level.LayerNames[e.Depth].PadRight(6)} | [{(e.IsBlocking ? "X" : " ")}] {LM.Get("blocking")}";
+					SetTransientStatus($"[ ]{LM.Get("cursor")}:{e.Name.PadRight(8)}| {LM.Get("pos")}: {e.Position.ToString().PadRight(7)}| {LM.Get("layer")}: {Level.LayerNames[i].PadRight(6)} | [{(e.IsBlocking ? "X" : " ")}] {LM.Get("blocking")}", 20000);
 					_selectedElement = e;
 					return;
 				}
 				//if we find nothing
 				_persistentStatus = "";
 				_selectedElement = null;
-			}
-		}
-	}
-
-	private void DrawGlyphs()
-	{
-		if (_editingmode != EditingMode.DISABLED && _selectedElement != null)
-		{
-			int glyphx = _statusBgRect.RelativeCenter.X - _persistentStatus.Length / 2 + 1;
-			_renderer.DrawSprite(_selectedElement.GetSprite(), _statusBgRect.Pos.Sum(glyphx, 1));
-		}
-
-		if (_editingmode > 0 && _editingmode < EditingMode.DELETE)
-		{
-			Sprite barsprite = _blueprintBar.GetSprite();
-			if (barsprite != null)
-			{
-				int xpos = _menuWidth + _viewport.RelativeCenter.X -barsprite.Size.X / 2;
-				int ypos = _viewport.Bottom - 3;
-				_renderer.DrawSprite(barsprite, new Vec2(xpos, ypos));
 			}
 		}
 	}
@@ -333,6 +378,11 @@ class Editor : Game
 				break;
 		}
 		return new GameAction(type, logic);
+	}
+
+	void ChangeActiveLayer()
+	{
+		_activeLayer = (_activeLayer + 1) % 3;
 	}
 }
 

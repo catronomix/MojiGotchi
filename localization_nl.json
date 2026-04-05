@@ -33,7 +33,13 @@
   "editor_menu_save": "Opslaan",
   "editor_menu_edit": "Bewerken",
   "editor_helptext": "EDITOR HELP PAGINA\n------------------\n\nNog in te vullen.",
+  "editor_editmode": "Bewerkmodus",
+  "editor_editmode_single": "enkel",
+  "editor_editmode_rect": "rechthoek",
+  "editor_editmode_fill": "vullen",
+  "editor_editmode_delete": "verwijderen",
   "selected": "selectie",
+  "cursor": "cursor",
   "pos": "pos",
   "layer": "laag",
   "blocking": "solide"

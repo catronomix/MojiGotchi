@@ -33,7 +33,13 @@
   "editor_menu_save": "Save",
   "editor_menu_edit": "Edit",
   "editor_helptext": "EDITOR HELP PAGE\n------------------\n\nHelp text will appear here.",
+  "editor_editmode": "Edit mode",
+  "editor_editmode_single": "single",
+  "editor_editmode_rect": "rectangle",
+  "editor_editmode_fill": "fill",
+  "editor_editmode_delete": "delete",
   "selected": "selected",
+  "cursor": "cursor",
   "pos": "pos",
   "layer": "layer",
   "blocking": "blocking"

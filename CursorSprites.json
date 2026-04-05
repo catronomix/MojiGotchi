@@ -7,6 +7,13 @@
     "Frames": [
       {
         "cells": [ 
+          { "char": "\u0000", "fg": "Blue", "bg": "Grey" }, { "char": "\u0000", "fg": "Blue", "bg": "Grey" }, { "char": "\u0000", "fg": "Blue", "bg": "Grey" },
+          { "char": "\u0000", "fg": "Blue", "bg": "Gray" }, { "char": "\u0000", "fg": "Black", "bg": "Black" }, { "char": "\u0000", "fg": "Blue", "bg": "Grey" },
+          { "char": "\u0000", "fg": "Blue", "bg": "Grey" }, { "char": "\u0000", "fg": "Blue", "bg": "Grey" }, { "char": "\u0000", "fg": "Blue", "bg": "Grey" }
+        ]
+      },
+      {
+        "cells": [ 
           { "char": "╔", "fg": "Blue", "bg": "Grey" }, { "char": "═", "fg": "Blue", "bg": "Grey" }, { "char": "╗", "fg": "Blue", "bg": "Grey" },
           { "char": "║", "fg": "Blue", "bg": "Gray" }, { "char": "\u0000", "fg": "Black", "bg": "Black" }, { "char": "║", "fg": "Blue", "bg": "Grey" },
           { "char": "╚", "fg": "Blue", "bg": "Grey" }, { "char": "═", "fg": "Blue", "bg": "Grey" }, { "char": "╝", "fg": "Blue", "bg": "Grey" }
@@ -44,19 +51,19 @@
     "Animations": [
       {
         "state": "DEFAULT",
-        "frames": [0]
+        "frames": [0,1]
       },
       {
         "state": "SELECT",
-        "frames": [1,2]
+        "frames": [0,2,0,3]
       },
       {
         "state": "DELETE",
-        "frames": [3,4]
+        "frames": [0,4,0,5]
       },
       {
         "state": "ENTITY",
-        "frames": [0]
+        "frames": [0,1]
       }
     ]
   }
