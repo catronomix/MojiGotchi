@@ -177,6 +177,17 @@ class Level
 		_relativeCenter = new Vec2(0, 0);
 	}
 
+	public void SetCell(char key, Vec2 pos, int depth = -1)
+	{
+		LevelElement? element = BlueprintManager.GetElement(key, pos);
+		if (element != null)
+		{	
+			element.Position = pos;
+			LevelLayer layer = depth == -1 ? Layers[element.Depth] : Layers[depth];
+			layer.Elements[pos.X, pos.Y] = element;
+		}
+	}
+
 	public void LoadFromFile(string filePath, int borderv = 10, int borderh = 30)
 	{
 		DebugLogger.Log($"LoadFromFile called with path: {filePath}");
@@ -233,11 +244,7 @@ class Level
 				for (int x = 0; x < lines[y].Length; x++)
 				{
 					char key = lines[y][x];
-					LevelElement? element = BlueprintManager.GetElement(key, new Vec2(x,y));
-					if (element != null)
-					{
-						Layers[element.Depth].Elements[x,y] = element;
-					}
+					SetCell(key, new Vec2(x, y));
 				}
 			}
 			//update world origin
@@ -270,7 +277,7 @@ class Level
 
 public class LevelLayer
 {
-	public LevelElement[,] Elements { get; private set; }
+	public LevelElement[,] Elements { get; set; }
 	public string LayerName { get; private set; }
 	public Sprite? Sprite { get; private set; }
 	public int Depth { get; private set; }

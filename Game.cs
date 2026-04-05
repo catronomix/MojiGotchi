@@ -13,7 +13,7 @@ class Game
 	// Declare Rect objects as instance fields to cache them
 	protected Rect _menuBgRect;
 	protected Rect _statusBgRect;
-	protected SimpleRect _viewport;
+	protected Rect _viewport;
 
 
 	// Set area sizes
@@ -120,10 +120,10 @@ class Game
 		//update camera before drawing game
 		_camera.UpdateCamera();
 
-		DrawLevelLayer(_level.Layers[0]);
+		DrawLevelLayer(_level.Layers[0], true);
 		DrawPet();
-		DrawLevelLayer(_level.Layers[1]);
-		DrawLevelLayer(_level.Layers[2]);
+		DrawLevelLayer(_level.Layers[1], true);
+		DrawLevelLayer(_level.Layers[2], true);
 		DrawPetBubble();
 		DrawStatus();
 		_renderer.RenderScreen();
@@ -246,6 +246,8 @@ class Game
 		// make sprites
 		Sprite menuBgSprite = _menuBgRect.GetSprite();
 		Sprite statusBgSprite = _statusBgRect.GetSprite();
+		Sprite viewportSprite = _viewport.GetSprite();
+
 		
 		//check if modal is active
 		if (_currentModal != null)
@@ -256,6 +258,7 @@ class Game
 		
 		_renderer.DrawSprite(menuBgSprite, _menuBgRect.Pos);
 		_renderer.DrawSprite(statusBgSprite, _statusBgRect.Pos);
+		_renderer.DrawSprite(viewportSprite, _viewport.Pos);
 		
 	}
 

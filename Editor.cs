@@ -25,6 +25,7 @@ class Editor : Game
 	private EditingMode _editingmode;
 	protected EditorHelp _editorHelp; // New field for editor-specific help modal
 	private LevelElement? _selectedElement;
+	private int _activeLayer;
 
 	//have a blueprint bar
 	BlueprintBar _blueprintBar;
@@ -60,15 +61,18 @@ class Editor : Game
 		_menu.AddItem(LM.Get("menu_help"), SetAction(ActionType.EDITOR_HELP));
 		_menu.AddItem(LM.Get("menu_quit"), SetAction(ActionType.EDITOR_QUIT));
 
-
 		_menu.SelectFirstEnabled();
 		
 		//has cursor
 		_cursor = new Cursor();
 		_selectedElement = null;
+		_focus = Focus.MENU;
 
 		//has blueprint bar
 		_blueprintBar = new BlueprintBar();
+
+		//set active layer
+		_activeLayer = 1;
         
 		BlueprintManager.Initialize(); // Initialize blueprints before loading a level
 		_level = new Level(); // This is now empty, we need to load a level
@@ -167,7 +171,9 @@ class Editor : Game
 						_cursor.Move(new Vec2(1, 0));
 						CursorInfo();
 						break;
-					default:
+					case ConsoleKey.Enter:
+						//run cursor action
+						CursorAction();
 						break;
 					case ConsoleKey.Escape:
 						_menu.Enable();
@@ -175,11 +181,13 @@ class Editor : Game
 						_editingmode = EditingMode.DISABLED;
 						_persistentStatus = LM.Get("status_welcome_editor"); // Welcome
 						break;
+					default:
+						break;
 				}
 				//blueprint bar
 				if(CharSet.Numbers.Contains(key.KeyChar))
 				{
-					//BlueprintBar.Select(key.KeyChar)
+					_blueprintBar.SelectElement(key.KeyChar);
 				}
 			}
 			else if (_currentModal != null) //modal is active
@@ -213,6 +221,25 @@ class Editor : Game
 		}
 	}
 
+	private void CursorAction()
+	{
+		switch (_editingmode)
+		{
+			case EditingMode.INSERTSINGLE:
+				if (_blueprintBar.SelectedElement != null && _cursor != null)
+				{
+					//set element on cursor
+					Vec2 targetpos = Vec2.Add(_cursor.Position, _level.RelativeCenter);
+					_level.SetCell(_blueprintBar.SelectedChar, targetpos, _activeLayer);
+					DebugLogger.Log($"CursorAction: SetCell called, element at grid: {_level.Layers[_activeLayer].Elements[targetpos.X, targetpos.Y]?.Name ?? "null"}");
+					_level.Layers[_activeLayer].UpdateSprite();
+				}
+				break;
+			default:
+				break;
+		}
+	}
+
 	private void CursorInfo()
 	{
 		if (_cursor != null && _editingmode != EditingMode.DISABLED)
@@ -238,7 +265,7 @@ class Editor : Game
 
 	private void DrawGlyphs()
 	{
-		if (_selectedElement != null)
+		if (_editingmode != EditingMode.DISABLED && _selectedElement != null)
 		{
 			int glyphx = _statusBgRect.RelativeCenter.X - _persistentStatus.Length / 2 + 1;
 			_renderer.DrawSprite(_selectedElement.GetSprite(), _statusBgRect.Pos.Sum(glyphx, 1));
@@ -250,7 +277,7 @@ class Editor : Game
 			if (barsprite != null)
 			{
 				int xpos = _menuWidth + _viewport.RelativeCenter.X -barsprite.Size.X / 2;
-				int ypos = _viewport.Bottom - 2;
+				int ypos = _viewport.Bottom - 3;
 				_renderer.DrawSprite(barsprite, new Vec2(xpos, ypos));
 			}
 		}
@@ -324,10 +351,12 @@ class Cursor: Entity
 class BlueprintBar
 {
 	private Dictionary<char, LevelElement> _elements;
-	public LevelElement? _selectedElement;
-	public char _selectedChar;
+	public LevelElement? SelectedElement { get; private set;}
+	public char SelectedChar { get; private set;}
 	private const int _numSlots = 9; //length of bar in number of slots
 	private int _selectedSlot;
+
+	private ScreenCell _bgCell;
 
 	//graphics
 	private Sprite _sprite;
@@ -335,10 +364,19 @@ class BlueprintBar
 	internal BlueprintBar()
 	{
 		_elements = new();
-		_selectedElement = null;
-		_selectedChar = '.';
+		SelectedElement = null;
+		SelectedChar = '.';
 		_selectedSlot = -1;
-		_sprite = new Sprite(new Vec2(_numSlots, 1));
+		_sprite = new Sprite(new Vec2(_numSlots*2+2, 3));
+		_bgCell = new ScreenCell(' ', Color.DarkRed, Color.LightGray);
+		//prepopulate sprite background
+		for (int i = 0; i < _sprite.Size.X; i++)
+		{
+			for (int j = 0; j < _sprite.Size.Y; j++)
+			{
+				_sprite.WriteCell(new Vec2(i, j), _bgCell);
+			}
+		}
 		Update();
 	}
 
@@ -349,37 +387,57 @@ class BlueprintBar
 		foreach (var entry in _elements)
 		{
 			var sprite = entry.Value.GetSprite();
-			if (sprite != null){
+			if (sprite != null)
+			{
 				ScreenCell cell = sprite.Data[0,0];
-				_sprite.Data[i,0] = cell;
+				_sprite.Data[1,i*2+1] = cell;
+				i++;
+			}
+			else
+			{
+				_sprite.Data[1,i*2+1] = _bgCell;
 			}
 		}
 	}
+	
 
 	public Sprite GetSprite()
 	{
 		return _sprite;
 	}
 
-	void NextRow(){
+	public void NextRow(){
 		int start = Math.Clamp(_selectedSlot + _numSlots, 0, BlueprintManager.NumItems);
 		Update(start);
 	}
 
-	void PrevRow(){
+	public void PrevRow(){
 		int start = Math.Clamp(_selectedSlot - _numSlots, 0, BlueprintManager.NumItems);
 		Update(start);
 	}
 
-	void Select(char key) //key here is numeric index of the blueprint bar
+	public LevelElement? SelectElement(char key) //key here is numeric index of the blueprint bar
 	{
 		int index = (int)char.GetNumericValue(key) - 1;
 		if (index >= 0 && index < _elements.Count)
 		{
 			var entry = _elements.ElementAt(index);
-			_selectedChar = entry.Key;
-			_selectedElement = entry.Value;
+			SelectedChar = entry.Key;
+			SelectedElement = entry.Value;
 		}
+		//update selection marker
+		for (int i = 0; i < _numSlots; i++)
+		{
+			if (i == index)
+			{
+				_sprite.Data[0,i*2+1].Character = 'v';
+				_sprite.Data[2,i*2+1].Character = '^';
+			}else{
+				_sprite.Data[0,i*2+1].Character = ' ';
+				_sprite.Data[2,i*2+1].Character = ' ';
+			}
+		}
+		return SelectedElement;
 	}
 }
 
