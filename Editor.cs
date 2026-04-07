@@ -1,3 +1,5 @@
+using System.Data;
+
 namespace MojiGotchi;
 
 public enum Focus
@@ -25,7 +27,7 @@ class Editor : Game
 	private EditingMode _editingmode;
 	protected EditorHelp _editorHelp; // New field for editor-specific help modal
 	private LevelElement? _selectedElement;
-	private int _activeLayer;
+	private LayerBar _layerbar;
 
 	//have a blueprint bar
 	BlueprintBar _blueprintBar;
@@ -72,18 +74,21 @@ class Editor : Game
 		_blueprintBar = new BlueprintBar();
 
 		//set active layer
-		_activeLayer = 1;
-        
+		_layerbar = new LayerBar(_level.Layers.Length, new Vec2(-5, 3).Sum(_viewport.Right, _viewport.Top), new Vec2(3, 5));
+		_layerbar.Update();
+
 		BlueprintManager.Initialize(); // Initialize blueprints before loading a level
 		_level = new Level(); // This is now empty, we need to load a level
 		_level.LoadFromFile("level1.txt"); // Load the level from the text file
-		SimpleRect deadzone = new SimpleRect(new Vec2(-4, -2), new Vec2(8, 4));
-
-		_camera = new Camera(_level, _cursor, deadzone, _viewport); 
 
 		_persistentStatus = LM.Get("editor_status_welcome"); // Welcome
 		// Call CheckWindow once at the end of the constructor to ensure all
 		// dimensions are correctly set for the first render.
+
+		// has camera
+		SimpleRect deadzone = new SimpleRect(new Vec2(-4, -2), new Vec2(8, 4));
+		_camera = new Camera(_level, _cursor, deadzone, _viewport);
+
 		CheckWindow(true);
 		_editingmode = EditingMode.DISABLED;
 	}
@@ -117,6 +122,15 @@ class Editor : Game
 		return _isRunning;
 	}
 
+	internal new void CheckWindow(bool force = false)
+	{
+		bool resized = base.CheckWindow(force);
+		if (resized)
+		{
+			_layerbar.Pos = new Vec2(-5, 3).Sum(_viewport.Right, _viewport.Top);
+		}
+	}
+
 	new void DrawStatus(int spacing = 1){
 		if (_editingmode > 0){ //when editor is active
 			String persistentstring = LM.Get("selected")+" [ ] | ";
@@ -134,8 +148,6 @@ class Editor : Game
 			else if(_editingmode == EditingMode.DELETE){
 				persistentstring += LM.Get("editor_editmode_delete");
 			}
-			persistentstring += "| "+ LM.Get("editor_activelayer") + ": "+ Level.LayerNames[_activeLayer];
-
 			_persistentStatus = persistentstring;
 		}
 		//rest of game status
@@ -146,24 +158,31 @@ class Editor : Game
 	{
 		if (_editingmode != EditingMode.DISABLED && _selectedElement != null)
 		{
-			int glyphx = _statusBgRect.RelativeCenter.X - _transientStatus.Length / 2 + 1;
-			_renderer.DrawSprite(_selectedElement.GetSprite(), _statusBgRect.Pos.Sum(glyphx, 2));
+			//draw selection glyph
+			int xpos = _statusBgRect.RelativeCenter.X - _transientStatus.Length / 2 + 1;
+			_renderer.DrawSprite(_selectedElement.GetSprite(), _statusBgRect.Pos.Sum(xpos, 2));
 		}
 
-		if (_editingmode > 0 && _editingmode < EditingMode.DELETE)
+		if (_editingmode > 0)
 		{
 			Sprite barsprite = _blueprintBar.GetSprite();
 			if (barsprite != null)
 			{
+				// draw blueprintbar
 				int xpos = _menuWidth + _viewport.RelativeCenter.X -barsprite.Size.X / 2;
 				int ypos = _viewport.Bottom - 3;
 				_renderer.DrawSprite(barsprite, new Vec2(xpos, ypos));
 			}
 			if (_blueprintBar.SelectedElement != null)
 			{
+				//draw blueprint selection glyph
 				int xpos = _statusBgRect.Left + _statusBgRect.RelativeCenter.X - _persistentStatus.Length / 2 + LM.Get("selected").Length -3;
 				int ypos = _statusBgRect.Top + 1;
 				_renderer.DrawSprite(_blueprintBar.SelectedElement.GetSprite(), new Vec2(xpos, ypos));
+			}
+			if (_layerbar != null)
+			{
+				_renderer.DrawSprite(_layerbar.GetSprite, _layerbar.Pos);
 			}
 		}
 		
@@ -237,21 +256,29 @@ class Editor : Game
 						_editingmode = EditingMode.DISABLED;
 						_persistentStatus = LM.Get("status_welcome_editor"); // Welcome
 						break;
-					case (_ , '['):
+					case (_ , ']'):
 						_blueprintBar.NextRow();
 						break;
-					case (_ , ']'):
+					case (_ , '['):
 						_blueprintBar.PrevRow();
 						break;
 					case (ConsoleKey.Tab, _):
-						ChangeActiveLayer();
+						_layerbar.NextLayer();
 						break;
+					case (ConsoleKey.Delete, _):
+						_editingmode = EditingMode.DELETE;
+						//TODO: deactivate layerbar
+						break;						
 					default:
 						break;
 				}
 				//blueprint bar
 				if(CharSet.Numbers.Contains(key.KeyChar))
 				{
+					if (_editingmode == EditingMode.DELETE)
+					{
+						_editingmode = EditingMode.INSERTSINGLE;
+					}
 					_blueprintBar.SelectElement(key.KeyChar);
 				}
 			}
@@ -288,20 +315,27 @@ class Editor : Game
 
 	private void CursorAction()
 	{
-		switch (_editingmode)
+		if (_cursor != null)
 		{
-			case EditingMode.INSERTSINGLE:
-				if (_blueprintBar.SelectedElement != null && _cursor != null)
-				{
-					//set element on cursor
-					Vec2 targetpos = Vec2.Add(_cursor.Position, _level.RelativeCenter);
-					_level.SetCell(_blueprintBar.SelectedChar, targetpos, _activeLayer);
-					DebugLogger.Log($"CursorAction: SetCell called, element at grid: {_level.Layers[_activeLayer].Elements[targetpos.X, targetpos.Y]?.Name ?? "null"}");
-					_level.Layers[_activeLayer].UpdateSprite();
-				}
-				break;
-			default:
-				break;
+			Vec2 targetpos = Vec2.Add(_cursor.Position, _level.RelativeCenter);
+			switch (_editingmode)
+			{
+				case EditingMode.INSERTSINGLE:
+					if (_blueprintBar.SelectedElement != null)
+					{
+						//set element on cursor
+						_level.SetCell(_blueprintBar.SelectedChar, targetpos, _layerbar.ActiveLayer);
+						DebugLogger.Log($"CursorAction: SetCell called, element at grid: {_level.Layers[_layerbar.ActiveLayer].Elements[targetpos.X, targetpos.Y]?.Name ?? "null"}");
+						_level.Layers[_layerbar.ActiveLayer].UpdateSprite();
+					}
+					break;
+				case EditingMode.DELETE:
+					//delete element on cursor
+					_level.SetCell('\u0000', targetpos, _layerbar.ActiveLayer);
+					break;
+				default:
+					break;
+			}
 		}
 	}
 
@@ -378,11 +412,6 @@ class Editor : Game
 				break;
 		}
 		return new GameAction(type, logic);
-	}
-
-	void ChangeActiveLayer()
-	{
-		_activeLayer = (_activeLayer + 1) % 3;
 	}
 }
 
@@ -488,6 +517,51 @@ class BlueprintBar
 			}
 		}
 		return SelectedElement;
+	}
+}
+
+class LayerBar : Rect
+{
+	public int ActiveLayer { get; set;}
+	private int _maxLayers;
+	public new Sprite GetSprite { get; private set; }
+
+	//constructor
+	public LayerBar(int maxlayers, Vec2 pos, Vec2 size) : base(pos, size, 1, 1, Color.Black, Color.LightGray, Color.White, ' ')
+	{
+		ActiveLayer = 1;
+		_maxLayers = maxlayers;
+		GetSprite = base.GetSprite();
+	}
+
+	public void NextLayer()
+	{
+		ActiveLayer = (ActiveLayer + 1) % _maxLayers;
+		Update();
+	}
+	
+	public void PrevLayer()
+	{
+		ActiveLayer = (ActiveLayer - 1 + _maxLayers) % _maxLayers;
+		Update();
+	}
+
+	public void Update()
+	{
+		GetSprite = base.GetSprite();
+		for (int i = 0; i < _maxLayers; i++)
+		{
+			if (i == ActiveLayer)
+			{
+				GetSprite.Data[i+1,1].BgColor = Color.Yellow;
+			}
+			else
+			{
+				GetSprite.Data[i+1, 1].BgColor = Color.Black;
+			}
+			GetSprite.Data[i+1,1].Character = Level.LayerNames[i][0];
+		}
+				
 	}
 }
 

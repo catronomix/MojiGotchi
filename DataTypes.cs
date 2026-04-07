@@ -310,7 +310,7 @@ class Rect : SimpleRect // Changed to public class for broader access if needed.
     public char Character { get => _character; set { if (_character != value) { _character = value; _isDirty = true; } } }
     
 
-    private Sprite? _cachedSprite;
+    internal Sprite? _cachedSprite;
 
     public Rect(Vec2 pos, Vec2 size, int borderwidth, int borderheight, Color fgColor, Color borderBgColor, Color bgColor, char character) : base (pos, size)
     {

@@ -1,3 +1,5 @@
+using NAudio.CoreAudioApi;
+
 namespace MojiGotchi;
 
 // Defines the template for a level element. Each blueprint is mapped to a character
@@ -186,6 +188,11 @@ class Level
 			LevelLayer layer = depth == -1 ? Layers[element.Depth] : Layers[depth];
 			layer.Elements[pos.X, pos.Y] = element;
 		}
+		else
+		{
+			LevelLayer layer = depth == -1 ? Layers[0] : Layers[depth];
+			layer.Elements[pos.X, pos.Y] = null;
+		}
 	}
 
 	public void LoadFromFile(string filePath, int borderv = 10, int borderh = 30)
@@ -277,7 +284,7 @@ class Level
 
 public class LevelLayer
 {
-	public LevelElement[,] Elements { get; set; }
+	public LevelElement?[,] Elements { get; set; }
 	public string LayerName { get; private set; }
 	public Sprite? Sprite { get; private set; }
 	public int Depth { get; private set; }

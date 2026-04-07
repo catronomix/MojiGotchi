@@ -135,7 +135,7 @@ class Game
 	}
 
 	// Check if window has been resized
-	protected void CheckWindow(bool force = false)
+	protected bool CheckWindow(bool force = false)
 	{
 		Vec2 consoleSize = ConsoleHelper.GetWindowSize();
 		bool resized = false;
@@ -169,6 +169,8 @@ class Game
 			_highScores.UpdatePage(_viewport.Size);
 			_camera.UpdateCamera();
 		}
+
+		return resized;
 	}
 
 	protected void SetTransientStatus(string message, int durationMs = 5000)
