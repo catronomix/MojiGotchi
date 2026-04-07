@@ -1,4 +1,5 @@
 using System.Data;
+using System.Runtime.Intrinsics.X86;
 
 namespace MojiGotchi;
 
@@ -25,9 +26,15 @@ class Editor : Game
 	//have a cursor
 	private Cursor? _cursor;
 	private EditingMode _editingmode;
-	protected EditorHelp _editorHelp; // New field for editor-specific help modal
 	private LevelElement? _selectedElement;
+
+	//have modals
+	protected EditorHelp _editorHelp; // New field for editor-specific help modal
+
+	// have layer management
 	private LayerBar _layerbar;
+	private bool _shade;
+	private const float _shadeAmount = 0.75f;
 
 	//have a blueprint bar
 	BlueprintBar _blueprintBar;
@@ -67,15 +74,18 @@ class Editor : Game
 		
 		//has cursor
 		_cursor = new Cursor();
+		_cursor.SetAnimation("SELECT");
 		_selectedElement = null;
 		_focus = Focus.MENU;
 
 		//has blueprint bar
 		_blueprintBar = new BlueprintBar();
+		_shade = false;
 
 		//set active layer
 		_layerbar = new LayerBar(_level.Layers.Length, new Vec2(-5, 3).Sum(_viewport.Right, _viewport.Top), new Vec2(3, 5));
 		_layerbar.Update();
+
 
 		BlueprintManager.Initialize(); // Initialize blueprints before loading a level
 		_level = new Level(); // This is now empty, we need to load a level
@@ -108,9 +118,19 @@ class Editor : Game
 		//update camera before drawing editor
 		_camera.UpdateCamera();
 
-		DrawLevelLayer(_level.Layers[0]);
-		DrawLevelLayer(_level.Layers[1]);
-		DrawLevelLayer(_level.Layers[2]);
+		foreach(LevelLayer layer in _level.Layers)
+		{
+			if (layer != _level.Layers[_layerbar.ActiveLayer] && _shade)
+			{
+				DrawLevelLayer(layer, true, _shadeAmount);
+			}
+			else
+			{
+				DrawLevelLayer(layer);
+			}
+			
+		}
+
 		DrawStatus();
 		DrawCursor();
 		DrawGlyphs();
@@ -254,6 +274,7 @@ class Editor : Game
 						_menu.Enable();
 						_focus = Focus.MENU;
 						_editingmode = EditingMode.DISABLED;
+						_cursor.SetAnimation("SELECT");
 						_persistentStatus = LM.Get("status_welcome_editor"); // Welcome
 						break;
 					case (_ , ']'):
@@ -265,8 +286,13 @@ class Editor : Game
 					case (ConsoleKey.Tab, _):
 						_layerbar.NextLayer();
 						break;
+					case (_, 's'):
+						//toggle layer shading
+						_shade = !_shade;
+						break;
 					case (ConsoleKey.Delete, _):
 						_editingmode = EditingMode.DELETE;
+						_cursor.SetAnimation("DELETE");
 						//TODO: deactivate layerbar
 						break;						
 					default:
@@ -278,6 +304,7 @@ class Editor : Game
 					if (_editingmode == EditingMode.DELETE)
 					{
 						_editingmode = EditingMode.INSERTSINGLE;
+						_cursor.SetAnimation("DEFAULT");
 					}
 					_blueprintBar.SelectElement(key.KeyChar);
 				}
@@ -527,7 +554,7 @@ class LayerBar : Rect
 	public new Sprite GetSprite { get; private set; }
 
 	//constructor
-	public LayerBar(int maxlayers, Vec2 pos, Vec2 size) : base(pos, size, 1, 1, Color.Black, Color.LightGray, Color.White, ' ')
+	public LayerBar(int maxlayers, Vec2 pos, Vec2 size) : base(pos, size, 1, 1, Color.Black, Color.BabyWhite, Color.BabyWhite, ' ')
 	{
 		ActiveLayer = 1;
 		_maxLayers = maxlayers;
@@ -553,13 +580,13 @@ class LayerBar : Rect
 		{
 			if (i == ActiveLayer)
 			{
-				GetSprite.Data[i+1,1].BgColor = Color.Yellow;
+				GetSprite.Data[_maxLayers - i,1].BgColor = Color.Yellow;
 			}
 			else
 			{
-				GetSprite.Data[i+1, 1].BgColor = Color.Black;
+				GetSprite.Data[_maxLayers - i, 1].BgColor = Color.Black;
 			}
-			GetSprite.Data[i+1,1].Character = Level.LayerNames[i][0];
+			GetSprite.Data[_maxLayers - i,1].Character = Level.LayerNames[i][0];
 		}
 				
 	}

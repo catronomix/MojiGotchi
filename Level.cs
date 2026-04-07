@@ -300,7 +300,7 @@ public class LevelLayer
 	}
 
 	//draw elements to layer sprite
-	public void UpdateSprite()
+	public void UpdateSprite(float shade = 0.0f)
 	{
 		if (Elements == null)
 		{
@@ -337,8 +337,13 @@ public class LevelLayer
 						int targetX = elementPos.X + x;
 						int targetY = elementPos.Y + y;
 
+						//shade
+						ScreenCell cell = elementSprite.Data[y, x];
+						cell.BgColor = Color.Mix(cell.BgColor, Color.Black, shade);
+						cell.Color = Color.Mix(cell.Color, Color.Black, shade);
+
 						// Draw the cell onto the target sprite. The WriteCell method handles boundary checks.
-						targetsprite.WriteCell(new Vec2(targetX, targetY), elementSprite.Data[y, x]);
+						targetsprite.WriteCell(new Vec2(targetX, targetY), cell);
 					}
 				}
 			}

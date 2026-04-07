@@ -82,10 +82,18 @@ public struct Color
         }
     }
 
-
     public static bool Equals(Color a, Color b)
     {
         return a.R == b.R && a.G == b.G && a.B == b.B;
+    }
+
+    public static Color Mix(Color a, Color b, float amount)
+    {
+        amount = Math.Clamp(amount, 0f, 1f);
+        byte r = (byte)(a.R + (b.R - a.R) * amount);
+        byte g = (byte)(a.G + (b.G - a.G) * amount);
+        byte b_val = (byte)(a.B + (b.B - a.B) * amount);
+        return new Color(r, g, b_val);
     }
 }
 

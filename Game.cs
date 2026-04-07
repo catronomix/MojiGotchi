@@ -249,19 +249,18 @@ class Game
 		Sprite menuBgSprite = _menuBgRect.GetSprite();
 		Sprite statusBgSprite = _statusBgRect.GetSprite();
 		Sprite viewportSprite = _viewport.GetSprite();
-
 		
+		_renderer.DrawSprite(menuBgSprite, _menuBgRect.Pos);
+		_renderer.DrawSprite(statusBgSprite, _statusBgRect.Pos);
+		_renderer.DrawSprite(viewportSprite, _viewport.Pos);
+
 		//check if modal is active
 		if (_currentModal != null)
 		{
 			_renderer.DrawSprite(_currentModal.GetSpriteBg(), _viewport.Pos);
 			_renderer.DrawSprite(_currentModal.GetSpriteContent(), _viewport.Pos);
 		}
-		
-		_renderer.DrawSprite(menuBgSprite, _menuBgRect.Pos);
-		_renderer.DrawSprite(statusBgSprite, _statusBgRect.Pos);
-		_renderer.DrawSprite(viewportSprite, _viewport.Pos);
-		
+
 	}
 
 	protected void DrawMenuItems()
@@ -395,7 +394,7 @@ class Game
 				//keep pet from moving into solid objects
 				if (_level != null)
 				{
-					foreach(LevelElement element in _level.Layers[1].Elements)
+					foreach(LevelElement? element in _level.Layers[1].Elements)
 					{
 						if (element == null) continue; //skip empty cells
 						if (element.IsBlocking)
@@ -518,14 +517,14 @@ class Game
 		_menu.Enable();
 	}
 
-	protected void DrawLevelLayer(LevelLayer layer, bool update = true)
+	protected void DrawLevelLayer(LevelLayer layer, bool update = true, float shade = 0.0f)
 	{
 		if (_level == null || layer == null || _currentModal != null) return;
 
 		// Level.SetSprite fills the layerSprite (which is level-sized)
 		if (update)
 		{
-			layer.UpdateSprite();
+			layer.UpdateSprite(shade);
 		}		
 		Vec2 drawPos = Vec2.Subtract(_camera.GetAbsCenter(), _level.RelativeCenter);
 		_renderer.DrawSprite(layer.Sprite, drawPos, _viewport);

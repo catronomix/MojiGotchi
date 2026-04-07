@@ -166,4 +166,17 @@ class Renderer
 			}
 		}
 	}
+
+	public void Shade(Color color, float amount, SimpleRect area)
+	{
+		//offset colors of cells
+		for (int y = area.Top; y < area.Bottom; y++)
+		{
+			for (int x = area.Left; x < area.Right; x++)
+			{
+				_screenBuffer[y, x].Color = Color.Mix(_screenBuffer[y, x].Color, color, amount);
+				_screenBuffer[y,x].BgColor = Color.Mix(_screenBuffer[y, x].BgColor, color, amount);
+			}
+		}
+	}
 }

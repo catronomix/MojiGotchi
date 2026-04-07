@@ -22,7 +22,7 @@
       {
         "cells": [ 
           { "char": "╔", "fg": "Yellow", "bg": "Grey" }, { "char": "═", "fg": "Yellow", "bg": "Grey" }, { "char": "╗", "fg": "Yellow", "bg": "Grey" },
-          { "char": "║", "fg": "Yellow", "bg": "Gray" }, { "char": "\u0000", "fg": "Black", "bg": "Black" }, { "char": "║", "fg": "Yellow", "bg": "Grey" },
+          { "char": "║", "fg": "Yellow", "bg": "Grey" }, { "char": "\u0000", "fg": "Black", "bg": "Black" }, { "char": "║", "fg": "Yellow", "bg": "Grey" },
           { "char": "╚", "fg": "Yellow", "bg": "Grey" }, { "char": "═", "fg": "Yellow", "bg": "Grey" }, { "char": "╝", "fg": "Yellow", "bg": "Grey" }
         ]
       },
