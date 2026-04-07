@@ -26,6 +26,7 @@ class Editor : Game
 	//have a cursor
 	private Cursor? _cursor;
 	private EditingMode _editingmode;
+	private FillRect _editrect;
 	private LevelElement? _selectedElement;
 
 	//have modals
@@ -34,7 +35,7 @@ class Editor : Game
 	// have layer management
 	private LayerBar _layerbar;
 	private bool _shade;
-	private const float _shadeAmount = 0.75f;
+	private const float _shadeAmount = 0.66f;
 
 	//have a blueprint bar
 	BlueprintBar _blueprintBar;
@@ -62,10 +63,10 @@ class Editor : Game
 		EditorHelp _help = new EditorHelp("Editor Help", Color.DarkGray, Color.White);
 		_editorHelp = new EditorHelp("Editor Help", Color.DarkGray, Color.White); // Initialize editor-specific help
 		//editor
-		_menu.AddItem(LM.Get("editor_menu_revert"), SetAction(ActionType.EDITOR_LOAD));
-		_menu.AddItem(LM.Get("editor_menu_save"), SetAction(ActionType.EDITOR_SAVE));
 		_menu.AddItem(LM.Get("editor_menu_edit"), SetAction(ActionType.EDITOR_EDIT));
-
+		_menu.AddItem(LM.Get("editor_menu_save"), SetAction(ActionType.EDITOR_SAVE));
+		_menu.AddItem(LM.Get("editor_menu_revert"), SetAction(ActionType.EDITOR_LOAD));
+		
 		//modals
 		_menu.AddItem(LM.Get("menu_help"), SetAction(ActionType.EDITOR_HELP));
 		_menu.AddItem(LM.Get("menu_quit"), SetAction(ActionType.EDITOR_QUIT));
@@ -77,7 +78,7 @@ class Editor : Game
 		_cursor.SetAnimation("SELECT");
 		_selectedElement = null;
 		_focus = Focus.MENU;
-
+		_editrect = new FillRect(_cursor.Pos, new Vec2(0,0));
 		//has blueprint bar
 		_blueprintBar = new BlueprintBar();
 		_shade = false;
@@ -124,6 +125,15 @@ class Editor : Game
 			{
 				DrawLevelLayer(layer, true, _shadeAmount);
 			}
+			else if (layer == _level.Layers[_layerbar.ActiveLayer])
+			{
+				DrawLevelLayer(layer);
+				//draw edit rect if needed
+				if (_editingmode == EditingMode.INSERTRECTSTART && _cursor != null)
+				{
+					_renderer.DrawSprite(_editrect.GetSprite(), Vec2.Add(_editrect.Pos, _camera.GetAbsCenter()), _viewport);
+				}
+			}
 			else
 			{
 				DrawLevelLayer(layer);
@@ -152,8 +162,8 @@ class Editor : Game
 	}
 
 	new void DrawStatus(int spacing = 1){
-		if (_editingmode > 0){ //when editor is active
-			String persistentstring = LM.Get("selected")+" [ ] | ";
+		if (_editingmode > 0 && _blueprintBar.SelectedElement != null){ //when editor is active
+			String persistentstring = "[ ] " + LM.Get("selected")+": " + (_blueprintBar.SelectedElement.Name + (_blueprintBar.SelectedElement.IsBlocking ? $" ({LM.Get("blocking")})" : "")).PadRight(18) +" | ";
 
 			persistentstring += LM.Get("editor_editmode")+": ";
 			if (_editingmode == EditingMode.INSERTSINGLE){
@@ -165,10 +175,11 @@ class Editor : Game
 			else if(_editingmode == EditingMode.FILL){
 				persistentstring += LM.Get("editor_editmode_fill");
 			}
-			else if(_editingmode == EditingMode.DELETE){
-				persistentstring += LM.Get("editor_editmode_delete");
-			}
 			_persistentStatus = persistentstring;
+		}
+		else if(_editingmode == EditingMode.DELETE)
+		{
+			_persistentStatus = LM.Get("editor_editmode") + ": " + LM.Get("editor_editmode_delete");
 		}
 		//rest of game status
 		base.DrawStatus(spacing);
@@ -196,7 +207,7 @@ class Editor : Game
 			if (_blueprintBar.SelectedElement != null)
 			{
 				//draw blueprint selection glyph
-				int xpos = _statusBgRect.Left + _statusBgRect.RelativeCenter.X - _persistentStatus.Length / 2 + LM.Get("selected").Length -3;
+				int xpos = _statusBgRect.Left + _statusBgRect.RelativeCenter.X - _persistentStatus.Length / 2 +1;
 				int ypos = _statusBgRect.Top + 1;
 				_renderer.DrawSprite(_blueprintBar.SelectedElement.GetSprite(), new Vec2(xpos, ypos));
 			}
@@ -250,51 +261,75 @@ class Editor : Game
 						//cursor up
 						_cursor.Move(new Vec2(0, -1));
 						CursorInfo();
+						EditRect();
 						break;
 					case (ConsoleKey.DownArrow, _):
 						//cursor down
 						_cursor.Move(new Vec2(0, 1));
 						CursorInfo();
+						EditRect();
 						break;
 					case (ConsoleKey.LeftArrow, _):
 						//cursor left
 						_cursor.Move(new Vec2(-1, 0));
 						CursorInfo();
+						EditRect();
 						break;
 					case (ConsoleKey.RightArrow, _):
 						//cursor right
 						_cursor.Move(new Vec2(1, 0));
 						CursorInfo();
+						EditRect();
 						break;
 					case (ConsoleKey.Spacebar, _):
 						//run cursor action
 						CursorAction();
 						break;
 					case (ConsoleKey.Escape, _):
+						if (_editingmode == EditingMode.INSERTRECTSTART)
+						{
+							_editingmode = EditingMode.INSERTSINGLE;
+							_editrect.Init(_cursor.Pos);
+							_cursor.SetAnimation("DEFAULT");
+							break;
+						}
 						_menu.Enable();
 						_focus = Focus.MENU;
 						_editingmode = EditingMode.DISABLED;
 						_cursor.SetAnimation("SELECT");
-						_persistentStatus = LM.Get("status_welcome_editor"); // Welcome
+						_persistentStatus = LM.Get("editor_status_welcome"); // Welcome
+						_blueprintBar.SelectElement('0');
 						break;
 					case (_ , ']'):
+						_blueprintBar.SelectElement('0');
 						_blueprintBar.NextRow();
 						break;
 					case (_ , '['):
+						_blueprintBar.SelectElement('0');
 						_blueprintBar.PrevRow();
 						break;
 					case (ConsoleKey.Tab, _):
 						_layerbar.NextLayer();
 						break;
-					case (_, 's'):
+					case (ConsoleKey.S, _):
 						//toggle layer shading
 						_shade = !_shade;
 						break;
-					case (ConsoleKey.Delete, _):
-						_editingmode = EditingMode.DELETE;
+					case (_, '0'):
 						_cursor.SetAnimation("DELETE");
+						_blueprintBar.SelectElement('0');
+						_editingmode = EditingMode.DELETE;
 						//TODO: deactivate layerbar
-						break;						
+						break;
+					case (ConsoleKey.R, _):
+						//rectangle mode
+						if (_editingmode == EditingMode.INSERTSINGLE)
+						{
+							_editingmode = EditingMode.INSERTRECTSTART;
+							_editrect.Init(_cursor.Pos);
+							_cursor.SetAnimation("DEFAULT");
+						}
+						break;							
 					default:
 						break;
 				}
@@ -334,7 +369,7 @@ class Editor : Game
 				// 2. Calculate Top-Left based on Cursor's World Position and its Pivot (center)
 				// Cursor position (0,0) is world center.
 				// We subtract cursorSprite.Size / 2 to make (0,0) the center of the pet.
-				Vec2 drawPos = Vec2.Add(_camera.GetAbsCenter(), _cursor.Position.Sum(-1,-1));
+				Vec2 drawPos = Vec2.Add(_camera.GetAbsCenter(), _cursor.Pos.Sum(-1,-1));
 				_renderer.DrawSprite(cursorSprite, drawPos, _viewport);
 			}
 		}
@@ -344,7 +379,7 @@ class Editor : Game
 	{
 		if (_cursor != null)
 		{
-			Vec2 targetpos = Vec2.Add(_cursor.Position, _level.RelativeCenter);
+			Vec2 targetpos = Vec2.Add(_cursor.Pos, _level.RelativeCenter);
 			switch (_editingmode)
 			{
 				case EditingMode.INSERTSINGLE:
@@ -352,17 +387,60 @@ class Editor : Game
 					{
 						//set element on cursor
 						_level.SetCell(_blueprintBar.SelectedChar, targetpos, _layerbar.ActiveLayer);
-						DebugLogger.Log($"CursorAction: SetCell called, element at grid: {_level.Layers[_layerbar.ActiveLayer].Elements[targetpos.X, targetpos.Y]?.Name ?? "null"}");
+						// DebugLogger.Log($"CursorAction: SetCell called, element at grid: {_level.Layers[_layerbar.ActiveLayer].Elements[targetpos.X, targetpos.Y]?.Name ?? "null"}");
 						_level.Layers[_layerbar.ActiveLayer].UpdateSprite();
 					}
 					break;
 				case EditingMode.DELETE:
 					//delete element on cursor
 					_level.SetCell('\u0000', targetpos, _layerbar.ActiveLayer);
+					_editingmode = EditingMode.DELETE;
+					break;
+				case EditingMode.INSERTRECTSTART:
+					//insert rect end
+					_editingmode = EditingMode.INSERTRECTEND;
+					PaintRect();
 					break;
 				default:
 					break;
 			}
+			CursorInfo();
+		}
+	}
+
+	private void EditRect(){
+		if (_cursor != null && _editingmode == EditingMode.INSERTRECTSTART)
+        {
+            if(_editrect != null && _blueprintBar.SelectedElement != null)
+            {
+                Sprite? sprite = _blueprintBar.SelectedElement.GetSprite();
+                if (sprite != null)
+				{
+                    ScreenCell? cell = sprite.Data[0,0];
+    				if (cell != null)
+    				{
+    				_editrect.Update(_cursor.Pos, cell);
+    				}
+				}
+				
+			}
+		}
+	}
+
+	private void PaintRect()
+	{
+		if (_editrect != null && _editingmode == EditingMode.INSERTRECTEND && _cursor != null)
+		{
+			for (int x = 0; x < _editrect.Size.X; x++)
+			{
+				for (int y = 0; y < _editrect.Size.Y; y++)
+				{
+					_level.SetCell(_blueprintBar.SelectedChar, Vec2.Add(_editrect.Pos.Sum(x, y), _level.RelativeCenter), _layerbar.ActiveLayer);
+				}
+			}
+			_level.Layers[_layerbar.ActiveLayer].UpdateSprite();
+			_editrect.Init(_cursor.Pos);
+			_editingmode = EditingMode.INSERTSINGLE;
 		}
 	}
 
@@ -370,7 +448,7 @@ class Editor : Game
 	{
 		if (_cursor != null && _editingmode != EditingMode.DISABLED)
 		{
-			Vec2 worldpos = Vec2.Add(_cursor.Position, _level.RelativeCenter);
+			Vec2 worldpos = Vec2.Add(_cursor.Pos, _level.RelativeCenter);
 			SetTransientStatus("",100);
 			LevelElement? e = null;
 			for (int i = 2; i >= 0; i--) //top down
@@ -378,12 +456,12 @@ class Editor : Game
 				e = _level.Layers[i].Elements[worldpos.X, worldpos.Y];
 				if (e != null)
 				{
-					SetTransientStatus($"[ ]{LM.Get("cursor")}:{e.Name.PadRight(8)}| {LM.Get("pos")}: {e.Position.ToString().PadRight(7)}| {LM.Get("layer")}: {Level.LayerNames[i].PadRight(6)} | [{(e.IsBlocking ? "X" : " ")}] {LM.Get("blocking")}", 20000);
+					SetTransientStatus($"[ ]{LM.Get("cursor")}:{(e.Name + (e.IsBlocking ? $" ({LM.Get("blocking")})" : "")).PadRight(18)}| {LM.Get("pos")}: {e.Pos.ToString().PadRight(7)}| {LM.Get("layer")}: {Level.LayerNames[i].PadRight(6)} |", 20000);
 					_selectedElement = e;
 					return;
 				}
 				//if we find nothing
-				_persistentStatus = "";
+				_transientStatus = "";
 				_selectedElement = null;
 			}
 		}
@@ -448,9 +526,9 @@ class Cursor: Entity
     //constructor
     public Cursor()
     {
-        _animations = JsonParser.LoadAnimations("CursorSprites.json", 200);
+        _animations = JsonParser.LoadAnimations("CursorSprites.json", 50);
         SetAnimation(AnimDefault);
-        _position = new Vec2(0,0);
+        _pos = new Vec2(0,0);
     }
 }
 
@@ -471,10 +549,10 @@ class BlueprintBar
 	{
 		_elements = new();
 		SelectedElement = null;
-		SelectedChar = '.';
+		SelectedChar = '\u0000';
 		_selectedSlot = -1;
-		_sprite = new Sprite(new Vec2(_numSlots*2+2, 3));
-		_bgCell = new ScreenCell(' ', Color.DarkRed, Color.LightGray);
+		_sprite = new Sprite(new Vec2(_numSlots*2+3, 3));
+		_bgCell = new ScreenCell('V', Color.BabyWhite, Color.BabyWhite);
 		//prepopulate sprite background
 		for (int i = 0; i < _sprite.Size.X; i++)
 		{
@@ -483,6 +561,13 @@ class BlueprintBar
 				_sprite.WriteCell(new Vec2(i, j), _bgCell);
 			}
 		}
+
+		// prev/next indication
+		ScreenCell prevcell = new ScreenCell('[', Color.Black, Color.BabyWhite);
+		_sprite.WriteCell(new Vec2(0,1), prevcell);
+		ScreenCell nextcell = new ScreenCell(']', Color.Black, Color.BabyWhite);
+		_sprite.WriteCell(new Vec2(_numSlots*2+2,1), nextcell);
+
 		Update();
 	}
 
@@ -496,13 +581,15 @@ class BlueprintBar
 			if (sprite != null)
 			{
 				ScreenCell cell = sprite.Data[0,0];
-				_sprite.Data[1,i*2+1] = cell;
+				_sprite.Data[1,i*2+2] = cell;
+				_sprite.Data[2,i*2+2].Character = (i+1).ToString()[0];
+				_sprite.Data[2,i*2+2].Color = Color.Black;
 				i++;
 			}
-			else
-			{
-				_sprite.Data[1,i*2+1] = _bgCell;
-			}
+		}
+		for (int j = i; j < _numSlots; j++)
+		{
+			_sprite.Data[1,j*2+2] = _bgCell;
 		}
 	}
 	
@@ -530,17 +617,18 @@ class BlueprintBar
 			var entry = _elements.ElementAt(index);
 			SelectedChar = entry.Key;
 			SelectedElement = entry.Value;
+		}else{
+			SelectedChar = '\u0000';
+			SelectedElement = null;
 		}
 		//update selection marker
 		for (int i = 0; i < _numSlots; i++)
 		{
 			if (i == index)
 			{
-				_sprite.Data[0,i*2+1].Character = 'v';
-				_sprite.Data[2,i*2+1].Character = '^';
+				_sprite.Data[0,i*2+2].Color = Color.Black;
 			}else{
-				_sprite.Data[0,i*2+1].Character = ' ';
-				_sprite.Data[2,i*2+1].Character = ' ';
+				_sprite.Data[0,i*2+2] = _bgCell;
 			}
 		}
 		return SelectedElement;

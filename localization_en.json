@@ -32,7 +32,7 @@
   "editor_menu_revert": "Revert",
   "editor_menu_save": "Save",
   "editor_menu_edit": "Edit",
-  "editor_helptext": "EDITOR HELP PAGE\n------------------\n\nHelp text will appear here.",
+  "editor_helptext": "HOW TO USE MOJIGOTCHI LEVEL EDITOR\n----------------------------------\nThe editor allows you to customize your MojiGotchi's world.\nUse the arrow keys to move the cursor,\ninformation about the selected cell will show\nat the top.\nThe top-right corner panel shows which layer is active.\nPress TAB to switch layers,\npress s to turn layer highlighting on/off.\nThe bottom panel shows available tiles to place.\nUse [ and ] to browse more tiles,\nand 1-9 to select a tile.\nWhen a tile is selected, you can use the spacebar to place the tile.\nPress 0 to enter delete mode when you want to clear tiles.",
   "editor_editmode": "Edit mode",
   "editor_editmode_single": "single",
   "editor_editmode_rect": "rectangle",
@@ -42,5 +42,8 @@
   "cursor": "cursor",
   "pos": "pos",
   "layer": "layer",
-  "blocking": "blocking"
+  "blocking": "blocking",
+  "modaltitle_highscores": "High Scores",
+  "modaltitle_help": "MojiGotchi - Manual",
+  "modaltext_help": "GOAL:\n\nKeep your virtual pet alive by managing its statistics.\n CONTROLS:\n- Up/Down Arrows: Navigate through the menu.\n- Enter: Confirm your selection.\n- Escape: Close this window.\n\nACTIONS:\n- Feed: Increases fullness and energy. Watch out for overfeeding!\n- Play: Increases mood, but costs energy.\n- Pet: Increases mood and makes your pet a little tired.\n- Wake up: Wakes up your pet if it's sleeping, but this harms its mood.\n- Sleep: Your pet falls asleep automatically when it's tired."
 }

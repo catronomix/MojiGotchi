@@ -35,19 +35,19 @@ class Camera
 		{
 			Vec2 offset = new Vec2(0,0);
 			//check if pet is outside of deadzone
-			if (_target.Position.X < _deadzone.Left)
+			if (_target.Pos.X < _deadzone.Left)
 			{
 				offset.X --;
 			}
-			else if (_target.Position.X > _deadzone.Right)
+			else if (_target.Pos.X > _deadzone.Right)
 			{
 				offset.X ++;
 			}
-			if (_target.Position.Y < _deadzone.Top)
+			if (_target.Pos.Y < _deadzone.Top)
 			{
 				offset.Y --;
 			}
-			else if (_target.Position.Y > _deadzone.Bottom)
+			else if (_target.Pos.Y > _deadzone.Bottom)
 			{
 				offset.Y ++;
 			}

@@ -114,7 +114,7 @@ public static class BlueprintManager
 		{
 			var element = new LevelElement(blueprint.IsBlocking);
 			element.Name = blueprint.Name;
-			element.Position = new Vec2(pos.X, pos.Y); // Position in the level grid
+			element.Pos = new Vec2(pos.X, pos.Y); // Position in the level grid
 			element.SetDepth(blueprint.Depth);
 
 			//offset animation on creation
@@ -184,7 +184,7 @@ class Level
 		LevelElement? element = BlueprintManager.GetElement(key, pos);
 		if (element != null)
 		{	
-			element.Position = pos;
+			element.Pos = pos;
 			LevelLayer layer = depth == -1 ? Layers[element.Depth] : Layers[depth];
 			layer.Elements[pos.X, pos.Y] = element;
 		}
@@ -325,7 +325,7 @@ public class LevelLayer
 			if (elementSprite != null)
 			{
 				// Get the element's top-left position within the level grid
-				Vec2 elementPos = element.Position;
+				Vec2 elementPos = element.Pos;
 
 				// Iterate over the cells of the element's sprite
 				for (int y = 0; y < elementSprite.Size.Y; y++)

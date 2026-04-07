@@ -163,7 +163,7 @@ public class Pet : Entity //Pet inherits from Entity class
 		SetAnimation(AnimDefault);
 
 		//position in the level, relative to world origin
-		_position = new Vec2(0,0);
+		_pos = new Vec2(0,0);
 
 		//get born :)
 		IsAlive = true;

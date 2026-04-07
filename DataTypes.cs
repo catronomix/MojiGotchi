@@ -299,7 +299,73 @@ class SimpleRect
     public Vec2 AbsCenter {get => new Vec2(Left + Width / 2, Top + Height / 2);}
 }
 
-// for testing: a rectangle class
+//fill rectangle class
+class FillRect : SimpleRect
+{
+    private Sprite? _sprite;
+    private Vec2 _origin;
+
+    public FillRect(Vec2 pos, Vec2 size) : base(pos, size)
+    {
+        _sprite = null;
+        Init(pos);
+    }
+
+    public void Init(Vec2 origin)
+    {
+        _origin = origin;
+        Pos = origin;
+        Size = new Vec2(0,0);
+        _sprite = null;
+    }
+
+    public void Update(Vec2 cornerpos, ScreenCell? cell)
+    {
+       
+        // 1. Determine the boundaries
+        int left = Math.Min(_origin.X, cornerpos.X);
+        int right = Math.Max(_origin.X, cornerpos.X);
+        int top = Math.Min(_origin.Y, cornerpos.Y);
+        int bottom = Math.Max(_origin.Y, cornerpos.Y);
+
+        // 2. Calculate size (Inclusive)
+        int width = right - left + 1;
+        int height = bottom - top + 1;
+
+        Pos = new Vec2(left, top);
+        Size = new Vec2(width, height);
+        if (Size.X != 0 && Size.Y != 0 && cell != null)
+        {
+            _sprite = new Sprite(Size);
+            for (int y = 0; y < Size.Y; y++)
+            {
+                for (int x = 0; x < Size.X; x++)
+                {
+                    _sprite.Data[y,x] = (ScreenCell)cell;
+                }
+            }
+        }
+        else
+        {
+            _sprite = null;
+        }
+    }
+
+    public Sprite? GetSprite()
+    {
+        if (Size.X != 0 && Size.Y != 0)
+        {
+            return _sprite;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+}
+
+// advanced rectangle class
 class Rect : SimpleRect // Changed to public class for broader access if needed.
 {
     private int _borderWidth;
@@ -416,7 +482,7 @@ public static class AnimRandom
 
 public static class CharSet
 {
-    public static String Numbers = "0123456789";
+    public static String Numbers = "123456789";
 }
 
 public static class Randomizer

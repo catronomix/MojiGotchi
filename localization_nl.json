@@ -32,7 +32,7 @@
   "editor_menu_revert": "Herladen",
   "editor_menu_save": "Opslaan",
   "editor_menu_edit": "Bewerken",
-  "editor_helptext": "EDITOR HELP PAGINA\n------------------\n\nNog in te vullen.",
+  "editor_helptext": "HOE DE MOJIGOTCHI LEVEL EDITOR GEBRUIKEN\n----------------------------------\nMet de editor kun je de wereld van je MojiGotchi aanpassen.\nGebruik de pijltjestoetsen om de cursor te verplaatsen, \ninformatie over de geselecteerde cel verschijnt bovenaan.\nHet paneel in de rechterbovenhoek laat zien welke laag actief is.\nDruk op TAB om tussen lagen te schakelen\ndruk op s om laag-accentuering aan/uit te zetten.\nHet onderste paneel toont de beschikbare tegels om te plaatsen.\nGebruik [ en ] om door de overige tegels te bladeren,\nen 1-9 om een tegel te selecteren.\nWanneer een tegel is geselecteerd,\nkun je de spatiebalk gebruiken om de tegel te plaatsen.\nDruk op 0 om de verwijdermodus te activeren wanneer je tegels wilt wissen.",
   "editor_editmode": "Bewerkmodus",
   "editor_editmode_single": "enkel",
   "editor_editmode_rect": "rechthoek",
@@ -42,5 +42,8 @@
   "cursor": "cursor",
   "pos": "pos",
   "layer": "laag",
-  "blocking": "solide"
-}
+  "blocking": "solide",
+  "modaltitle_highscores": "Topscores",
+  "modaltitle_help": "MojiGotchi - Handleiding",
+  "modaltext_help": "DOEL:\n\nHoud je virtuele huisdier in leven door zijn statistieken te beheren.\n  BESTURING:\n- Pijltjes Omhoog/Omlaag: Navigeer door het menu.\n- Enter: Bevestig je selectie.\n- Escape: Sluit dit venster.\n\nACTIES:\n- Voeden: Verhoogt verzadiging en energie. Pas op voor overvoeding!\n- Spelen: Verhoogt humeur, maar kost energie.\n- Aaien: Verhoogt humeur en maakt je pet een beetje moe.\n- Wekken: Maakt je pet wakker als hij slaapt, maar dit schaadt zijn humeur.\n- Slaap: Je pet valt vanzelf in slaap als hij moe is."
+  }

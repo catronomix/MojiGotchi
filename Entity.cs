@@ -33,12 +33,12 @@ public class Entity
 			_animations = value;
 		}
 	}
-	protected Vec2 _position;
-    public Vec2 Position //relative to the center of the game area
+	protected Vec2 _pos;
+    public Vec2 Pos //relative to the center of the game area
 	{
 		get
 		{
-			return _position;
+			return _pos;
 		}
 		set
 		{
@@ -46,7 +46,7 @@ public class Entity
 			// _position.X = Math.Clamp(value.X, 0, Console.WindowWidth);
 			// _position.Y = Math.Clamp(value.Y, 0, Console.WindowHeight);
 			//entities can exist off-screen
-			_position = value;
+			_pos = value;
 		}
 	}
     protected string _animationState;
@@ -61,7 +61,7 @@ public class Entity
 		_animOffset = AnimRandom.GetRandom(0, 16);
 
 		//position in the level
-		_position = new Vec2(-100,-100); //invalid value to have new entities be hidden by default
+		_pos = new Vec2(-100,-100); //invalid value to have new entities be hidden by default
     }
 
     public Sprite? GetSprite()
@@ -75,8 +75,8 @@ public class Entity
    
     public void Move(Vec2 amount)
     {
-        _position.X += amount.X;
-        _position.Y += amount.Y;
+        _pos.X += amount.X;
+        _pos.Y += amount.Y;
     }
 
 	public void Move(int direction)

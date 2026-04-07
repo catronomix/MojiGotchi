@@ -168,6 +168,7 @@ class Game
 			_help.UpdatePage(_viewport.Size);
 			_highScores.UpdatePage(_viewport.Size);
 			_camera.UpdateCamera();
+			ConsoleHelper.HideCursor();
 		}
 
 		return resized;
@@ -299,7 +300,7 @@ class Game
 				// 2. Calculate Top-Left based on Pet's World Position and its Pivot (center)
 				// Pet position (0,0) is world center.
 				// We subtract petSprite.Size / 2 to make (0,0) the center of the pet.
-				Vec2 drawPos = Vec2.Add(_camera.GetAbsCenter(), _pet.Position.Sum(-1,-1));
+				Vec2 drawPos = Vec2.Add(_camera.GetAbsCenter(), _pet.Pos.Sum(-1,-1));
 				_renderer.DrawSprite(petSprite, drawPos, _viewport);
 				//draw message bubble	
 			}
@@ -313,7 +314,7 @@ class Game
 			Sprite? bubble = _pet.MessageBubble.GetSprite();
 			if (bubble != null)
 				{
-					Vec2 drawPos = Vec2.Add(_camera.GetAbsCenter(), _pet.Position.Sum(-1,-1));
+					Vec2 drawPos = Vec2.Add(_camera.GetAbsCenter(), _pet.Pos.Sum(-1,-1));
 					_renderer.DrawSprite(bubble, drawPos.Sum(-bubble.Size.X / 2+1, -3), _viewport);
 				}
 		}
@@ -383,13 +384,13 @@ class Game
 			{
 				UpdateMenuAvailability([ActionType.WAKE], false);
 				UpdateMenuAvailability([ActionType.FEED, ActionType.PLAY, ActionType.PET], true);
-				Vec2 lastpetpos = _pet.Position;
+				Vec2 lastpetpos = _pet.Pos;
 				_pet.Wander();
 				
 				//keep pet inside level
-				int x = Math.Clamp(_pet.Position.X, -_level.RelativeCenter.X, _level.RelativeCenter.X);
-				int y = Math.Clamp(_pet.Position.Y, -_level.RelativeCenter.Y, _level.RelativeCenter.Y);
-				_pet.Position = new Vec2(x, y);
+				int x = Math.Clamp(_pet.Pos.X, -_level.RelativeCenter.X, _level.RelativeCenter.X);
+				int y = Math.Clamp(_pet.Pos.Y, -_level.RelativeCenter.Y, _level.RelativeCenter.Y);
+				_pet.Pos = new Vec2(x, y);
 
 				//keep pet from moving into solid objects
 				if (_level != null)
@@ -401,9 +402,9 @@ class Game
 						{
 							// check if colliding
 							// The pet's collision point is its center cell, which is _pet.Position + (1,1)
-							if(Vec2.Chebyshev(ElementPosInWorldSpace(element), _pet.Position) < 2)
+							if(Vec2.Chebyshev(ElementPosInWorldSpace(element), _pet.Pos) < 2)
 							{
-								_pet.Position = lastpetpos;
+								_pet.Pos = lastpetpos;
 							}
 						}
 					}
@@ -533,6 +534,6 @@ class Game
 	protected Vec2 ElementPosInWorldSpace(LevelElement element)
 	{
 		if (_level == null) return new Vec2(0, 0);
-		return Vec2.Subtract(element.Position, _level.RelativeCenter);
+		return Vec2.Subtract(element.Pos, _level.RelativeCenter);
 	}
 }

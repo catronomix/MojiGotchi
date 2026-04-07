@@ -8,14 +8,14 @@
       {
         "cells": [ 
           { "char": "\u0000", "fg": "Blue", "bg": "Grey" }, { "char": "\u0000", "fg": "Blue", "bg": "Grey" }, { "char": "\u0000", "fg": "Blue", "bg": "Grey" },
-          { "char": "\u0000", "fg": "Blue", "bg": "Gray" }, { "char": "\u0000", "fg": "Black", "bg": "Black" }, { "char": "\u0000", "fg": "Blue", "bg": "Grey" },
+          { "char": "\u0000", "fg": "Blue", "bg": "Grey" }, { "char": "\u0000", "fg": "Black", "bg": "Black" }, { "char": "\u0000", "fg": "Blue", "bg": "Grey" },
           { "char": "\u0000", "fg": "Blue", "bg": "Grey" }, { "char": "\u0000", "fg": "Blue", "bg": "Grey" }, { "char": "\u0000", "fg": "Blue", "bg": "Grey" }
         ]
       },
       {
         "cells": [ 
           { "char": "╔", "fg": "Blue", "bg": "Grey" }, { "char": "═", "fg": "Blue", "bg": "Grey" }, { "char": "╗", "fg": "Blue", "bg": "Grey" },
-          { "char": "║", "fg": "Blue", "bg": "Gray" }, { "char": "\u0000", "fg": "Black", "bg": "Black" }, { "char": "║", "fg": "Blue", "bg": "Grey" },
+          { "char": "║", "fg": "Blue", "bg": "Grey" }, { "char": "\u0000", "fg": "Black", "bg": "Black" }, { "char": "║", "fg": "Blue", "bg": "Grey" },
           { "char": "╚", "fg": "Blue", "bg": "Grey" }, { "char": "═", "fg": "Blue", "bg": "Grey" }, { "char": "╝", "fg": "Blue", "bg": "Grey" }
         ]
       },
@@ -29,21 +29,21 @@
       {
         "cells": [ 
           { "char": "o", "fg": "Orange", "bg": "Grey" }, { "char": "═", "fg": "Orange", "bg": "Grey" }, { "char": "o", "fg": "Orange", "bg": "Grey" },
-          { "char": "║", "fg": "Orange", "bg": "Gray" }, { "char": "\u0000", "fg": "Black", "bg": "Black" }, { "char": "║", "fg": "Orange", "bg": "Grey" },
+          { "char": "║", "fg": "Orange", "bg": "Grey" }, { "char": "\u0000", "fg": "Black", "bg": "Black" }, { "char": "║", "fg": "Orange", "bg": "Grey" },
           { "char": "o", "fg": "Orange", "bg": "Grey" }, { "char": "═", "fg": "Orange", "bg": "Grey" }, { "char": "o", "fg": "Orange", "bg": "Grey" }
         ]
       },
       {
         "cells": [ 
           { "char": "╔", "fg": "Red", "bg": "Grey" }, { "char": "═", "fg": "Red", "bg": "Grey" }, { "char": "╗", "fg": "Red", "bg": "Grey" },
-          { "char": "║", "fg": "Red", "bg": "Gray" }, { "char": "\u0000", "fg": "Black", "bg": "Black" }, { "char": "║", "fg": "Red", "bg": "Grey" },
+          { "char": "║", "fg": "Red", "bg": "Grey" }, { "char": "\u0000", "fg": "Black", "bg": "Black" }, { "char": "║", "fg": "Red", "bg": "Grey" },
           { "char": "╚", "fg": "Red", "bg": "Grey" }, { "char": "═", "fg": "Red", "bg": "Grey" }, { "char": "╝", "fg": "Red", "bg": "Grey" }
         ]
       },
       {
         "cells": [ 
           { "char": "╔", "fg": "Magenta", "bg": "Grey" }, { "char": "v", "fg": "Magenta", "bg": "Grey" }, { "char": "╗", "fg": "Magenta", "bg": "Grey" },
-          { "char": ">", "fg": "Magenta", "bg": "Gray" }, { "char": "\u0000", "fg": "Black", "bg": "Black" }, { "char": "<", "fg": "Magenta", "bg": "Grey" },
+          { "char": ">", "fg": "Magenta", "bg": "Grey" }, { "char": "\u0000", "fg": "Black", "bg": "Black" }, { "char": "<", "fg": "Magenta", "bg": "Grey" },
           { "char": "╚", "fg": "Magenta", "bg": "Grey" }, { "char": "^", "fg": "Magenta", "bg": "Grey" }, { "char": "╝", "fg": "Magenta", "bg": "Grey" }
         ]
       }
