@@ -70,7 +70,7 @@ class Editor : Game
 		
 		//modals
 		_menu.AddItem(LM.Get("menu_help"), SetAction(ActionType.EDITOR_HELP));
-		_menu.AddItem(LM.Get("menu_quit"), SetAction(ActionType.EDITOR_QUIT));
+		_menu.AddItem(LM.Get("editor_menu_quit"), SetAction(ActionType.EDITOR_QUIT));
 
 		_menu.SelectFirstEnabled();
 		
@@ -300,6 +300,7 @@ class Editor : Game
 							_focus = Focus.MENU;
 							_persistentStatus = LM.Get("editor_status_welcome"); // Welcome
 							_blueprintBar.SelectElement('0');
+							_editingmode = EditingMode.DISABLED;
 						}else{
 							_editingmode = EditingMode.SELECT;
 							_cursor.SetAnimation("SELECT");
