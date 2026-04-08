@@ -2,18 +2,7 @@ namespace MojiGotchi;
 
 public class Entity
 {
-    protected string _name;
-	public string Name
-	{
-		get
-		{
-			return _name;
-		}
-		set
-		{
-			_name = value;
-		}
-	}
+    public string Name {get; set;}
 	
 	// Animation state constants
 	public const string AnimDefault = "DEFAULT";
@@ -42,10 +31,6 @@ public class Entity
 		}
 		set
 		{
-			//check for out of bounds
-			// _position.X = Math.Clamp(value.X, 0, Console.WindowWidth);
-			// _position.Y = Math.Clamp(value.Y, 0, Console.WindowHeight);
-			//entities can exist off-screen
 			_pos = value;
 		}
 	}
@@ -54,7 +39,7 @@ public class Entity
     //constructor
     public Entity()
     {
-        _name = "";
+        Name = "";
 		//setup animations list
 		_animations = null;
 		_animationState = AnimDefault;

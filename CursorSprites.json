@@ -28,42 +28,57 @@
       },
       {
         "cells": [ 
-          { "char": "o", "fg": "Orange", "bg": "Grey" }, { "char": "═", "fg": "Orange", "bg": "Grey" }, { "char": "o", "fg": "Orange", "bg": "Grey" },
-          { "char": "║", "fg": "Orange", "bg": "Grey" }, { "char": "\u0000", "fg": "Black", "bg": "Black" }, { "char": "║", "fg": "Orange", "bg": "Grey" },
-          { "char": "o", "fg": "Orange", "bg": "Grey" }, { "char": "═", "fg": "Orange", "bg": "Grey" }, { "char": "o", "fg": "Orange", "bg": "Grey" }
+          { "char": "o", "fg": "Blue", "bg": "Grey" }, { "char": "═", "fg": "Blue", "bg": "Grey" }, { "char": "o", "fg": "Blue", "bg": "Grey" },
+          { "char": "║", "fg": "Blue", "bg": "Grey" }, { "char": "\u0000", "fg": "Black", "bg": "Black" }, { "char": "║", "fg": "Blue", "bg": "Grey" },
+          { "char": "o", "fg": "Blue", "bg": "Grey" }, { "char": "═", "fg": "Blue", "bg": "Grey" }, { "char": "o", "fg": "Blue", "bg": "Grey" }
         ]
       },
       {
         "cells": [ 
-          { "char": "╔", "fg": "Red", "bg": "Grey" }, { "char": "═", "fg": "Red", "bg": "Grey" }, { "char": "╗", "fg": "Red", "bg": "Grey" },
-          { "char": "║", "fg": "Red", "bg": "Grey" }, { "char": "\u0000", "fg": "Black", "bg": "Black" }, { "char": "║", "fg": "Red", "bg": "Grey" },
-          { "char": "╚", "fg": "Red", "bg": "Grey" }, { "char": "═", "fg": "Red", "bg": "Grey" }, { "char": "╝", "fg": "Red", "bg": "Grey" }
+          { "char": "╔", "fg": "Red", "bg": "Grey" }, { "char": "v", "fg": "Red", "bg": "Grey" }, { "char": "╗", "fg": "Red", "bg": "Grey" },
+          { "char": ">", "fg": "Red", "bg": "Grey" }, { "char": "\u0000", "fg": "Black", "bg": "Black" }, { "char": "<", "fg": "Red", "bg": "Grey" },
+          { "char": "╚", "fg": "Red", "bg": "Grey" }, { "char": "^", "fg": "Red", "bg": "Grey" }, { "char": "╝", "fg": "Red", "bg": "Grey" }
         ]
       },
       {
         "cells": [ 
-          { "char": "╔", "fg": "Magenta", "bg": "Grey" }, { "char": "v", "fg": "Magenta", "bg": "Grey" }, { "char": "╗", "fg": "Magenta", "bg": "Grey" },
-          { "char": ">", "fg": "Magenta", "bg": "Grey" }, { "char": "\u0000", "fg": "Black", "bg": "Black" }, { "char": "<", "fg": "Magenta", "bg": "Grey" },
-          { "char": "╚", "fg": "Magenta", "bg": "Grey" }, { "char": "^", "fg": "Magenta", "bg": "Grey" }, { "char": "╝", "fg": "Magenta", "bg": "Grey" }
+          { "char": "╔", "fg": "Red", "bg": "Grey" }, { "char": "|", "fg": "Red", "bg": "Grey" }, { "char": "╗", "fg": "Red", "bg": "Grey" },
+          { "char": "-", "fg": "Red", "bg": "Grey" }, { "char": "\u0000", "fg": "Black", "bg": "Black" }, { "char": "-", "fg": "Red", "bg": "Grey" },
+          { "char": "╚", "fg": "Red", "bg": "Grey" }, { "char": "|", "fg": "Red", "bg": "Grey" }, { "char": "╝", "fg": "Red", "bg": "Grey" }
+        ]
+      },
+      {
+        "cells": [ 
+          { "char": "╔", "fg": "Orange", "bg": "Grey" }, { "char": "|", "fg": "Orange", "bg": "Grey" }, { "char": "╗", "fg": "Orange", "bg": "Grey" },
+          { "char": "-", "fg": "Orange", "bg": "Grey" }, { "char": "\u0000", "fg": "Black", "bg": "Black" }, { "char": "-", "fg": "Orange", "bg": "Grey" },
+          { "char": "╚", "fg": "Orange", "bg": "Grey" }, { "char": "|", "fg": "Orange", "bg": "Grey" }, { "char": "╝", "fg": "Orange", "bg": "Grey" }
         ]
       }
     ],
     "Animations": [
       {
-        "state": "DEFAULT",
+        "state": "SELECT",
         "frames": [0,1]
       },
       {
-        "state": "SELECT",
-        "frames": [0,2,0,3]
+        "state": "EDIT",
+        "frames": [0,3]
       },
       {
         "state": "DELETE",
-        "frames": [0,4,0,5]
+        "frames": [0,4]
       },
       {
         "state": "ENTITY",
-        "frames": [0,1]
+        "frames": [0,2]
+      },
+      {
+        "state": "RECT",
+        "frames": [0,6]
+      },
+      {
+        "state": "RECTDELETE",
+        "frames": [0,5]
       }
     ]
   }

@@ -14,6 +14,7 @@ public enum Focus
 public enum EditingMode
 {
 	DISABLED,
+	SELECT,
 	INSERTSINGLE,
 	INSERTRECTSTART,
 	INSERTRECTEND,
@@ -90,7 +91,7 @@ class Editor : Game
 
 		BlueprintManager.Initialize(); // Initialize blueprints before loading a level
 		_level = new Level(); // This is now empty, we need to load a level
-		_level.LoadFromFile("level1.txt"); // Load the level from the text file
+		_level.LoadFromFile("level1.json"); // Load the level from the text file
 
 		_persistentStatus = LM.Get("editor_status_welcome"); // Welcome
 		// Call CheckWindow once at the end of the constructor to ensure all
@@ -290,22 +291,26 @@ class Editor : Game
 						{
 							_editingmode = EditingMode.INSERTSINGLE;
 							_editrect.Init(_cursor.Pos);
-							_cursor.SetAnimation("DEFAULT");
+							_cursor.SetAnimation("EDIT");
 							break;
 						}
-						_menu.Enable();
-						_focus = Focus.MENU;
-						_editingmode = EditingMode.DISABLED;
-						_cursor.SetAnimation("SELECT");
-						_persistentStatus = LM.Get("editor_status_welcome"); // Welcome
-						_blueprintBar.SelectElement('0');
+						if (_editingmode == EditingMode.SELECT)
+						{
+							_menu.Enable();
+							_focus = Focus.MENU;
+							_persistentStatus = LM.Get("editor_status_welcome"); // Welcome
+							_blueprintBar.SelectElement('0');
+						}else{
+							_editingmode = EditingMode.SELECT;
+							_cursor.SetAnimation("SELECT");
+						}
 						break;
 					case (_ , ']'):
-						_blueprintBar.SelectElement('0');
+						// _blueprintBar.SelectElement('0');
 						_blueprintBar.NextRow();
 						break;
 					case (_ , '['):
-						_blueprintBar.SelectElement('0');
+						// _blueprintBar.SelectElement('0');
 						_blueprintBar.PrevRow();
 						break;
 					case (ConsoleKey.Tab, _):
@@ -323,25 +328,34 @@ class Editor : Game
 						break;
 					case (ConsoleKey.R, _):
 						//rectangle mode
-						if (_editingmode == EditingMode.INSERTSINGLE)
+						if (_editingmode == EditingMode.INSERTSINGLE || _editingmode == EditingMode.DELETE)
 						{
+							if (_editingmode == EditingMode.DELETE)
+							{
+								_cursor.SetAnimation("RECTDELETE");
+							}
+							else
+							{
+							_cursor.SetAnimation("RECT");
+							}
 							_editingmode = EditingMode.INSERTRECTSTART;
 							_editrect.Init(_cursor.Pos);
-							_cursor.SetAnimation("DEFAULT");
+							
 						}
-						break;							
+						break;
+					case (ConsoleKey.F, _):
+						//fill once
+						PaintFill();
+						break;
 					default:
 						break;
 				}
 				//blueprint bar
 				if(CharSet.Numbers.Contains(key.KeyChar))
 				{
-					if (_editingmode == EditingMode.DELETE)
-					{
-						_editingmode = EditingMode.INSERTSINGLE;
-						_cursor.SetAnimation("DEFAULT");
-					}
+					_editingmode = EditingMode.INSERTSINGLE;
 					_blueprintBar.SelectElement(key.KeyChar);
+					_cursor.SetAnimation("EDIT");
 				}
 			}
 			else if (_currentModal != null) //modal is active
@@ -393,7 +407,7 @@ class Editor : Game
 					break;
 				case EditingMode.DELETE:
 					//delete element on cursor
-					_level.SetCell('\u0000', targetpos, _layerbar.ActiveLayer);
+					_level.SetCell('.', targetpos, _layerbar.ActiveLayer);
 					_editingmode = EditingMode.DELETE;
 					break;
 				case EditingMode.INSERTRECTSTART:
@@ -411,18 +425,16 @@ class Editor : Game
 	private void EditRect(){
 		if (_cursor != null && _editingmode == EditingMode.INSERTRECTSTART)
         {
-            if(_editrect != null && _blueprintBar.SelectedElement != null)
+            if(_editrect != null)
             {
-                Sprite? sprite = _blueprintBar.SelectedElement.GetSprite();
+                Sprite? sprite = _blueprintBar.SelectedElement?.GetSprite();
+				ScreenCell cell = new ScreenCell(' ', Color.Black, Color.Black);
                 if (sprite != null)
 				{
-                    ScreenCell? cell = sprite.Data[0,0];
-    				if (cell != null)
-    				{
-    				_editrect.Update(_cursor.Pos, cell);
-    				}
+                    cell = sprite.Data[0,0];	
 				}
-				
+					
+					_editrect.Update(_cursor.Pos, cell);				
 			}
 		}
 	}
@@ -441,8 +453,61 @@ class Editor : Game
 			_level.Layers[_layerbar.ActiveLayer].UpdateSprite();
 			_editrect.Init(_cursor.Pos);
 			_editingmode = EditingMode.INSERTSINGLE;
+			_cursor.SetAnimation("EDIT");
 		}
 	}
+
+	private void PaintFill()
+	{
+		if (_cursor != null && (_editingmode == EditingMode.INSERTSINGLE || _editingmode == EditingMode.DELETE))
+		{
+			Vec2 origin = Vec2.Add(_cursor.Pos, _level.RelativeCenter);
+			LevelElement?[,] grid = _level.Layers[_layerbar.ActiveLayer].Elements;
+			LevelElement? fillElement = _blueprintBar.SelectedElement;
+
+			int rows = grid.GetLength(0);
+			int cols = grid.GetLength(1);
+
+			// Boundary check for the starting point
+			if (origin.X < 0 || origin.X >= rows || origin.Y < 0 || origin.Y >= cols)
+				return;
+
+			char targetChar = grid[origin.X, origin.Y]?.Character?? '.';
+			char? replacementChar = _blueprintBar.SelectedChar;
+
+			// If the target character is already the replacement character, no work is needed
+			if (targetChar == replacementChar)
+				return;
+
+			Stack<Vec2> stack = new Stack<Vec2>();
+			stack.Push(origin);
+
+			while (stack.Count > 0)
+			{
+				Vec2 pos = stack.Pop();
+
+				// Check boundaries
+				if (pos.X < 0 || pos.X >= rows || pos.Y < 0 || pos.Y >= cols)
+					continue;
+
+				// Check if the current cell matches the starting character
+				LevelElement? currentElement = grid[pos.X, pos.Y];
+				char currentChar = currentElement?.Character ?? '.';
+				if (currentChar == targetChar)
+				{
+					// Replace the cell (creating a new instance to avoid reference issues)
+					_level.SetCell(replacementChar, pos, _layerbar.ActiveLayer);
+
+					// Add neighbors (4-way connectivity)
+					stack.Push(new Vec2(pos.X + 1, pos.Y));
+					stack.Push(new Vec2(pos.X - 1, pos.Y));
+					stack.Push(new Vec2(pos.X, pos.Y + 1));
+					stack.Push(new Vec2(pos.X, pos.Y - 1));
+				}
+			}
+		}
+	}
+	
 
 	private void CursorInfo()
 	{
@@ -477,21 +542,27 @@ class Editor : Game
 				logic = (game) =>
 				{
 					Editor editor = (Editor)game; // Cast to Editor
-					//todo
+					if (editor._level != null)
+					{
+						editor._level.LoadFromFile("level1.json");
+					}
 				};
 				break;
 			case ActionType.EDITOR_SAVE:
 				logic = (game) =>
 				{
 					Editor editor = (Editor)game; // Cast to Editor
-					//todo
+					if (editor._level != null)
+					{
+						editor._level.SaveToFile("level1.json");
+					}
 				};
 				break;
 			case ActionType.EDITOR_EDIT:
 				logic = (game) =>
 				{
 					Editor editor = (Editor)game; // Cast to Editor
-					_editingmode = EditingMode.INSERTSINGLE;
+					_editingmode = EditingMode.SELECT;
 					editor._menu.Disable();
 					editor._focus = Focus.CURSOR;
 				};
@@ -527,7 +598,7 @@ class Cursor: Entity
     public Cursor()
     {
         _animations = JsonParser.LoadAnimations("CursorSprites.json", 50);
-        SetAnimation(AnimDefault);
+        SetAnimation("SELECT");
         _pos = new Vec2(0,0);
     }
 }
@@ -549,7 +620,7 @@ class BlueprintBar
 	{
 		_elements = new();
 		SelectedElement = null;
-		SelectedChar = '\u0000';
+		SelectedChar = '.';
 		_selectedSlot = -1;
 		_sprite = new Sprite(new Vec2(_numSlots*2+3, 3));
 		_bgCell = new ScreenCell('V', Color.BabyWhite, Color.BabyWhite);
@@ -611,24 +682,32 @@ class BlueprintBar
 
 	public LevelElement? SelectElement(char key) //key here is numeric index of the blueprint bar
 	{
+		bool changed = false;
 		int index = (int)char.GetNumericValue(key) - 1;
 		if (index >= 0 && index < _elements.Count)
 		{
 			var entry = _elements.ElementAt(index);
 			SelectedChar = entry.Key;
 			SelectedElement = entry.Value;
-		}else{
-			SelectedChar = '\u0000';
-			SelectedElement = null;
+			changed = true;
 		}
-		//update selection marker
-		for (int i = 0; i < _numSlots; i++)
+		else if (index < 0)
 		{
-			if (i == index)
+			SelectedChar = '.';
+			SelectedElement = null;
+			changed = true;
+		}
+		if (changed)
+		{
+			//update selection marker
+			for (int i = 0; i < _numSlots; i++)
 			{
-				_sprite.Data[0,i*2+2].Color = Color.Black;
-			}else{
-				_sprite.Data[0,i*2+2] = _bgCell;
+				if (i == index)
+				{
+					_sprite.Data[0,i*2+2].Color = Color.Black;
+				}else{
+					_sprite.Data[0,i*2+2] = _bgCell;
+				}
 			}
 		}
 		return SelectedElement;

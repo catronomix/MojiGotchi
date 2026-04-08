@@ -143,7 +143,7 @@ public class Pet : Entity //Pet inherits from Entity class
 		random = new Random();
 		_wanderDirection = random.Next(0, 8);
 		
-		_name = GenerateRandomName();
+		Name = GenerateRandomName();
 		//set birth time
 		_birthTime = DateTime.Now;
 		//set stats
@@ -231,7 +231,7 @@ public class Pet : Entity //Pet inherits from Entity class
 		_animationState = AnimEating;
 		SoundManager.Play("eat.wav");
 		MessageBubble.SetMessage("Omnomnom", 1000, true);
-		return LM.Get("pet_action_feed", [_name]);
+		return LM.Get("pet_action_feed", [Name]);
 	}
 
 	public string Play()
@@ -242,7 +242,7 @@ public class Pet : Entity //Pet inherits from Entity class
 		_animationState = AnimPlaying;
 		SoundManager.Play("play.wav");
 		MessageBubble.SetMessage("Wheeeee!", 1000, true);
-		return LM.Get("pet_action_play", [_name]);
+		return LM.Get("pet_action_play", [Name]);
 	}
 
 	public string PetPet() // Renamed to avoid conflict with class name 'Pet'
@@ -253,7 +253,7 @@ public class Pet : Entity //Pet inherits from Entity class
 		//not implemented yet
 		// _animationState = AnimationState.HAPPY;
 		SoundManager.Play("petpet.wav");
-		return LM.Get("pet_action_pet", [_name]);
+		return LM.Get("pet_action_pet", [Name]);
 	}
 
 	public string WakeUp() // Renamed for clarity
@@ -265,7 +265,7 @@ public class Pet : Entity //Pet inherits from Entity class
 		_animationState = AnimWakeup;
 		MessageBubble.SetMessage("Ugh..", 1000, true);
 		SoundManager.Play("wakeup.wav");
-		return LM.Get("pet_action_wake", [_name]);
+		return LM.Get("pet_action_wake", [Name]);
 	}
 
 	public string UpdateAllStats()
@@ -318,25 +318,25 @@ public class Pet : Entity //Pet inherits from Entity class
 		{
 			//pet has died from depression
 			IsAlive = false;
-			return LM.Get("death_message_depression", [_name, ageString]);
+			return LM.Get("death_message_depression", [Name, ageString]);
 		}
 		if (Energy.Value <= Energy.Min)
 		{
 			//pet has died from exhaustion
 			IsAlive = false;
-			return LM.Get("death_message_exhaustion", [_name, ageString]);
+			return LM.Get("death_message_exhaustion", [Name, ageString]);
 		}
 		if (Saturation.Value <= Saturation.Min)
 		{
 			//pet has died from hunger
 			IsAlive = false;
-			return LM.Get("death_message_hunger", [_name, ageString]);
+			return LM.Get("death_message_hunger", [Name, ageString]);
 		}
 		if (Saturation.Value >= Saturation.Max)
 		{
 			//pet has died from overfeeding
 			IsAlive = false;
-			return LM.Get("death_message_overfeeding", [_name, ageString]);
+			return LM.Get("death_message_overfeeding", [Name, ageString]);
 		}
 
 		return "";

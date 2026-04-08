@@ -32,7 +32,7 @@
   "editor_menu_revert": "Revert",
   "editor_menu_save": "Save",
   "editor_menu_edit": "Edit",
-  "editor_helptext": "HOW TO USE MOJIGOTCHI LEVEL EDITOR\n----------------------------------\nThe editor allows you to customize your MojiGotchi's world.\nUse the arrow keys to move the cursor,\ninformation about the selected cell will show\nat the top.\nThe top-right corner panel shows which layer is active.\nPress TAB to switch layers,\npress s to turn layer highlighting on/off.\nThe bottom panel shows available tiles to place.\nUse [ and ] to browse more tiles,\nand 1-9 to select a tile.\nWhen a tile is selected, you can use the spacebar to place the tile.\nPress 0 to enter delete mode when you want to clear tiles.",
+  "editor_helptext": "HOW TO USE MOJIGOTCHI LEVEL EDITOR\n----------------------------------\nThe editor allows you to customize your MojiGotchi's world.\nUse the arrow keys to move the cursor,\ninformation about the selected cell will show\nat the top.\nThe top-right corner panel shows which layer is active.\nPress TAB to switch layers,\npress s to turn layer highlighting on/off.\nThe bottom panel shows available tiles to place.\nUse [ and ] to browse more tiles,\nand 1-9 to select a tile.\nWhen a tile is selected, you can use the spacebar to place the tile.\nPress 0 to enter delete mode when you want to clear tiles.\nPress r to draw rectangles, press f to flood fill.",
   "editor_editmode": "Edit mode",
   "editor_editmode_single": "single",
   "editor_editmode_rect": "rectangle",

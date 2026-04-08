@@ -80,7 +80,7 @@ class Game
 		_pet = DataManager.LoadPet();
 		BlueprintManager.Initialize(); // Initialize blueprints before loading a level
 		_level = new Level(); // This is now empty, we need to load a level
-		_level.LoadFromFile("level1.txt"); // Load the level from the text file
+		_level.LoadFromFile("level1.json"); // Load the level from the text file
 		SimpleRect deadzone = new SimpleRect(new Vec2(-4, -2), new Vec2(8, 4));
 		if (_pet != null)
 		{
@@ -401,7 +401,7 @@ class Game
 						if (element.IsBlocking)
 						{
 							// check if colliding
-							// The pet's collision point is its center cell, which is _pet.Position + (1,1)
+							// The pet's collision point is its center cell, which is _pet.Pos + (1,1)
 							if(Vec2.Chebyshev(ElementPosInWorldSpace(element), _pet.Pos) < 2)
 							{
 								_pet.Pos = lastpetpos;
