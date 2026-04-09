@@ -7,9 +7,9 @@ public class MessageBubble
 	private Color _bgColor;
 	private DateTime _lastSet;
 	private DateTime _expires;
-    private bool _active;
+	private bool _active;
 
-    private Sprite? _mySprite;
+	private Sprite? _mySprite;
 	
 	public MessageBubble(Color fgcolor, Color bgcolor)
 	{
@@ -18,8 +18,8 @@ public class MessageBubble
 		_bgColor = bgcolor;
 		_lastSet = DateTime.Now;
 		_expires = DateTime.MinValue;
-        _active = false;
-        _mySprite = null;
+		_active = false;
+		_mySprite = null;
 	}
 
 	public void SetMessage(string message, int expireMs = 2000, bool force = false)
@@ -47,17 +47,17 @@ public class MessageBubble
 
 	public Sprite? GetSprite()
 	{
-        if (_active){
-            bool available = _expires > DateTime.Now;
-            if (available)
-            {
-                return _mySprite;
-            }
-            else
-            {
-                _active = false;
-            }
-        }
-        return null;
+		if (_active){
+			bool available = _expires > DateTime.Now;
+			if (available)
+			{
+				return _mySprite;
+			}
+			else
+			{
+				_active = false;
+			}
+		}
+		return null;
 	}	
 }

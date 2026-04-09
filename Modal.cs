@@ -12,7 +12,7 @@ public class Modal
 	}
 	private Color _edgeColor;
 
-    private string _title;
+	private string _title;
 	public string Title
 	{
 		get
@@ -28,40 +28,40 @@ public class Modal
 	private Sprite? _bgSprite;
 	private Sprite? _contentSprite;
 
-    public Modal(string title, Color bgColor, Color edgeColor)
-    {
-        _title = title;
+	public Modal(string title, Color bgColor, Color edgeColor)
+	{
+		_title = title;
 		_bgColor = bgColor;
 		_edgeColor = edgeColor;
 		_bgSprite = null;
 		_contentSprite = null;
-    }
+	}
 	
-    public void SetSpriteBg(Vec2 size)
-    {
-        Sprite sprite = new Sprite(size);
-        ScreenCell[,] data = sprite.Data;
+	public void SetSpriteBg(Vec2 size)
+	{
+		Sprite sprite = new Sprite(size);
+		ScreenCell[,] data = sprite.Data;
 
-        for (int y = 0; y < size.Y; y++)
-        {
-            for (int x = 0; x < size.X; x++)
-            {
-                // Determine if the current cell is part of the border
-                bool isBorder = (x == 0 || x == size.X - 1 || y == 0 || y == size.Y - 1);
+		for (int y = 0; y < size.Y; y++)
+		{
+			for (int x = 0; x < size.X; x++)
+			{
+				// Determine if the current cell is part of the border
+				bool isBorder = (x == 0 || x == size.X - 1 || y == 0 || y == size.Y - 1);
 
-                if (isBorder)
-                {
-                    // Use a simple character for the border, like a space,
-                    // and rely on the background color for visual distinction.
-                    // Or, you could use ASCII box-drawing characters for a more defined border.
-                    data[y, x] = new ScreenCell { Character = ' ', Color = Color.White, BgColor = _edgeColor };
-                }
-                else
-                {
-                    data[y, x] = new ScreenCell { Character = ' ', Color = Color.White, BgColor = _bgColor };
-                }
-            }
-        }
+				if (isBorder)
+				{
+					// Use a simple character for the border, like a space,
+					// and rely on the background color for visual distinction.
+					// Or, you could use ASCII box-drawing characters for a more defined border.
+					data[y, x] = new ScreenCell { Character = ' ', Color = Color.White, BgColor = _edgeColor };
+				}
+				else
+				{
+					data[y, x] = new ScreenCell { Character = ' ', Color = Color.White, BgColor = _bgColor };
+				}
+			}
+		}
 		//draw title in center of top border
 		int titleX = (size.X - _title.Length) / 2;
 		for (int x = 0; x < _title.Length; x++)

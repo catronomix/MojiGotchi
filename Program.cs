@@ -5,10 +5,10 @@ using System.IO;
 
 public enum LoopResult
 {
-    CONTINUE, //continue loop
-    QUIT,
-    GOTOGAME,
-    GOTOEDITOR
+	CONTINUE, //continue loop
+	QUIT,
+	GOTOGAME,
+	GOTOEDITOR
 }
 
 class Program
@@ -16,11 +16,11 @@ class Program
 	private static Dictionary<string, string> _gameOptions = new();
 
 	private enum AppState
-    {
-        GAME,
-        EDITOR,
-        QUIT
-    }
+	{
+		GAME,
+		EDITOR,
+		QUIT
+	}
 
 	private static void Main(string[] args)
 	{
@@ -43,59 +43,60 @@ class Program
 		LM.SetLanguage(language);
 
 		// Enable/disable dev mode
-        bool devMode = _gameOptions.ContainsKey("devmode") && _gameOptions["devmode"] == "true";
-
-        AppState currentState = AppState.GAME;
+		bool devMode = _gameOptions.ContainsKey("devmode") && _gameOptions["devmode"] == "true";
+		if (!devMode) DebugLogger.Disable();
+		
+		AppState currentState = devMode ? AppState.EDITOR : AppState.GAME;
 
 		while (currentState != AppState.QUIT)
-        {
-            switch (currentState)
-            {
-                case AppState.EDITOR:
-                    currentState = RunEditorLoop(devMode);
-                    break;
+		{
+			switch (currentState)
+			{
+				case AppState.EDITOR:
+					currentState = RunEditorLoop(devMode);
+					break;
 
-                case AppState.GAME:
-                    currentState = RunGameLoop(isFirstLanguageSetup, devMode);
-                    isFirstLanguageSetup = false; 
-                    break;
-            }
-        }
+				case AppState.GAME:
+					currentState = RunGameLoop(isFirstLanguageSetup, devMode);
+					isFirstLanguageSetup = false; 
+					break;
+			}
+		}
 
 	}
 
 	private static AppState RunGameLoop(bool showLanguageModal, bool devMode)
-    {
-        // Pass devMode to the Game constructor
-        Game game = new Game(devMode);
+	{
+		// Pass devMode to the Game constructor
+		Game game = new Game(devMode);
 
-        if (showLanguageModal)
-        {
-            game.ChooseLanguage();
-        }
+		if (showLanguageModal)
+		{
+			game.ChooseLanguage();
+		}
 
-        while (true)
-        {
-            LoopResult result = game.Step(); 
+		while (true)
+		{
+			LoopResult result = game.Step(); 
 
-            if (result == LoopResult.GOTOEDITOR) return AppState.EDITOR;
-            if (result == LoopResult.QUIT) return AppState.QUIT;
-        }
-    }
+			if (result == LoopResult.GOTOEDITOR) return AppState.EDITOR;
+			if (result == LoopResult.QUIT) return AppState.QUIT;
+		}
+	}
 
-    private static AppState RunEditorLoop(bool devMode)
-    {
-        // Pass devMode to the Editor constructor
-        Editor editor = new Editor(devMode);
+	private static AppState RunEditorLoop(bool devMode)
+	{
+		// Pass devMode to the Editor constructor
+		Editor editor = new Editor(devMode);
 
-        while (true)
-        {
-            LoopResult result = editor.Step();
+		while (true)
+		{
+			LoopResult result = editor.Step();
 
-            if (result == LoopResult.GOTOGAME) return AppState.GAME;
-            if (result == LoopResult.QUIT) return AppState.QUIT;
-        }
-    }
+			if (result == LoopResult.GOTOGAME) return AppState.GAME;
+			if (result == LoopResult.QUIT) return AppState.QUIT;
+		}
+	}
 
 	private static void LoadGameOptions()
 	{

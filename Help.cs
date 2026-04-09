@@ -6,7 +6,7 @@ public class Help : Modal
 	private string _helpText = LM.Get("modaltext_help");
 
 
-    public Help() : base(LM.Get("modaltitle_help"), Color.DarkGreen, Color.Green)
+	public Help() : base(LM.Get("modaltitle_help"), Color.DarkGreen, Color.Green)
 	{
 		
 	}

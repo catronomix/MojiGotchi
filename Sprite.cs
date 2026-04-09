@@ -116,9 +116,9 @@ public class Animation
 	}
 
 	public Animation Clone()
-    {
-        return (Animation)this.MemberwiseClone();
-    }
+	{
+		return (Animation)this.MemberwiseClone();
+	}
 }
 
 

@@ -260,27 +260,39 @@ class Editor : Game
 				{
 					case (ConsoleKey.UpArrow, _):
 						//cursor up
-						_cursor.Move(new Vec2(0, -1));
-						CursorInfo();
-						EditRect();
+						if (_cursor.Pos.Y > -(_level.Size.Y -_level.RelativeCenter.Y))
+						{
+							_cursor.Move(new Vec2(0, -1));
+							CursorInfo();
+							EditRect();
+						}
 						break;
 					case (ConsoleKey.DownArrow, _):
 						//cursor down
-						_cursor.Move(new Vec2(0, 1));
-						CursorInfo();
-						EditRect();
+						if (_cursor.Pos.Y < (_level.Size.Y -_level.RelativeCenter.Y -1))
+						{
+							_cursor.Move(new Vec2(0, 1));
+							CursorInfo();
+							EditRect();
+						}
 						break;
 					case (ConsoleKey.LeftArrow, _):
 						//cursor left
-						_cursor.Move(new Vec2(-1, 0));
-						CursorInfo();
-						EditRect();
+						if (_cursor.Pos.X > -(_level.Size.X -_level.RelativeCenter.X))
+						{
+							_cursor.Move(new Vec2(-1, 0));
+							CursorInfo();
+							EditRect();
+						}
 						break;
 					case (ConsoleKey.RightArrow, _):
 						//cursor right
-						_cursor.Move(new Vec2(1, 0));
-						CursorInfo();
-						EditRect();
+						if (_cursor.Pos.X < (_level.Size.X -_level.RelativeCenter.X -1))
+						{
+							_cursor.Move(new Vec2(1, 0));
+							CursorInfo();
+							EditRect();
+						}
 						break;
 					case (ConsoleKey.Spacebar, _):
 						//run cursor action
@@ -401,14 +413,14 @@ class Editor : Game
 					if (_blueprintBar.SelectedElement != null)
 					{
 						//set element on cursor
-						_level.SetCell(_blueprintBar.SelectedChar, targetpos, _layerbar.ActiveLayer);
+						_level.SetCell(_blueprintBar.SelectedKey, targetpos, _layerbar.ActiveLayer);
 						// DebugLogger.Log($"CursorAction: SetCell called, element at grid: {_level.Layers[_layerbar.ActiveLayer].Elements[targetpos.X, targetpos.Y]?.Name ?? "null"}");
 						_level.Layers[_layerbar.ActiveLayer].UpdateSprite();
 					}
 					break;
 				case EditingMode.DELETE:
 					//delete element on cursor
-					_level.SetCell('.', targetpos, _layerbar.ActiveLayer);
+					_level.SetCell("..", targetpos, _layerbar.ActiveLayer);
 					_editingmode = EditingMode.DELETE;
 					break;
 				case EditingMode.INSERTRECTSTART:
@@ -425,14 +437,14 @@ class Editor : Game
 
 	private void EditRect(){
 		if (_cursor != null && _editingmode == EditingMode.INSERTRECTSTART)
-        {
-            if(_editrect != null)
-            {
-                Sprite? sprite = _blueprintBar.SelectedElement?.GetSprite();
+		{
+			if(_editrect != null)
+			{
+				Sprite? sprite = _blueprintBar.SelectedElement?.GetSprite();
 				ScreenCell cell = new ScreenCell(' ', Color.Black, Color.Black);
-                if (sprite != null)
+				if (sprite != null)
 				{
-                    cell = sprite.Data[0,0];	
+					cell = sprite.Data[0,0];	
 				}
 					
 					_editrect.Update(_cursor.Pos, cell);				
@@ -448,7 +460,7 @@ class Editor : Game
 			{
 				for (int y = 0; y < _editrect.Size.Y; y++)
 				{
-					_level.SetCell(_blueprintBar.SelectedChar, Vec2.Add(_editrect.Pos.Sum(x, y), _level.RelativeCenter), _layerbar.ActiveLayer);
+					_level.SetCell(_blueprintBar.SelectedKey, Vec2.Add(_editrect.Pos.Sum(x, y), _level.RelativeCenter), _layerbar.ActiveLayer);
 				}
 			}
 			_level.Layers[_layerbar.ActiveLayer].UpdateSprite();
@@ -473,11 +485,11 @@ class Editor : Game
 			if (origin.X < 0 || origin.X >= rows || origin.Y < 0 || origin.Y >= cols)
 				return;
 
-			char targetChar = grid[origin.X, origin.Y]?.Character?? '.';
-			char? replacementChar = _blueprintBar.SelectedChar;
+			string targetKey = grid[origin.X, origin.Y]?.Key?? "..";
+			string? replaceKey = _blueprintBar.SelectedKey;
 
 			// If the target character is already the replacement character, no work is needed
-			if (targetChar == replacementChar)
+			if (targetKey == replaceKey)
 				return;
 
 			Stack<Vec2> stack = new Stack<Vec2>();
@@ -493,11 +505,11 @@ class Editor : Game
 
 				// Check if the current cell matches the starting character
 				LevelElement? currentElement = grid[pos.X, pos.Y];
-				char currentChar = currentElement?.Character ?? '.';
-				if (currentChar == targetChar)
+				string currentKey = currentElement?.Key ?? "..";
+				if (currentKey == targetKey)
 				{
 					// Replace the cell (creating a new instance to avoid reference issues)
-					_level.SetCell(replacementChar, pos, _layerbar.ActiveLayer);
+					_level.SetCell(replaceKey, pos, _layerbar.ActiveLayer);
 
 					// Add neighbors (4-way connectivity)
 					stack.Push(new Vec2(pos.X + 1, pos.Y));
@@ -594,21 +606,21 @@ class Editor : Game
 
 class Cursor: Entity
 {
-    
-    //constructor
-    public Cursor()
-    {
-        _animations = JsonParser.LoadAnimations("CursorSprites.json", 50);
-        SetAnimation("SELECT");
-        _pos = new Vec2(0,0);
-    }
+	
+	//constructor
+	public Cursor()
+	{
+		_animations = JsonParser.LoadAnimations("CursorSprites.json", 50);
+		SetAnimation("SELECT");
+		_pos = new Vec2(0,0);
+	}
 }
 
 class BlueprintBar
 {
-	private Dictionary<char, LevelElement> _elements;
+	private Dictionary<string, LevelElement> _elements;
 	public LevelElement? SelectedElement { get; private set;}
-	public char SelectedChar { get; private set;}
+	public string SelectedKey { get; private set;}
 	private const int _numSlots = 9; //length of bar in number of slots
 	private int _selectedSlot;
 
@@ -621,7 +633,7 @@ class BlueprintBar
 	{
 		_elements = new();
 		SelectedElement = null;
-		SelectedChar = '.';
+		SelectedKey = "..";
 		_selectedSlot = -1;
 		_sprite = new Sprite(new Vec2(_numSlots*2+3, 3));
 		_bgCell = new ScreenCell('V', Color.BabyWhite, Color.BabyWhite);
@@ -672,13 +684,13 @@ class BlueprintBar
 	}
 
 	public void NextRow(){
-		int start = Math.Clamp(_selectedSlot + _numSlots, 0, BlueprintManager.NumItems);
-		Update(start);
+		_selectedSlot = Math.Clamp(_selectedSlot + _numSlots, 0, BlueprintManager.NumItems-_numSlots);
+		Update(_selectedSlot);
 	}
 
 	public void PrevRow(){
-		int start = Math.Clamp(_selectedSlot - _numSlots, 0, BlueprintManager.NumItems);
-		Update(start);
+		_selectedSlot = Math.Clamp(_selectedSlot - _numSlots, 0, BlueprintManager.NumItems-_numSlots);
+		Update(_selectedSlot);
 	}
 
 	public LevelElement? SelectElement(char key) //key here is numeric index of the blueprint bar
@@ -688,13 +700,13 @@ class BlueprintBar
 		if (index >= 0 && index < _elements.Count)
 		{
 			var entry = _elements.ElementAt(index);
-			SelectedChar = entry.Key;
+			SelectedKey = entry.Key;
 			SelectedElement = entry.Value;
 			changed = true;
 		}
 		else if (index < 0)
 		{
-			SelectedChar = '.';
+			SelectedKey = "..";
 			SelectedElement = null;
 			changed = true;
 		}

@@ -36,25 +36,25 @@ public static class SoundManager
 	private static void PlayWindows(string filePath)
 	{
 #if WINDOWS
-        try
-        {
-            var outputDevice = new WaveOutEvent();
-            var audioFile = new AudioFileReader(filePath);
-            audioFile.Volume = _volume;
+		try
+		{
+			var outputDevice = new WaveOutEvent();
+			var audioFile = new AudioFileReader(filePath);
+			audioFile.Volume = _volume;
 
-            outputDevice.Init(audioFile);
-            outputDevice.Play();
+			outputDevice.Init(audioFile);
+			outputDevice.Play();
 
-            outputDevice.PlaybackStopped += (s, e) =>
-            {
-                outputDevice.Dispose();
-                audioFile.Dispose();
-            };
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Windows Audio Error: {ex.Message}");
-        }
+			outputDevice.PlaybackStopped += (s, e) =>
+			{
+				outputDevice.Dispose();
+				audioFile.Dispose();
+			};
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Windows Audio Error: {ex.Message}");
+		}
 #else
 		Console.WriteLine("Windows audio requested on a non-Windows platform.");
 #endif

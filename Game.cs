@@ -73,7 +73,7 @@ class Game
 		_menu.AddItem(LM.Get("menu_newgame"), SetAction(ActionType.NEWPET), Color.DarkGreen);
 		_menu.AddItem(LM.Get("menu_topscore"), SetAction(ActionType.TOPSCORE), Color.DarkGreen);
 		_menu.AddItem(LM.Get("menu_help"), SetAction(ActionType.HELP), Color.DarkGreen);
-		_menu.AddItem(LM.Get("menu_editor"), SetAction(ActionType.EDITOR_START), Color.DarkGray);
+		_menu.AddItem(LM.Get("menu_editor"), SetAction(ActionType.EDITOR_START), Color.DarkYellow);
 		_menu.AddItem(LM.Get("menu_quit"), SetAction(ActionType.QUIT), Color.DarkGreen);
 
 		_menu.SelectFirstEnabled();
@@ -95,6 +95,9 @@ class Game
 
 		//call CheckWindow once forced to ensure the window and buffer size are synced.
 		CheckWindow(true);
+
+		//apply padding to the level to keep the pet contained and for visual style
+		_level.PadLevel(_viewport.Size.X / 2, _viewport.Size.Y / 2);
 	}
 
 	public void ChooseLanguage()
