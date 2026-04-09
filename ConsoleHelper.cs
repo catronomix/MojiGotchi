@@ -51,8 +51,11 @@ public static class ConsoleHelper
 
 		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 		{
+			
+			Console.SetWindowSize(width, height);
 			Console.WindowWidth = width;
 			Console.WindowHeight = height;
+			Console.Write($"\x1b[8;{height};{width}t");
 		}
 		else
 		{

@@ -8,7 +8,7 @@ class Game
 
 	protected static Color programBgColor = Color.Black;
 	protected Renderer _renderer; // Changed to instance field
-	protected bool _isRunning = true;
+	protected LoopResult _loopresult = LoopResult.CONTINUE;
 
 	// Declare Rect objects as instance fields to cache them
 	protected Rect _menuBgRect;
@@ -46,7 +46,7 @@ class Game
 	protected LanguageChoice _languageChoice;
 
 	// Initialize the game
-	public Game()
+	public Game(bool devmode)
 	{
 		_renderer = new Renderer(programBgColor);
 		// Initialize Rects for drawing the game's menu, status bar and play area
@@ -64,16 +64,17 @@ class Game
 		_currentModal = null;
 
 		//gameplay
-		_menu.AddItem(LM.Get("menu_feed"), SetAction(ActionType.FEED), false);
-		_menu.AddItem(LM.Get("menu_play"), SetAction(ActionType.PLAY), false);
-		_menu.AddItem(LM.Get("menu_pet"), SetAction(ActionType.PET), false);
-		_menu.AddItem(LM.Get("menu_wake"), SetAction(ActionType.WAKE), false);
+		_menu.AddItem(LM.Get("menu_feed"), SetAction(ActionType.FEED), Color.WoodDark, false);
+		_menu.AddItem(LM.Get("menu_play"), SetAction(ActionType.PLAY), Color.WoodDark, false);
+		_menu.AddItem(LM.Get("menu_pet"), SetAction(ActionType.PET), Color.WoodDark, false);
+		_menu.AddItem(LM.Get("menu_wake"), SetAction(ActionType.WAKE), Color.WoodDark, false);
 
 		//management
-		_menu.AddItem(LM.Get("menu_newgame"), SetAction(ActionType.NEWPET));
-		_menu.AddItem(LM.Get("menu_quit"), SetAction(ActionType.QUIT));
-		_menu.AddItem(LM.Get("menu_topscore"), SetAction(ActionType.TOPSCORE));
-		_menu.AddItem(LM.Get("menu_help"), SetAction(ActionType.HELP));
+		_menu.AddItem(LM.Get("menu_newgame"), SetAction(ActionType.NEWPET), Color.DarkGreen);
+		_menu.AddItem(LM.Get("menu_topscore"), SetAction(ActionType.TOPSCORE), Color.DarkGreen);
+		_menu.AddItem(LM.Get("menu_help"), SetAction(ActionType.HELP), Color.DarkGreen);
+		_menu.AddItem(LM.Get("menu_editor"), SetAction(ActionType.EDITOR_START), Color.DarkGray);
+		_menu.AddItem(LM.Get("menu_quit"), SetAction(ActionType.QUIT), Color.DarkGreen);
 
 		_menu.SelectFirstEnabled();
 		//load saved pet from file
@@ -91,8 +92,8 @@ class Game
 		_camera = new Camera(_level, _pet, deadzone, _viewport); 
 
 		_persistentStatus = LM.Get("status_welcome"); // Welcome
-		// Call CheckWindow once at the end of the constructor to ensure all
-		// dimensions are correctly set for the first render.
+
+		//call CheckWindow once forced to ensure the window and buffer size are synced.
 		CheckWindow(true);
 	}
 
@@ -103,7 +104,7 @@ class Game
 		_menu.Disable();
 	}
 
-	public bool Step()
+	public LoopResult Step()
 	{
 		//Check window resized
 		CheckWindow();
@@ -131,7 +132,7 @@ class Game
 		/*--------------------INPUT--------------------*/
 		HandleInput();
 		Thread.Sleep(sleepDelta);
-		return _isRunning;
+		return _loopresult;
 	}
 
 	// Check if window has been resized
@@ -283,7 +284,7 @@ class Game
 					mySprite.Data[1, 1].Character = ' ';
 					if (mySprite.Size.X >= 2) mySprite.Data[1, mySprite.Size.X - 2].Character = ' ';
 				}
-				_renderer.DrawSprite(mySprite, new Vec2(_menuBgRect.Pos.X + 1, _menuBgRect.Pos.Y + index * 4 + 1));
+				_renderer.DrawSprite(mySprite, new Vec2(_menuBgRect.Pos.X + 1, _menuBgRect.Pos.Y + index * 3 + 1));
 				index++;
 			}
 		}
@@ -421,7 +422,7 @@ class Game
 		UpdateMenuAvailability([ActionType.NEWPET], true);
 		_menu.SelectFirstEnabled();
 		// The death message is already set in _persistentStatus by CheckStats.
-		SoundManager.Play("death.wav");
+		SoundManager.PlayFileDirect("death.wav");
 		SetTransientStatus("Begin een nieuw spel om een nieuwe MojiGotchi te krijgen.");
 	}
 
@@ -443,7 +444,7 @@ class Game
 					game.UpdateMenuAvailability([ActionType.NEWPET], false);
 					game._persistentStatus = LM.Get("status_caring", [game._pet.Name]);
 					game._menu.SelectFirstEnabled();
-					SoundManager.Play("newgame.wav");
+					SoundManager.PlayFileDirect("newgame.wav");
 				};
 				break;
 			case ActionType.FEED:
@@ -486,7 +487,14 @@ class Game
 				logic = (game) =>
 				{
 					if (game._pet != null) { DataManager.SavePet(game._pet); } else { DataManager.DeleteSave(); }
-					game._isRunning = false;
+					game._loopresult = LoopResult.QUIT;
+				};
+				break;
+			case ActionType.EDITOR_START:
+				logic = (game) =>
+				{
+					if (game._pet != null) { DataManager.SavePet(game._pet); } else { DataManager.DeleteSave(); }
+					game._loopresult = LoopResult.GOTOEDITOR;
 				};
 				break;
 			case ActionType.TOPSCORE:

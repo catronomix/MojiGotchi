@@ -229,7 +229,7 @@ public class Pet : Entity //Pet inherits from Entity class
 		Energy.Raise();
 		_lastFed = DateTime.Now;
 		_animationState = AnimEating;
-		SoundManager.Play("eat.wav");
+		SoundManager.PlayFileDirect("eat.wav");
 		MessageBubble.SetMessage("Omnomnom", 1000, true);
 		return LM.Get("pet_action_feed", [Name]);
 	}
@@ -240,7 +240,7 @@ public class Pet : Entity //Pet inherits from Entity class
 		Mood.Raise();   // Playing increases mood
 		_lastPlayed = DateTime.Now;
 		_animationState = AnimPlaying;
-		SoundManager.Play("play.wav");
+		SoundManager.PlayFileDirect("play.wav");
 		MessageBubble.SetMessage("Wheeeee!", 1000, true);
 		return LM.Get("pet_action_play", [Name]);
 	}
@@ -252,7 +252,7 @@ public class Pet : Entity //Pet inherits from Entity class
 		_lastPetted = DateTime.Now;
 		//not implemented yet
 		// _animationState = AnimationState.HAPPY;
-		SoundManager.Play("petpet.wav");
+		SoundManager.PlayFileDirect("petpet.wav");
 		return LM.Get("pet_action_pet", [Name]);
 	}
 
@@ -264,7 +264,7 @@ public class Pet : Entity //Pet inherits from Entity class
 		_lastWaked = DateTime.Now;
 		_animationState = AnimWakeup;
 		MessageBubble.SetMessage("Ugh..", 1000, true);
-		SoundManager.Play("wakeup.wav");
+		SoundManager.PlayFileDirect("wakeup.wav");
 		return LM.Get("pet_action_wake", [Name]);
 	}
 

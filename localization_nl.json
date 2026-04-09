@@ -9,6 +9,7 @@
   "menu_quit": "Afsluiten",
   "menu_topscore": "Topscore",
   "menu_help": "Help",
+  "menu_editor": "Editor",
   "status_welcome": "Welkom bij MojiGotchi!",
   "status_caring": "Je zorgt voor {0}",
   "status_stats": "[Verzadiging:{0}/{1} Humeur:{2}/{3} Energie:{4}/{5} Slaap:{6}/{7}]",

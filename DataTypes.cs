@@ -11,6 +11,7 @@ public enum ActionType
 	PLAY,
 	PET,
 	WAKE,
+    EDITOR_START,
 	EDITOR_LOAD,
 	EDITOR_SAVE,
 	EDITOR_EDIT,

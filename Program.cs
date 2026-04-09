@@ -3,14 +3,29 @@
 using System.Collections.Generic;
 using System.IO;
 
+public enum LoopResult
+{
+    CONTINUE, //continue loop
+    QUIT,
+    GOTOGAME,
+    GOTOEDITOR
+}
+
 class Program
 {
 	private static Dictionary<string, string> _gameOptions = new();
 
+	private enum AppState
+    {
+        GAME,
+        EDITOR,
+        QUIT
+    }
+
 	private static void Main(string[] args)
 	{
-		ConsoleHelper.SetWindowSize(122,40);
 		ConsoleHelper.EnableAnsiEscapeCodes(); // Enable ANSI support for the console
+		ConsoleHelper.SetWindowSize(116,33);
 		ConsoleHelper.HideCursor();
 		ConsoleHelper.EnableUTF8();
 
@@ -20,7 +35,6 @@ class Program
 		// Load language BEFORE creating Game so menu items can be localized
 		bool isFirstLanguageSetup = !_gameOptions.ContainsKey("language");
 		string language = isFirstLanguageSetup ? "en" : _gameOptions["language"];
-		
 		if (isFirstLanguageSetup)
 		{
 			_gameOptions["language"] = language;
@@ -28,46 +42,60 @@ class Program
 		}
 		LM.SetLanguage(language);
 
-		//optionally start editor
-		if (_gameOptions["devmode"] == "true")
-		{
-			Editor _editor = new Editor();
-			bool devloop = true;
-			while (devloop)
-			{
-				devloop = Loop(_editor);
-			}
-		}
+		// Enable/disable dev mode
+        bool devMode = _gameOptions.ContainsKey("devmode") && _gameOptions["devmode"] == "true";
 
-		//start game
-		Game _game = new Game();         // Declare as local variable
-		
-		// Show language choice modal on first run
-		if (isFirstLanguageSetup)
-		{
-			_game.ChooseLanguage();
-		}
+        AppState currentState = AppState.GAME;
 
-		bool running = true;
-		//need to differentiate between game mode and editor mode
-		while (running)
-		{
-			running = Loop(_game);
-		}
+		while (currentState != AppState.QUIT)
+        {
+            switch (currentState)
+            {
+                case AppState.EDITOR:
+                    currentState = RunEditorLoop(devMode);
+                    break;
+
+                case AppState.GAME:
+                    currentState = RunGameLoop(isFirstLanguageSetup, devMode);
+                    isFirstLanguageSetup = false; 
+                    break;
+            }
+        }
 
 	}
 
-	private static bool Loop(Game game)
-	{
-		// Directly call Renderer.Resize and pass its boolean result to game.Step
-		
-		return game.Step();
-	}
+	private static AppState RunGameLoop(bool showLanguageModal, bool devMode)
+    {
+        // Pass devMode to the Game constructor
+        Game game = new Game(devMode);
 
-	private static bool Loop(Editor editor)
-	{
-		return editor.Step();
-	}
+        if (showLanguageModal)
+        {
+            game.ChooseLanguage();
+        }
+
+        while (true)
+        {
+            LoopResult result = game.Step(); 
+
+            if (result == LoopResult.GOTOEDITOR) return AppState.EDITOR;
+            if (result == LoopResult.QUIT) return AppState.QUIT;
+        }
+    }
+
+    private static AppState RunEditorLoop(bool devMode)
+    {
+        // Pass devMode to the Editor constructor
+        Editor editor = new Editor(devMode);
+
+        while (true)
+        {
+            LoopResult result = editor.Step();
+
+            if (result == LoopResult.GOTOGAME) return AppState.GAME;
+            if (result == LoopResult.QUIT) return AppState.QUIT;
+        }
+    }
 
 	private static void LoadGameOptions()
 	{

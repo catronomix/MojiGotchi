@@ -30,6 +30,7 @@ class Renderer
 			_consoleHeight = newHeight;
 			_screenBuffer = new ScreenCell[_consoleHeight, _consoleWidth];
 			ConsoleHelper.HideCursor();
+			ClearBuffer();
 			return true;
 		}
 		return false;

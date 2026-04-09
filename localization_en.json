@@ -9,6 +9,7 @@
   "menu_quit": "Quit",
   "menu_topscore": "High scores",
   "menu_help": "Help",
+  "menu_editor": "Editor",
   "status_welcome": "Welcome to MojiGotchi!",
   "status_caring": "You are taking care of {0}",
   "status_stats": "[Hunger:{0}/{1} Mood:{2}/{3} Energy:{4}/{5} Sleep:{6}/{7}]",

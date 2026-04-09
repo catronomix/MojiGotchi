@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -16,7 +15,7 @@ public static class SoundManager
 		set => _volume = Math.Clamp(value, 0f, 1f);
 	}
 
-	public static void Play(string filePath)
+	public static void PlayFileDirect(string filePath)
 	{
 		if (!File.Exists(filePath)) return;
 

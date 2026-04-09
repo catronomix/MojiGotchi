@@ -45,7 +45,7 @@ class Editor : Game
 	private Focus _focus;
 
 	// Initialize the editor
-	public Editor()
+	public Editor(bool devmode) : base(devmode)
 	{
 		// Set area sizes
 		base._menuWidth = 21;
@@ -64,13 +64,13 @@ class Editor : Game
 		EditorHelp _help = new EditorHelp("Editor Help", Color.DarkGray, Color.White);
 		_editorHelp = new EditorHelp("Editor Help", Color.DarkGray, Color.White); // Initialize editor-specific help
 		//editor
-		_menu.AddItem(LM.Get("editor_menu_edit"), SetAction(ActionType.EDITOR_EDIT));
-		_menu.AddItem(LM.Get("editor_menu_save"), SetAction(ActionType.EDITOR_SAVE));
-		_menu.AddItem(LM.Get("editor_menu_revert"), SetAction(ActionType.EDITOR_LOAD));
+		_menu.AddItem(LM.Get("editor_menu_edit"), SetAction(ActionType.EDITOR_EDIT), Color.WoodDark);
+		_menu.AddItem(LM.Get("editor_menu_save"), SetAction(ActionType.EDITOR_SAVE), Color.WoodDark);
+		_menu.AddItem(LM.Get("editor_menu_revert"), SetAction(ActionType.EDITOR_LOAD), Color.WoodDark);
 		
 		//modals
-		_menu.AddItem(LM.Get("menu_help"), SetAction(ActionType.EDITOR_HELP));
-		_menu.AddItem(LM.Get("editor_menu_quit"), SetAction(ActionType.EDITOR_QUIT));
+		_menu.AddItem(LM.Get("menu_help"), SetAction(ActionType.EDITOR_HELP), Color.DarkGreen);
+		_menu.AddItem(LM.Get("editor_menu_quit"), SetAction(ActionType.EDITOR_QUIT), Color.DarkGreen);
 
 		_menu.SelectFirstEnabled();
 		
@@ -105,7 +105,7 @@ class Editor : Game
 		_editingmode = EditingMode.DISABLED;
 	}
 
-	public new bool Step()
+	public new LoopResult Step()
 	{
 		//Check window resized
 		CheckWindow();
@@ -150,7 +150,7 @@ class Editor : Game
 		/*--------------------INPUT--------------------*/
 		HandleInput();
 		Thread.Sleep(sleepDelta);
-		return _isRunning;
+		return _loopresult;
 	}
 
 	internal new void CheckWindow(bool force = false)
@@ -572,7 +572,7 @@ class Editor : Game
 				logic = (game) =>
 				{
 					Editor editor = (Editor)game; // Cast to Editor
-					editor._isRunning = false; // Use editor._isRunning
+					editor._loopresult = LoopResult.GOTOGAME; // Use editor._isRunning
 				};
 				break;
 			case ActionType.EDITOR_HELP:
