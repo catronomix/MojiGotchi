@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -16,7 +15,7 @@ public static class SoundManager
 		set => _volume = Math.Clamp(value, 0f, 1f);
 	}
 
-	public static void Play(string filePath)
+	public static void PlayFileDirect(string filePath)
 	{
 		if (!File.Exists(filePath)) return;
 
@@ -37,25 +36,25 @@ public static class SoundManager
 	private static void PlayWindows(string filePath)
 	{
 #if WINDOWS
-        try
-        {
-            var outputDevice = new WaveOutEvent();
-            var audioFile = new AudioFileReader(filePath);
-            audioFile.Volume = _volume;
+		try
+		{
+			var outputDevice = new WaveOutEvent();
+			var audioFile = new AudioFileReader(filePath);
+			audioFile.Volume = _volume;
 
-            outputDevice.Init(audioFile);
-            outputDevice.Play();
+			outputDevice.Init(audioFile);
+			outputDevice.Play();
 
-            outputDevice.PlaybackStopped += (s, e) =>
-            {
-                outputDevice.Dispose();
-                audioFile.Dispose();
-            };
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Windows Audio Error: {ex.Message}");
-        }
+			outputDevice.PlaybackStopped += (s, e) =>
+			{
+				outputDevice.Dispose();
+				audioFile.Dispose();
+			};
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Windows Audio Error: {ex.Message}");
+		}
 #else
 		Console.WriteLine("Windows audio requested on a non-Windows platform.");
 #endif

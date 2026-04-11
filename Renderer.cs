@@ -30,6 +30,7 @@ class Renderer
 			_consoleHeight = newHeight;
 			_screenBuffer = new ScreenCell[_consoleHeight, _consoleWidth];
 			ConsoleHelper.HideCursor();
+			ClearBuffer();
 			return true;
 		}
 		return false;
@@ -163,6 +164,19 @@ class Renderer
 				if (c == ScreenCell.SkipChar) continue;
 				_screenBuffer[screenY, screenX].Character = c;
 				_screenBuffer[screenY, screenX].Color = fgColor;
+			}
+		}
+	}
+
+	public void Shade(Color color, float amount, SimpleRect area)
+	{
+		//offset colors of cells
+		for (int y = area.Top; y < area.Bottom; y++)
+		{
+			for (int x = area.Left; x < area.Right; x++)
+			{
+				_screenBuffer[y, x].Color = Color.Mix(_screenBuffer[y, x].Color, color, amount);
+				_screenBuffer[y,x].BgColor = Color.Mix(_screenBuffer[y, x].BgColor, color, amount);
 			}
 		}
 	}

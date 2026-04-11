@@ -3,24 +3,10 @@ namespace MojiGotchi;
 public class Help : Modal
 {
 	// help text
-	private string _helpText = @"
-DOEL:
-Houd je virtuele huisdier in leven door zijn statistieken te beheren.
-
-BESTURING:
-- Pijltjes Omhoog/Omlaag: Navigeer door het menu.
-- Enter: Bevestig je selectie.
-- Escape: Sluit dit venster.
-
-ACTIES:
-- Voeden: Verhoogt verzadiging en energie. Pas op voor overvoeding!
-- Spelen: Verhoogt humeur, maar kost energie.
-- Aaien: Verhoogt humeur en maakt je pet een beetje moe.
-- Wekken: Maakt je pet wakker als hij slaapt, maar dit schaadt zijn humeur.
-- Slaap: Je pet valt vanzelf in slaap als hij moe is.";
+	private string _helpText = LM.Get("modaltext_help");
 
 
-    public Help() : base("MojiGotchi - Handleiding", Color.DarkGreen, Color.Green)
+	public Help() : base(LM.Get("modaltitle_help"), Color.DarkGreen, Color.Green)
 	{
 		
 	}
@@ -50,7 +36,5 @@ ACTIES:
 			// Add content with a small margin (x=2) and vertical offset
 			AddContent(lineSprite, new Vec2(4, i + 2));
 		}
-
-		
 	}
 }

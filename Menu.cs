@@ -45,11 +45,10 @@ class MenuItem
 		}
 	}
 
-	private Color _defaultFgColor = Color.White;
-	private Color _defaultBgColor = Color.DarkGreen;
+	private Color _enabledFgColor = Color.White;
 	private Color _disabledFgColor = Color.DarkGray;
 
-	public MenuItem(string title, GameAction action, int width)
+	public MenuItem(string title, GameAction action, int width, Color bgcolor)
 	{
 		_title = title;
 		_action = action;
@@ -63,8 +62,8 @@ class MenuItem
 		_enabledSprite = new Sprite(spriteSize);
 		_disabledSprite = new Sprite(spriteSize);
 
-		PopulateSprite(_enabledSprite, _defaultFgColor, _defaultBgColor);
-		PopulateSprite(_disabledSprite, _disabledFgColor, _defaultBgColor);
+		PopulateSprite(_enabledSprite, _enabledFgColor, bgcolor);
+		PopulateSprite(_disabledSprite, _disabledFgColor, Color.Mix(bgcolor, Color.Black, 0.2f));
 
 		_enabled = true; // Default to enabled
 	}
@@ -79,7 +78,7 @@ class MenuItem
 		{
 			for (int x = 0; x < width; x++)
 			{
-				targetSprite.WriteCell(new Vec2(x, y), new ScreenCell(' ', _defaultFgColor, cellBgColor));
+				targetSprite.WriteCell(new Vec2(x, y), new ScreenCell(' ', _enabledFgColor, cellBgColor));
 			}
 		}
 
@@ -151,7 +150,9 @@ class Menu
 	public Color Color { get; private set; } // Foreground color for the menu container
 	public List<MenuItem> MenuItems { get; private set; }
 	public int SelectedIndex { get; private set; }
+	public bool Enabled { get; private set; }
 
+	// Constructor
 	public Menu(int width, Color bgColor, Color color)
 	{
 		Width = width;
@@ -161,11 +162,12 @@ class Menu
 
 		// Set selected item to the first if available
 		SelectedIndex = 0;
+		Enabled = true;
 	}
 
-	public void AddItem(string title, GameAction action, bool enabled = true)
+	public void AddItem(string title, GameAction action, Color bgcolor, bool enabled = true)
 	{
-		MenuItems.Add(new MenuItem(title, action, Width - 2));
+		MenuItems.Add(new MenuItem(title, action, Width - 2, bgcolor));
 		if (!enabled)
 		{
 			MenuItems[MenuItems.Count - 1].Disable();
@@ -181,7 +183,7 @@ class Menu
 			if (MenuItems[i].Enabled)
 			{
 				SelectedIndex = i;
-				SoundManager.Play("select.wav");
+				SoundManager.PlayFileDirect("select.wav");
 				return;
 			}
 		}
@@ -196,7 +198,7 @@ class Menu
 			if (MenuItems[i].Enabled)
 			{
 				SelectedIndex = i;
-				SoundManager.Play("select.wav");
+				SoundManager.PlayFileDirect("select.wav");
 				return;
 			}
 		}
@@ -208,6 +210,16 @@ class Menu
 		{
 			SelectedIndex++;
 		}
+	}
+
+	public void Enable()
+	{
+		Enabled = true;
+	}
+
+	public void Disable()
+	{
+		Enabled = false;
 	}
 
 }

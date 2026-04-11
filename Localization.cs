@@ -56,27 +56,27 @@ public static class LM //shorthand for localizationmanager
 	}
 
 	public static string Get(string key, params object?[] args)
-    {
-        if (!_currentStrings.TryGetValue(key, out var value))
-        {
-            DebugLogger.Log($"Missing localization key: {key}");
-            return "";
-        }
+	{
+		if (!_currentStrings.TryGetValue(key, out var value))
+		{
+			DebugLogger.Log($"Missing localization key: {key}");
+			return "";
+		}
 
-        if (args.Length == 0)
-            return value;
+		if (args.Length == 0)
+			return value;
 
-        try
+		try
 		{
 			string formatted = string.Format(value, args);
-            return formatted;
-        }
-        catch (FormatException ex)
-        {
-            DebugLogger.Log($"Format error for key '{key}': {ex.Message}");
-            return value;
-        }
-    }
+			return formatted;
+		}
+		catch (FormatException ex)
+		{
+			DebugLogger.Log($"Format error for key '{key}': {ex.Message}");
+			return value;
+		}
+	}
 
 	public static string CurrentLang()
 	{

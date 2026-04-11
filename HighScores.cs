@@ -2,7 +2,7 @@ namespace MojiGotchi;
 
 public class HighScores : Modal
 {
-	public HighScores() : base("High Scores", Color.DarkMagenta, Color.Red)
+	public HighScores() : base(LM.Get("modaltitle_highscores"), Color.DarkMagenta, Color.Red)
 	{
 
 	}

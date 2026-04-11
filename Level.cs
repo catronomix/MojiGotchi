@@ -1,4 +1,5 @@
-using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace MojiGotchi;
 
@@ -9,72 +10,85 @@ public class LevelElementBlueprint
 	public string Name { get; }
 	public Animation Animation { get; }
 	public bool IsBlocking { get; }
-	public string Layer { get; }
 
-	public LevelElementBlueprint(string name, Animation animation, bool isBlocking, string layer)
+	public LevelElementBlueprint(string name, Animation animation, bool isBlocking)
 	{
 		Name = name;
 		Animation = animation;
 		IsBlocking = isBlocking;
-		Layer = layer;
 	}
 }
 
 // A static manager that holds all the defined LevelElementBlueprints.
 public static class BlueprintManager
 {
-	private static readonly Dictionary<char, LevelElementBlueprint> _blueprints = new();
-
+	private static readonly Dictionary<string, LevelElementBlueprint> _blueprints = new();
+	public static int NumItems => _blueprints.Count;
+	private const int NOANIM = int.MaxValue;
 
 	// Initializes all the blueprints for the game. This should be called once at startup.
 	public static void Initialize()
 	{
 		_blueprints.Clear();
-		// Define blueprints here. Each character in your level file will map to one of these.
 
-		// '═' horizontal wall
-		MakeBlueprint1("WallH", '=', '═', Color.White, Color.DarkRed, "MidLayer", true, 1000);
+		// All keys MUST be 2 characters to maintain level file alignment!
+		//walls
+		MakeBlueprint1("WallH", "==", '═', Color.Wallfg, Color.Wallbg, true, NOANIM);
+		MakeBlueprint1("WallV", "=|", '║', Color.Wallfg, Color.Wallbg, true, NOANIM);
+		MakeBlueprint1("WallTL", "=<", '╔', Color.Wallfg, Color.Wallbg, true, NOANIM);
+		MakeBlueprint1("WallTR", "=>", '╗', Color.Wallfg, Color.Wallbg, true, NOANIM);
+		MakeBlueprint1("WallBL", "=(", '╚', Color.Wallfg, Color.Wallbg, true, NOANIM);
+		MakeBlueprint1("WallBR", "=)", '╝', Color.Wallfg, Color.Wallbg, true, NOANIM);
+		MakeBlueprint1("WallJT", "=T", '╩', Color.Wallfg, Color.Wallbg, true, NOANIM);
+		MakeBlueprint1("WallJR", "=R", '╠', Color.Wallfg, Color.Wallbg, true, NOANIM);
+		MakeBlueprint1("WallJD", "=D", '╦', Color.Wallfg, Color.Wallbg, true, NOANIM);
+		MakeBlueprint1("WallJL", "=L", '╣', Color.Wallfg, Color.Wallbg, true, NOANIM);
+		MakeBlueprint1("WallX", "=X", '╬', Color.Wallfg, Color.Wallbg, true, NOANIM);
 
-		// '║' vertical wall
-		MakeBlueprint1("WallV", '|', '║', Color.White, Color.DarkRed, "MidLayer", true, 1000);
+		//house elements
+		MakeBlueprint1("Window", "%%", '▒', Color.LightBlue, Color.Blue, true, NOANIM);
+		MakeBlueprint1("Door", "DD", '•', Color.Gray, Color.DarkRed, false, NOANIM);
+		MakeBlueprint1("Dark Plank", "PD", '╱', Color.WoodLight, Color.WoodDark, true, NOANIM);
+		MakeBlueprint1("Light Plank", "PL", '╱', Color.WoodDark, Color.WoodLight, true, NOANIM);
+		MakeBlueprint1("Red Tile", "TR", '┼', Color.DarkRed, Color.Red, true, NOANIM);
+		MakeBlueprint1("Magenta Tile", "TM", '╳', Color.DarkMagenta, Color.Magenta, true, NOANIM);
+		MakeBlueprint1("Yellow Tile", "TY", '#', Color.DarkYellow, Color.Yellow, true, NOANIM);
+		MakeBlueprint1("Red Carpet", "CR", '░', Color.Red, Color.DarkRed, false, NOANIM);
+		MakeBlueprint1("Cyan Carpet", "CC", '▒', Color.LightCyan, Color.Cyan, false, NOANIM);
+		MakeBlueprint1("Orange Carpet", "CO", '▓', Color.Orange, Color.LightOrange, false, NOANIM);
 
-		// '╔' topleft corner wall
-		MakeBlueprint1("CornerTL", '<', '╔', Color.White, Color.DarkRed, "MidLayer", true, 1000);
+		//nature
+		MakeBlueprint1("Grass", ",,", new char[] {'/', '|', '|', '|', '/', '|', '|', '|', '|', '|' }, Color.GrassGreen, Color.GroundGreen, false, 330);
+		MakeBlueprint1("Clover", ",♣", '♣', Color.GrassGreen, Color.GroundGreen, false, NOANIM);
+		MakeBlueprint1("Stem", "BS", '¥', Color.WoodLight, Color.DarkGreen, true, NOANIM);
+		MakeBlueprint1("Stalk", "Bs", '¥', Color.WoodLight, Color.GroundGreen, true, NOANIM);
+		MakeBlueprint1("Bush", "BB", new char[] { '@', '@', 'O', '@', '@', '0' }, Color.BushGreen, Color.DarkGreen, true, 700);
+		MakeBlueprint1("Apple", "Ba", '@', Color.Red, Color.DarkGreen, true, NOANIM);
+		MakeBlueprint1("Berry", "Bb", '•', Color.Purple, Color.DarkGreen, true, NOANIM);
+		MakeBlueprint1("Dark Wood", "WD", '#', Color.WoodLight, Color.WoodDark, true, NOANIM);
+		MakeBlueprint1("Light Wood", "WL", '#', Color.WoodDark, Color.WoodLight, true, NOANIM);
+		MakeBlueprint1("Water", "~~", new char[] { '~', '-' }, Color.WaterDark, Color.WaterLight, true, 400);
+		MakeBlueprint1("Deep Water", "~D", new char[] { '~', '-'}, Color.WaterLight, Color.WaterDark, true, 500);
+		MakeBlueprint1("Smiley", ":)", '☺', Color.Black, Color.Yellow, true, NOANIM);
+		MakeBlueprint1("Yellow Flower", "FY", '@', Color.Yellow, Color.GroundGreen, true, NOANIM);
+		MakeBlueprint1("Red Flower", "FR", '@', Color.Red, Color.GroundGreen, true, NOANIM);
+		MakeBlueprint1("Blue Flower", "FB", '@', Color.LightBlue, Color.GroundGreen, true, NOANIM);
+		MakeBlueprint1("Purple Flower", "FP", '@', Color.Purple, Color.GroundGreen, true, NOANIM);
 
-		// '╗' topright corner wall
-		MakeBlueprint1("CornerTR", '>', '╗', Color.White, Color.DarkRed, "MidLayer", true, 1000);
+		//solids
+		MakeBlueprint1("Solid White", "#W", ' ', Color.Black, Color.White, true, NOANIM);
+		MakeBlueprint1("Solid Black", "#b", ' ', Color.White, Color.Black, true, NOANIM);
+		MakeBlueprint1("Solid Gray", "#g", ' ', Color.DarkGray, Color.Gray, true, NOANIM);
+		MakeBlueprint1("Solid Blue", "#B", ' ', Color.Blue, Color.LightBlue, true, NOANIM);
+		MakeBlueprint1("Solid Cyan", "#C", ' ', Color.Cyan, Color.LightCyan, true, NOANIM);
+		MakeBlueprint1("Solid Green", "#G", ' ', Color.Green, Color.LightGreen, true, NOANIM);
+		MakeBlueprint1("Solid Orange", "#O", ' ', Color.Orange, Color.LightOrange, true, NOANIM);
+		MakeBlueprint1("Solid Red", "#R", ' ', Color.Red, Color.LightRed, true, NOANIM);
+		MakeBlueprint1("Solid Yellow", "#Y", ' ', Color.Yellow, Color.LightYellow, true, NOANIM);
 
-		// '╚' bottomleft corner wall
-		MakeBlueprint1("CornerBL", '(', '╚', Color.White, Color.DarkRed, "MidLayer", true, 1000);
-
-		// '╝' bottomright corner wall
-		MakeBlueprint1("CornerBR", ')', '╝', Color.White, Color.DarkRed, "MidLayer", true, 1000);
-
-		// '#' floor tile
-		MakeBlueprint1("Floor", '#', '#', Color.DarkYellow, Color.Yellow, "BottomLayer", false, 1000);
-
-		// '%' window
-		MakeBlueprint1("Window", '%', '▒', Color.LightBlue, Color.Blue, "MidLayer", true, 1000);
-
-		// 'D' door
-		MakeBlueprint1("Door", 'D', '•', Color.Gray, Color.DarkRed, "BottomLayer", false, 1000);
-
-		// ',' grass
-		MakeBlueprint1("Grass", ',', new char[] { '\\', '|', '/' }, Color.GrassGreen, Color.GroundGreen, "BottomLayer", false, 1000);
-
-		// 'B', 'b' bush
-		MakeBlueprint1("MidBush", 'B', new char[] { '@', 'O' }, Color.BushGreen, Color.DarkGreen, "MidLayer", true, 500);
-		MakeBlueprint1("TopBush", 'b', new char[] { '@', 'O' }, Color.BushGreen, Color.DarkGreen, "TopLayer", false, 500);
-
-		// 'W', 'w' wood
-		MakeBlueprint1("MidWood", 'W', '#', Color.WoodLight, Color.WoodDark, "MidLayer", true, 500);
-		MakeBlueprint1("TopWood", 'w', '#', Color.WoodLight, Color.WoodDark, "TopLayer", false, 500);
-
-		// '~' Water
-		MakeBlueprint1("Water", '~', new char[] { '~', '-' }, Color.WaterLight, Color.WaterDark, "MidLayer", true, 400);
 	}
 
-	public static void MakeBlueprint1(string name, char key, char[] chars, Color fg, Color bg, string layer, bool blocking = false, int animtime = 500)
+	public static void MakeBlueprint1(string name, string key, char[] chars, Color fg, Color bg, bool blocking = false, int animtime = 500)
 	{
 		var anim = new Animation(animtime);
 		foreach (char c in chars)
@@ -83,188 +97,314 @@ public static class BlueprintManager
 			sprite.WriteCell(new Vec2(0, 0), new ScreenCell(c, fg, bg));
 			anim.addFrame(sprite);
 		}
-		_blueprints.Add(key, new LevelElementBlueprint(name, anim, blocking, layer));
+		_blueprints.Add(key, new LevelElementBlueprint(name, anim, blocking));
 	}
 
-	public static void MakeBlueprint1(string name, char key, char character, Color fg, Color bg, string layer, bool blocking = false, int animtime = 500)
+	public static void MakeBlueprint1(string name, string key, char character, Color fg, Color bg, bool blocking = false, int animtime = 500)
 	{
-		MakeBlueprint1(name, key, new char[] { character }, fg, bg, layer, blocking, animtime);
+		MakeBlueprint1(name, key, new char[] { character }, fg, bg, blocking, animtime);
 	}
 
-
-	public static LevelElementBlueprint? GetBlueprint(char key)
+	public static LevelElementBlueprint? GetBlueprint(string key)
 	{
 		_blueprints.TryGetValue(key, out var blueprint);
 		return blueprint;
 	}
+
+	public static LevelElement? GetElement(string key, Vec2 pos)
+	{
+		LevelElementBlueprint? blueprint = GetBlueprint(key);
+		if (blueprint != null)
+		{
+			var element = new LevelElement(key, blueprint.IsBlocking)
+			{
+				Name = blueprint.Name,
+				Pos = new Vec2(pos.X, pos.Y)
+			};
+
+			Animation animation = blueprint.Animation.Clone();
+			animation.OffsetTime((float)Randomizer.R().NextDouble() * 1000.0f);
+			element.Animations = new Dictionary<string, Animation> { { Entity.AnimDefault, animation } };
+			return element;
+		}
+		return null;
+	}
+
+	public static Dictionary<string, LevelElement> GetBlueprintElements(int start = 0, int count = -1)
+	{
+		var result = new Dictionary<string, LevelElement>();
+		var keys = _blueprints.Keys.ToList();
+
+		int actualCount = count == -1 ? keys.Count - start : count;
+		int end = Math.Min(start + actualCount, keys.Count);
+
+		for (int i = start; i < end; i++)
+		{
+			string key = keys[i];
+			var bp = _blueprints[key];
+			var element = new LevelElement(key, bp.IsBlocking)
+			{
+				Name = bp.Name,
+				Animations = new Dictionary<string, Animation> { { Entity.AnimDefault, bp.Animation } }
+			};
+			result.Add(key, element);
+		}
+		return result;
+	}
 }
 
-// Represents a level/room in the game, composed of various LevelElements organized into layers.
 class Level
 {
-	public List<LevelElement> BottomLayer { get; private set; }
-	public List<LevelElement> MidLayer { get; private set; }
-	public List<LevelElement> TopLayer { get; private set; }
-	public Sprite? BottomSprite { get; private set; }
-	public Sprite? MidSprite { get; private set; }
-	public Sprite? TopSprite { get; private set; }
+	public LevelLayer[] Layers { get; private set; }
+	public static readonly string[] LayerNames = { "Bottom", "Mid", "Top" };
+
 	private Vec2 _size;
-	public Vec2 Size
-	{
-		get
-		{
-			return _size;
-		}
-	}
+	public Vec2 Size => _size;
 
 	private Vec2 _relativeCenter;
-	public Vec2 RelativeCenter
-	{
-		get
-		{
-			return _relativeCenter;
-		}
-	}
-
-	//for randomizing animations
-	Random randomizer = new Random();
+	public Vec2 RelativeCenter => _relativeCenter;
 
 	public Level()
 	{
-		BottomLayer = new List<LevelElement>();
-		MidLayer = new List<LevelElement>();
-		TopLayer = new List<LevelElement>();
+		Layers = new LevelLayer[3];
+		_size = new Vec2(0, 0);
+		_relativeCenter = new Vec2(0, 0);
 	}
 
-	public void LoadFromFile(string filePath, int borderv = 10, int borderh = 30)
+	public void SetCell(string? key, Vec2 pos, int depth = -1)
 	{
-		DebugLogger.Log($"LoadFromFile called with path: {filePath}");
-		if (File.Exists(filePath))
+		// Default to ".." for null keys to maintain grid alignment
+		LevelElement? element = BlueprintManager.GetElement(key ?? "..", pos);
+		int layerIndex = depth == -1 ? 0 : Math.Clamp(depth, 0, Layers.Length - 1);
+		
+		if (pos.X >= 0 && pos.X < _size.X && pos.Y >= 0 && pos.Y < _size.Y)
 		{
-			DebugLogger.Log($"Level file exists: {filePath}");
-			Random randomBorder = new Random();
-			using var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-			using var reader = new StreamReader(stream);
-			List<string> lines = reader.ReadToEnd().Split('\n').ToList();
-			DebugLogger.Log($"Level file loaded: {lines.Count} lines");
-			
-			//pad left and right
-			for (int i = 0; i < lines.Count; i++)
+			Layers[layerIndex].Elements[pos.X, pos.Y] = element;
+		}
+	}
+
+	public void LoadFromFile(string filePath)
+	{
+		try
+		{
+			if (!File.Exists(filePath))
 			{
-				for (int j = 0; j < borderh; j++)
-				{
-					string pre = randomBorder.Next(10) > 0 ? "B" : ",";
-					string post = randomBorder.Next(10) > 0 ? "B" : ",";
-					lines[i] = pre + lines[i] + post;
-				}
+				DebugLogger.Log($"Level file not found! ({filePath})");
+				CreateNewLevel(100, 40);
+				return;
 			}
 
-			//pad top and bottom
+			string json = File.ReadAllText(filePath);
+			var context = new LevelJsonContext();
+			var dto = JsonSerializer.Deserialize<LevelDataDto>(json, context.LevelDataDto);
+			if (dto == null) return;
+
+			_size = new Vec2(dto.Width, dto.Height);
+			_relativeCenter = _size.Divide(2);
 			
-			for (int i = 0; i < borderv; i++)
+			for (int i = 0; i < Layers.Length; i++)
 			{
-				string emptyline = "";
-				for (int j = 0; j < lines[0].Length; j++)
-				{
-					emptyline += randomBorder.Next(10) > 0 ? "B" : ",";
-				}
-				lines.Insert(0, emptyline);
-				lines.Add(emptyline);
+				Layers[i] = new LevelLayer(LayerNames[i], i, _size);
 			}
-			
-			//update size for padding
-			_size.X = lines[0].Length;
-			_size.Y = lines.Count;
-			//set sprite sizes
-			BottomSprite = new Sprite(_size);
-			MidSprite = new Sprite(_size);
-			TopSprite = new Sprite(_size);
 
-			for (int y = 0; y < lines.Count; y++)
+			foreach (var layerDto in dto.Layers)
 			{
-				for (int x = 0; x < lines[y].Length; x++)
-				{
-					char key = lines[y][x];
-					if (key == '.') continue; // dots are empty/transparent
+				int layerIndex = Array.IndexOf(LayerNames, layerDto.Name);
+				if (layerIndex == -1) continue;
 
-					LevelElementBlueprint? blueprint = BlueprintManager.GetBlueprint(key);
-					if (blueprint != null)
+				for (int y = 0; y < Math.Min(layerDto.Data.Count, _size.Y); y++)
+				{
+					string row = layerDto.Data[y];
+					for (int x = 0; x < _size.X; x++)
 					{
-						var element = new LevelElement(blueprint.IsBlocking);
-						element.Name = blueprint.Name;
-						element.Position = new Vec2(x, y); // Position in the level grid
+						int charIndex = x * 2;
+						if (charIndex + 1 >= row.Length) break;
 
-						//offset animation on creation
-						Animation animation = blueprint.Animation.Clone();
-						animation.OffsetTime((float)randomizer.NextDouble()*1000.0f);
-
-						element.Animations = new Dictionary<string, Animation> { { Entity.AnimDefault, animation } };
-
-						// Add to the correct layer based on the blueprint
-						if (blueprint.Layer == "BottomLayer")
+						string cell = row.Substring(charIndex, 2);
+						if (cell != "..")
 						{
-							BottomLayer.Add(element);
-						}
-						else if (blueprint.Layer == "MidLayer")
-						{
-							MidLayer.Add(element);
-						}
-						else if (blueprint.Layer == "TopLayer")
-						{
-							TopLayer.Add(element);
+							SetCell(cell, new Vec2(x, y), layerIndex);
 						}
 					}
 				}
 			}
-			//update world origin
-			_relativeCenter = _size.Divide(2);
-			DebugLogger.Log($"Level loaded successfully. Size: {_size.X}x{_size.Y}");
+
+			foreach (var layer in Layers) layer.UpdateSprite();
+			DebugLogger.Log($"Loaded level: {filePath}");
 		}
-		else
+		catch (Exception ex)
 		{
-			DebugLogger.Log($"Level file not found: {filePath}");
+			DebugLogger.Log($"Error loading level: {ex.Message}");
 		}
 	}
 
-	//draw elements to layer sprite
-	public static void SetSprite(List<LevelElement> layer, Sprite targetSprite)
+	public bool SaveToFile(string filePath)
 	{
-		// Iterate over each element in the provided layer
-		foreach (var element in layer)
+		try
 		{
-			// Get the element's current sprite. This is dynamic and will get the correct
-			// frame if the element is animated.
+			string? directory = Path.GetDirectoryName(filePath);
+			if (!string.IsNullOrEmpty(directory)) Directory.CreateDirectory(directory);
+
+			var jsonBuilder = new System.Text.StringBuilder();
+			jsonBuilder.AppendLine("{");
+			jsonBuilder.AppendLine($"  \"width\": {Size.X},");
+			jsonBuilder.AppendLine($"  \"height\": {Size.Y},");
+			jsonBuilder.AppendLine("  \"layers\": [");
+
+			for (int i = 0; i < Layers.Length; i++)
+			{
+				LevelLayer layer = Layers[i];
+				jsonBuilder.AppendLine("    {");
+				jsonBuilder.AppendLine($"      \"name\": \"{layer.LayerName}\",");
+				jsonBuilder.AppendLine("      \"data\": [");
+
+				for (int y = 0; y < Size.Y; y++)
+				{
+					var rowBuilder = new System.Text.StringBuilder();
+					for (int x = 0; x < Size.X; x++)
+					{
+						// Alignment Check: Always use 2 characters
+						LevelElement? element = layer.Elements[x, y];
+						rowBuilder.Append(element?.Key ?? "..");
+					}
+					jsonBuilder.AppendLine($"        \"{rowBuilder}\"{(y < Size.Y - 1 ? "," : "")}");
+				}
+				jsonBuilder.AppendLine("      ]");
+				jsonBuilder.AppendLine($"    }}{(i < Layers.Length - 1 ? "," : "")}");
+			}
+
+			jsonBuilder.AppendLine("  ]");
+			jsonBuilder.AppendLine("}");
+
+			File.WriteAllText(filePath, jsonBuilder.ToString());
+			return true;
+		}
+		catch (Exception ex)
+		{
+			DebugLogger.Log($"Error saving level: {ex.Message}");
+			return false;
+		}
+	}
+
+	public void CreateNewLevel(int width, int height)
+	{
+		_size = new Vec2(width, height);
+		_relativeCenter = _size.Divide(2);
+		Layers = new LevelLayer[3];
+		for (int i = 0; i < Layers.Length; i++)
+		{
+			Layers[i] = new LevelLayer(LayerNames[i], i, _size);
+		}
+	}
+
+	public void PadLevel(int borderh, int borderv)
+	{
+		Vec2 newSize = new Vec2(_size.X + (borderh * 2), _size.Y + (borderv * 2));
+		
+		for (int i = 0; i < Layers.Length; i++)
+		{
+			LevelLayer oldLayer = Layers[i];
+			var newElements = new LevelElement?[newSize.X, newSize.Y];
+			for (int y = 0; y < newSize.Y; y++)
+			{
+				for (int x = 0; x < newSize.X; x++)
+				{
+					int oldX = x - borderh;
+					int oldY = y - borderv;
+
+					if (oldX >= 0 && oldX < _size.X && oldY >= 0 && oldY < _size.Y)
+					{
+						newElements[x, y] = oldLayer.Elements[oldX, oldY];
+						if (newElements[x, y] != null) newElements[x, y]!.Pos = new Vec2(x, y);
+					}
+					else if (i == 1) // Only pad the middle layer with terrain
+					{
+						string padKey = Randomizer.R().Next(10) > 0 ? "BB" : ",,";
+						newElements[x, y] = BlueprintManager.GetElement(padKey, new Vec2(x, y));
+					}
+				}
+			}
+			oldLayer.Elements = newElements;
+			oldLayer.UpdateSprite();
+		}
+
+		_size = newSize;
+		_relativeCenter = _size.Divide(2);
+	}
+}
+
+public class LevelLayer
+{
+	public LevelElement?[,] Elements { get; set; }
+	public string LayerName { get; private set; }
+	public Sprite? Sprite { get; private set; }
+	public int Depth { get; private set; }
+	public Vec2 Size { get; private set; }
+
+	public LevelLayer(string layername, int depth, Vec2 size)
+	{
+		Elements = new LevelElement[size.X, size.Y];
+		LayerName = layername;
+		Depth = depth;
+		Size = size;
+		Sprite = null;
+	}
+
+	public void UpdateSprite(float shade = 0.0f)
+	{
+		Sprite targetsprite = new Sprite(new Vec2(Elements.GetLength(0), Elements.GetLength(1)));
+
+		foreach (var element in Elements)
+		{
+			if (element == null) continue;
 			Sprite? elementSprite = element.GetSprite();
 
 			if (elementSprite != null)
 			{
-				// Get the element's top-left position within the level grid
-				Vec2 elementPos = element.Position;
-
-				// Iterate over the cells of the element's sprite
+				Vec2 elementPos = element.Pos;
 				for (int y = 0; y < elementSprite.Size.Y; y++)
 				{
 					for (int x = 0; x < elementSprite.Size.X; x++)
 					{
-						// Calculate the destination coordinates on the large target sprite
 						int targetX = elementPos.X + x;
 						int targetY = elementPos.Y + y;
 
-						// Draw the cell onto the target sprite. The WriteCell method handles boundary checks.
-						targetSprite.WriteCell(new Vec2(targetX, targetY), elementSprite.Data[y, x]);
+						ScreenCell cell = elementSprite.Data[y, x];
+						if (shade > 0)
+						{
+							cell.BgColor = Color.Mix(cell.BgColor, Color.Black, shade);
+							cell.Color = Color.Mix(cell.Color, Color.Black, shade);
+						}
+						targetsprite.WriteCell(new Vec2(targetX, targetY), cell);
 					}
 				}
 			}
 		}
+		Sprite = targetsprite;
 	}
 }
 
 public class LevelElement : Entity
 {
-	public bool IsBlocking { get; }
+	public bool IsBlocking { get; set; }
+	public string Key { get; private set; }
 
-	public LevelElement(bool blocking = false) : base()
+	public LevelElement(string key = "..", bool blocking = false) : base()
 	{
 		IsBlocking = blocking;
+		Key = key;
 	}
+}
+
+internal class LevelDataDto
+{
+	[JsonPropertyName("width")] public int Width { get; set; }
+	[JsonPropertyName("height")] public int Height { get; set; }
+	[JsonPropertyName("layers")] public List<LayerDataDto> Layers { get; set; } = new();
+}
+
+internal class LayerDataDto
+{
+	[JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
+	[JsonPropertyName("data")] public List<string> Data { get; set; } = new();
 }
