@@ -195,7 +195,8 @@ class Level
 			}
 
 			string json = File.ReadAllText(filePath);
-			var dto = JsonSerializer.Deserialize<LevelDataDto>(json);
+			var context = new LevelJsonContext();
+			var dto = JsonSerializer.Deserialize<LevelDataDto>(json, context.LevelDataDto);
 			if (dto == null) return;
 
 			_size = new Vec2(dto.Width, dto.Height);
