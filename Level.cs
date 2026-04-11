@@ -58,14 +58,34 @@ public static class BlueprintManager
 		MakeBlueprint1("Orange Carpet", "CO", '▓', Color.Orange, Color.LightOrange, false, NOANIM);
 
 		//nature
-		MakeBlueprint1("Grass", ",,", new char[] { '\\', '|', '/' }, Color.GrassGreen, Color.GroundGreen, false, 1000);
-		MakeBlueprint1("Bush", "BB", new char[] { '@', 'O' }, Color.BushGreen, Color.DarkGreen, true, 500);
-		MakeBlueprint1("Apple", "Ba", '@', Color.Red, Color.DarkGreen, true, 500);
-		MakeBlueprint1("Berry", "Bb", '•', Color.Purple, Color.DarkGreen, true, 500);
+		MakeBlueprint1("Grass", ",,", new char[] {'/', '|', '|', '|', '/', '|', '|', '|', '|', '|' }, Color.GrassGreen, Color.GroundGreen, false, 330);
+		MakeBlueprint1("Clover", ",♣", '♣', Color.GrassGreen, Color.GroundGreen, false, NOANIM);
+		MakeBlueprint1("Stem", "BS", '¥', Color.WoodLight, Color.DarkGreen, true, NOANIM);
+		MakeBlueprint1("Stalk", "Bs", '¥', Color.WoodLight, Color.GroundGreen, true, NOANIM);
+		MakeBlueprint1("Bush", "BB", new char[] { '@', '@', 'O', '@', '@', '0' }, Color.BushGreen, Color.DarkGreen, true, 700);
+		MakeBlueprint1("Apple", "Ba", '@', Color.Red, Color.DarkGreen, true, NOANIM);
+		MakeBlueprint1("Berry", "Bb", '•', Color.Purple, Color.DarkGreen, true, NOANIM);
 		MakeBlueprint1("Dark Wood", "WD", '#', Color.WoodLight, Color.WoodDark, true, NOANIM);
 		MakeBlueprint1("Light Wood", "WL", '#', Color.WoodDark, Color.WoodLight, true, NOANIM);
-		MakeBlueprint1("Water", "~~", new char[] { '~', '-' }, Color.WaterLight, Color.WaterDark, true, 400);
-		MakeBlueprint1("Deep Water", "~D", new char[] { '~', '-' }, Color.WaterLight, Color.WaterDark, true, 500);
+		MakeBlueprint1("Water", "~~", new char[] { '~', '-' }, Color.WaterDark, Color.WaterLight, true, 400);
+		MakeBlueprint1("Deep Water", "~D", new char[] { '~', '-'}, Color.WaterLight, Color.WaterDark, true, 500);
+		MakeBlueprint1("Smiley", ":)", '☺', Color.Black, Color.Yellow, true, NOANIM);
+		MakeBlueprint1("Yellow Flower", "FY", '@', Color.Yellow, Color.GroundGreen, true, NOANIM);
+		MakeBlueprint1("Red Flower", "FR", '@', Color.Red, Color.GroundGreen, true, NOANIM);
+		MakeBlueprint1("Blue Flower", "FB", '@', Color.LightBlue, Color.GroundGreen, true, NOANIM);
+		MakeBlueprint1("Purple Flower", "FP", '@', Color.Purple, Color.GroundGreen, true, NOANIM);
+
+		//solids
+		MakeBlueprint1("Solid White", "#W", ' ', Color.Black, Color.White, true, NOANIM);
+		MakeBlueprint1("Solid Black", "#b", ' ', Color.White, Color.Black, true, NOANIM);
+		MakeBlueprint1("Solid Gray", "#g", ' ', Color.DarkGray, Color.Gray, true, NOANIM);
+		MakeBlueprint1("Solid Blue", "#B", ' ', Color.Blue, Color.LightBlue, true, NOANIM);
+		MakeBlueprint1("Solid Cyan", "#C", ' ', Color.Cyan, Color.LightCyan, true, NOANIM);
+		MakeBlueprint1("Solid Green", "#G", ' ', Color.Green, Color.LightGreen, true, NOANIM);
+		MakeBlueprint1("Solid Orange", "#O", ' ', Color.Orange, Color.LightOrange, true, NOANIM);
+		MakeBlueprint1("Solid Red", "#R", ' ', Color.Red, Color.LightRed, true, NOANIM);
+		MakeBlueprint1("Solid Yellow", "#Y", ' ', Color.Yellow, Color.LightYellow, true, NOANIM);
+
 	}
 
 	public static void MakeBlueprint1(string name, string key, char[] chars, Color fg, Color bg, bool blocking = false, int animtime = 500)
