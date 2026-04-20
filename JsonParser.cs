@@ -35,7 +35,7 @@ static class JsonParser
 		};
 	}
 
-	public static Dictionary<string, Animation>? LoadAnimations(string filepath, int frametime)
+	public static Dictionary<string, Animation>? LoadAnimations(string filepath)
 	{
 		DebugLogger.Log($"LoadAnimations called with path: {filepath}");
 		var loadedAnimations = new Dictionary<string, Animation>();
@@ -96,6 +96,7 @@ static class JsonParser
 					string? state = anim.GetProperty("state").GetString();
 					if (!string.IsNullOrEmpty(state))
 					{
+						var frametime = anim.GetProperty("ftime").GetInt32();
 						var animation = new Animation(frametime);
 						foreach (JsonElement idx in anim.GetProperty("frames").EnumerateArray())
 						{

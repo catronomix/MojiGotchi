@@ -12,7 +12,7 @@
   "menu_editor": "Editor",
   "status_welcome": "Welcome to MojiGotchi!",
   "status_caring": "You are taking care of {0}",
-  "status_stats": "[Hunger:{0}/{1} Mood:{2}/{3} Energy:{4}/{5} Sleep:{6}/{7}]",
+  "status_stats": "[Saturation:{0}/{1} Mood:{2}/{3} Energy:{4}/{5} Sleep:{6}/{7}]",
   "status_sleeping": " (Sleeping)",
   "death_message": "{0} died at the age of {1}",
   "death_message_depression": "{0} died of depression at the age of {1}",

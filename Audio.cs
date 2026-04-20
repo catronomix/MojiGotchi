@@ -1,3 +1,4 @@
+namespace MojiGotchi;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -8,39 +9,45 @@ using NAudio.Wave;
 public static class SoundManager
 {
 	private static float _volume = 0.5f;
-
 	public static float Volume
 	{
 		get => _volume;
 		set => _volume = Math.Clamp(value, 0f, 1f);
 	}
 
-	public static void PlayFileDirect(string filePath)
+	//optimized version: play from preloaded
+
+
+	//original version: play from disk
+	public static void PlaySound(byte[]? soundbytes)
 	{
-		if (!File.Exists(filePath)) return;
+		if (soundbytes == null) return;
 
 		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 		{
-			PlayWindows(filePath);
+			PlayWindows(soundbytes);
 		}
 		else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
 		{
-			PlayMac(filePath);
+			// currently not implemented
+			// PlayMac(soundbytes);
 		}
 		else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
 		{
-			PlayLinux(filePath);
+			//currently not implemented
+			// PlayLinux(soundbytes);
 		}
 	}
 
-	private static void PlayWindows(string filePath)
+	private static void PlayWindows(byte[] soundbytes)
 	{
 #if WINDOWS
 		try
 		{
-			var outputDevice = new WaveOutEvent();
-			var audioFile = new AudioFileReader(filePath);
-			audioFile.Volume = _volume;
+			WaveOutEvent outputDevice = new WaveOutEvent();
+			using MemoryStream ms = new MemoryStream(soundbytes);
+			WaveFileReader audioFile = new WaveFileReader(ms);
+			outputDevice.Volume = _volume;
 
 			outputDevice.Init(audioFile);
 			outputDevice.Play();
@@ -60,17 +67,17 @@ public static class SoundManager
 #endif
 	}
 
-	private static void PlayMac(string filePath)
-	{
-		// afplay is native to macOS and very low latency
-		ExecuteCommandLine("afplay", $"\"{filePath}\"");
-	}
+	// private static void PlayMac(byte[] soundbytes)
+	// {
+	// 	// afplay is native to macOS and very low latency
+	// 	ExecuteCommandLine("afplay", $"\"{soundbytes}\"");
+	// }
 
-	private static void PlayLinux(string filePath)
-	{
-		// aplay is standard for .wav files on Linux
-		ExecuteCommandLine("aplay", $"\"{filePath}\"");
-	}
+	// private static void PlayLinux(byte[] soundbytes)
+	// {
+	// 	// aplay is standard for .wav files on Linux
+	// 	ExecuteCommandLine("aplay", $"\"{soundbytes}\"");
+	// }
 
 	private static void ExecuteCommandLine(string command, string arguments)
 	{
@@ -88,5 +95,38 @@ public static class SoundManager
 		{
 			Console.WriteLine($"Linux/Mac Audio Error: {ex.Message}");
 		}
+	}
+}
+
+public class Sounds
+{
+	//have sounds
+	private Dictionary<string, byte[]?> _library;
+
+	public Sounds()
+	{
+		_library = new();
+	}
+
+	public void AddSound(string name, string filename)
+	{
+		try
+		{
+			byte[]? stream = File.ReadAllBytes(filename);
+			if (stream != null)
+			{
+				DebugLogger.Log(stream.ToString());
+			}
+			_library.Add(name, stream);
+		}
+		catch(Exception e)
+		{
+			DebugLogger.Log($"Error loading sound file {filename} ({e})");
+		}
+	}
+
+	public byte[]? GetSound(string key)
+	{
+		return _library.GetValueOrDefault(key, null);
 	}
 }

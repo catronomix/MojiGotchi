@@ -102,29 +102,53 @@
           { "char": "|", "fg": "White", "bg": "DarkGray" }, { "char": "o", "fg": "White", "bg": "DarkGray" }, { "char": "(", "fg": "White", "bg": "DarkGray" },
           { "char": "\u0000", "fg": "White", "bg": "DarkGray" }, { "char": "v", "fg": "White", "bg": "DarkGray" }, { "char": "\u0000", "fg": "White", "bg": "DarkGray" }
         ]
+      },
+      { 
+        "cells": [
+          { "char": "^", "fg": "Black", "bg": "Black" }, { "char": " ", "fg": "Black", "bg": "Black" }, { "char": "^", "fg": "Black", "bg": "Black" },
+          { "char": "|", "fg": "White", "bg": "DarkGray" }, { "char": "O", "fg": "White", "bg": "DarkGray" }, { "char": "|", "fg": "White", "bg": "DarkGray" },
+          { "char": "\u0000", "fg": "White", "bg": "DarkGray" }, { "char": "v", "fg": "White", "bg": "DarkGray" }, { "char": "\u0000", "fg": "White", "bg": "DarkGray" }
+        ]
+      },
+      {
+        "cells": [
+          { "char": "^", "fg": "Black", "bg": "Black" }, { "char": " ", "fg": "Black", "bg": "Black" }, { "char": "^", "fg": "Black", "bg": "Black" },
+          { "char": ")", "fg": "White", "bg": "DarkGray" }, { "char": "o", "fg": "White", "bg": "DarkGray" }, { "char": "(", "fg": "White", "bg": "DarkGray" },
+          { "char": "\u0000", "fg": "White", "bg": "DarkGray" }, { "char": "V", "fg": "White", "bg": "DarkGray" }, { "char": "\u0000", "fg": "White", "bg": "DarkGray" }
+        ]
       }
       
     ],
     "Animations": [
       {
         "state": "DEFAULT",
-        "frames": [0, 1, 2, 3]
+        "frames": [0, 1, 2, 3],
+        "ftime": 500
       },
       {
         "state": "EATING",
-        "frames": [4, 5]
+        "frames": [4, 5],
+        "ftime": 200
       },
       {
         "state": "PLAYING",
-        "frames": [6, 7, 8, 9]
+        "frames": [6, 7, 8, 9],
+        "ftime": 200
       },
       {
         "state": "SLEEPING",
-        "frames": [10, 11, 12]
+        "frames": [10, 11, 12],
+        "ftime": 1000
       },
       {
         "state": "WAKEUP",
-        "frames": [13]
+        "frames": [13],
+        "ftime": 9999
+      },
+      {
+        "state": "HAPPY",
+        "frames": [14,15],
+        "ftime": 500
       }
     ]
   }

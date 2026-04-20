@@ -116,7 +116,7 @@ public class Pet : Entity //Pet inherits from Entity class
 	//pet can wander
 	private Random random;
 	private int _wanderDirection;
-	private const int _wanderIntervalMs = 50;
+	private const int _wanderIntervalMs = 100;
 	private const int _animationTimeout = 2000;
 	private DateTime _lastWander = DateTime.MinValue;
 
@@ -135,6 +135,9 @@ public class Pet : Entity //Pet inherits from Entity class
 
 	//make it talk :)
 	public MessageBubble MessageBubble;
+
+	//sounds
+	private Sounds _sounds;
 
 	//constructor
 	public Pet() : base()
@@ -159,7 +162,7 @@ public class Pet : Entity //Pet inherits from Entity class
 		_lastWaked = DateTime.MinValue;
 
 		//setup animations list
-		_animations = JsonParser.LoadAnimations("PetSprites.json", 500);
+		_animations = JsonParser.LoadAnimations("PetSprites.json");
 		SetAnimation(AnimDefault);
 
 		//position in the level, relative to world origin
@@ -173,6 +176,13 @@ public class Pet : Entity //Pet inherits from Entity class
 
 		//message bubble
 		MessageBubble = new MessageBubble(Color.Black, Color.White);
+
+		//load sounds
+		_sounds = new();
+		_sounds.AddSound("eat", "eat.wav");
+		_sounds.AddSound("play", "play.wav");
+		_sounds.AddSound("petpet", "petpet.wav");
+		_sounds.AddSound("wakeup", "wakeup.wav");
 
 	}
 
@@ -221,7 +231,7 @@ public class Pet : Entity //Pet inherits from Entity class
 	}
 
 	// Action methods for the pet
-	public string Feed()
+	public string Feed(int bubbletime = 1000)
 	{
 		// Example: Feeding reduces hunger and might slightly increase mood
 		Saturation.Raise(); // Or set to a specific value, e.g., _hunger.Reset();
@@ -229,42 +239,42 @@ public class Pet : Entity //Pet inherits from Entity class
 		Energy.Raise();
 		_lastFed = DateTime.Now;
 		_animationState = AnimEating;
-		SoundManager.PlayFileDirect("eat.wav");
-		MessageBubble.SetMessage("Omnomnom", 1000, true);
+		SoundManager.PlaySound(_sounds.GetSound("eat"));
+		MessageBubble.SetMessage("Omnomnom", bubbletime, true);
 		return LM.Get("pet_action_feed", [Name]);
 	}
 
-	public string Play()
+	public string Play(int bubbletime = 1000)
 	{
 		Energy.Lower(); // Playing uses energy
 		Mood.Raise();   // Playing increases mood
 		_lastPlayed = DateTime.Now;
 		_animationState = AnimPlaying;
-		SoundManager.PlayFileDirect("play.wav");
-		MessageBubble.SetMessage("Wheeeee!", 1000, true);
+		SoundManager.PlaySound(_sounds.GetSound("play"));
+		MessageBubble.SetMessage("Wheeeee!", bubbletime, true);
 		return LM.Get("pet_action_play", [Name]);
 	}
 
-	public string PetPet() // Renamed to avoid conflict with class name 'Pet'
+	public string PetPet(int bubbletime = 1000) // Renamed to avoid conflict with class name 'Pet'
 	{
 		Mood.Raise(); // Petting increases mood
 		Sleepyness.Raise(); // Playing increases sleeping
 		_lastPetted = DateTime.Now;
 		//not implemented yet
-		// _animationState = AnimationState.HAPPY;
-		SoundManager.PlayFileDirect("petpet.wav");
+		_animationState = AnimHappy;
+		SoundManager.PlaySound(_sounds.GetSound("petpet"));
 		return LM.Get("pet_action_pet", [Name]);
 	}
 
-	public string WakeUp() // Renamed for clarity
+	public string WakeUp(int bubbletime = 1000) // Renamed for clarity
 	{
 		Sleepyness.Lower(3); // Waking up reduces sleeping stat
 		IsSleeping = false;
 		Mood.Lower(3); // Waking up reduces mood
 		_lastWaked = DateTime.Now;
 		_animationState = AnimWakeup;
-		MessageBubble.SetMessage("Ugh..", 1000, true);
-		SoundManager.PlayFileDirect("wakeup.wav");
+		MessageBubble.SetMessage("Ugh..", bubbletime, true);
+		SoundManager.PlaySound(_sounds.GetSound("wakeup"));
 		return LM.Get("pet_action_wake", [Name]);
 	}
 

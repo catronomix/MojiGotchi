@@ -152,6 +152,9 @@ class Menu
 	public int SelectedIndex { get; private set; }
 	public bool Enabled { get; private set; }
 
+	//sounds
+	private Sounds _sounds;
+
 	// Constructor
 	public Menu(int width, Color bgColor, Color color)
 	{
@@ -163,6 +166,10 @@ class Menu
 		// Set selected item to the first if available
 		SelectedIndex = 0;
 		Enabled = true;
+
+		//load sounds
+		_sounds = new();
+		_sounds.AddSound("select", "select.wav");
 	}
 
 	public void AddItem(string title, GameAction action, Color bgcolor, bool enabled = true)
@@ -183,7 +190,7 @@ class Menu
 			if (MenuItems[i].Enabled)
 			{
 				SelectedIndex = i;
-				SoundManager.PlayFileDirect("select.wav");
+				SoundManager.PlaySound(_sounds.GetSound("select"));
 				return;
 			}
 		}
@@ -198,7 +205,7 @@ class Menu
 			if (MenuItems[i].Enabled)
 			{
 				SelectedIndex = i;
-				SoundManager.PlayFileDirect("select.wav");
+				SoundManager.PlaySound(_sounds.GetSound("select"));
 				return;
 			}
 		}

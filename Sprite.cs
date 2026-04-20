@@ -92,9 +92,14 @@ public class Animation
 		{
 			return null;
 		}
+		//check if only one frame
+		if (_frames.Count == 1)
+		{
+			return _frames[0];
+		}
 		//check if we need to advance the animation
-	TimeSpan frameDuration = TimeSpan.FromMilliseconds(_frameDurationMs);
-	if (DateTime.Now - _lastFrameTime > frameDuration)
+		TimeSpan frameDuration = TimeSpan.FromMilliseconds(_frameDurationMs);
+		if (DateTime.Now - _lastFrameTime > frameDuration)
 		{
 			_currentFrame++;
 			if (_currentFrame >= _frames.Count)

@@ -32,12 +32,14 @@ class Game
 	//have a camera
 	protected Camera _camera;
 
-
 	//have a status
 	protected string _persistentStatus;
 	protected string _transientStatus = "";
 	protected DateTime _transientStatusExpires = DateTime.MinValue;
 	protected DateTime _lastStatUpdate = DateTime.MinValue;
+
+	//have sounds
+	protected Sounds _sounds;
 
 	//modals
 	protected Modal? _currentModal;
@@ -98,6 +100,11 @@ class Game
 
 		//apply padding to the level to keep the pet contained and for visual style
 		_level.PadLevel(_viewport.Size.X / 2, _viewport.Size.Y / 2);
+
+		//load sounds
+		_sounds = new();
+		_sounds.AddSound("death", "death.wav");
+		_sounds.AddSound("newgame", "newgame.wav");
 	}
 
 	public void ChooseLanguage()
@@ -425,7 +432,7 @@ class Game
 		UpdateMenuAvailability([ActionType.NEWPET], true);
 		_menu.SelectFirstEnabled();
 		// The death message is already set in _persistentStatus by CheckStats.
-		SoundManager.PlayFileDirect("death.wav");
+		SoundManager.PlaySound(_sounds.GetSound("death"));
 		SetTransientStatus("Begin een nieuw spel om een nieuwe MojiGotchi te krijgen.");
 	}
 
@@ -447,7 +454,7 @@ class Game
 					game.UpdateMenuAvailability([ActionType.NEWPET], false);
 					game._persistentStatus = LM.Get("status_caring", [game._pet.Name]);
 					game._menu.SelectFirstEnabled();
-					SoundManager.PlayFileDirect("newgame.wav");
+					SoundManager.PlaySound(_sounds.GetSound("newgame"));
 				};
 				break;
 			case ActionType.FEED:
@@ -455,7 +462,7 @@ class Game
 				{
 					if (game._pet != null)
 					{
-						game.SetTransientStatus(game._pet.Feed());
+						game.SetTransientStatus(game._pet.Feed(2000), 2000);
 					}
 				};
 				break;
@@ -464,7 +471,7 @@ class Game
 				{
 					if (game._pet != null)
 					{
-						game.SetTransientStatus(game._pet.Play());
+						game.SetTransientStatus(game._pet.Play(1500), 1500);
 					}
 				};
 				break;
@@ -473,7 +480,7 @@ class Game
 				{
 					if (game._pet != null)
 					{
-						game.SetTransientStatus(game._pet.PetPet());
+						game.SetTransientStatus(game._pet.PetPet(2000), 2000);
 					}
 				};
 				break;
@@ -482,7 +489,7 @@ class Game
 				{
 					if (game._pet != null)
 					{
-						game.SetTransientStatus(game._pet.WakeUp());
+						game.SetTransientStatus(game._pet.WakeUp(3000),3000);
 					}
 				};
 				break;
