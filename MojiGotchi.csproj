@@ -5,6 +5,7 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 	<ItemGroup>
     <None Update="*Sprites.json" CopyToOutputDirectory="PreserveNewest" />
@@ -12,13 +13,14 @@
     <None Update="level1.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="*.wav" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="Silk.NET.OpenAL" Version="2.23.0" />
+	  <PackageReference Include="Silk.NET.OpenAL.Extensions.Enumeration" Version="2.23.0" />
+	  <PackageReference Include="Silk.NET.OpenAL.Soft.Native" Version="1.23.1" />
+	</ItemGroup>
 	<PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
 		<DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
 	</PropertyGroup>
-
-	<ItemGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
-		<PackageReference Include="NAudio" Version="2.3.0" />
-	</ItemGroup>
 	<PropertyGroup>
 		<TrimMode>partial</TrimMode> 
 		<StackTraceSupport>false</StackTraceSupport>
