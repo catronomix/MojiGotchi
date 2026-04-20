@@ -16,7 +16,8 @@ public enum ActionType
 	EDITOR_SAVE,
 	EDITOR_EDIT,
 	EDITOR_HELP,
-	EDITOR_QUIT
+	EDITOR_QUIT,
+	HIGHSCORES_CLEAR,
 }
 
 public struct Color
@@ -447,7 +448,6 @@ class Rect : SimpleRect // Changed to public class for broader access if needed.
 	}
 
 }
-
 
 class GameAction
 {

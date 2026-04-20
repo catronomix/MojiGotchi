@@ -1,7 +1,7 @@
 namespace MojiGotchi;
 
 //MenuItem class
-class MenuItem
+internal class MenuItem
 {
 	private string _title;
 	public string Title
@@ -161,7 +161,7 @@ class Menu
 		Width = width;
 		BgColor = bgColor;
 		Color = color;
-		MenuItems = new List<MenuItem>(); // Ensure the list is never null
+		MenuItems = new(); // Ensure the list is never null
 
 		// Set selected item to the first if available
 		SelectedIndex = 0;

@@ -1,10 +1,10 @@
 namespace MojiGotchi;
 
-public class HighScores : Modal
+internal class HighScores : Modal
 {
-	public HighScores() : base(LM.Get("modaltitle_highscores"), Color.DarkMagenta, Color.Red)
+	public HighScores(Game game) : base(LM.Get("modaltitle_highscores"), Color.DarkMagenta, Color.Red)
 	{
-
+		base.AddMenuItem(LM.Get("highscores_button_clear"), game.SetAction(ActionType.HIGHSCORES_CLEAR), Color.Red, false);
 	}
 
 	public void UpdatePage(Vec2 size)

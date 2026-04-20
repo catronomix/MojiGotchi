@@ -28,6 +28,13 @@ public class Modal
 	private Sprite? _bgSprite;
 	private Sprite? _contentSprite;
 
+	//modal buttons
+	internal List<MenuItem> Options { get; private set; }
+	public int SelectedIndex { get; private set; }
+
+	//button sounds
+	private Sounds _sounds;
+
 	public Modal(string title, Color bgColor, Color edgeColor)
 	{
 		_title = title;
@@ -35,6 +42,61 @@ public class Modal
 		_edgeColor = edgeColor;
 		_bgSprite = null;
 		_contentSprite = null;
+
+		//have buttons
+		Options = new();
+		SelectedIndex = 0;
+
+		//load sounds
+		_sounds = new();
+		_sounds.AddSound("select", "select.wav");
+	}
+
+	internal void AddMenuItem(string title, GameAction action, Color bgcolor, bool enabled = true)
+	{
+		Options.Add(new MenuItem(title, action, title.Length + 4, bgcolor));
+		if (!enabled)
+		{
+			Options[Options.Count - 1].Disable();
+		}
+	}
+
+	// Moves the selection down to the next enabled menu item.
+	public void SelectRight()
+	{
+		int currentSelection = SelectedIndex;
+		for (int i = currentSelection + 1; i < Options.Count; i++)
+		{
+			if (Options[i].Enabled)
+			{
+				SelectedIndex = i;
+				SoundManager.PlaySound(_sounds.GetSound("select"));
+				return;
+			}
+		}
+	}
+
+	// Moves the selection up to the previous enabled menu item.
+	public void SelectLeft()
+	{
+		int currentSelection = SelectedIndex;
+		for (int i = currentSelection - 1; i >= 0; i--)
+		{
+			if (Options[i].Enabled)
+			{
+				SelectedIndex = i;
+				SoundManager.PlaySound(_sounds.GetSound("select"));
+				return;
+			}
+		}
+	}
+
+	public void SelectFirstEnabled()
+	{
+		while (SelectedIndex < Options.Count && !Options[SelectedIndex].Enabled)
+		{
+			SelectedIndex++;
+		}
 	}
 	
 	public void SetSpriteBg(Vec2 size)

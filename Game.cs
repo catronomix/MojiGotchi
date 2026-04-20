@@ -61,7 +61,7 @@ class Game
 
 		//init modals
 		_help = new Help();
-		_highScores = new HighScores();
+		_highScores = new HighScores(this);
 		_languageChoice = new LanguageChoice();
 		_currentModal = null;
 
@@ -127,6 +127,7 @@ class Game
 		//draw area Rects to renderer
 		DrawRects();
 		DrawMenuItems();
+		DrawModalOptions();
 
 		//update camera before drawing game
 		_camera.UpdateCamera();
@@ -240,16 +241,26 @@ class Game
 						break;
 				}
 			}
-			else //menu is disabled
+			else if(_currentModal != null) // a modal is active
 			{
 				switch (key.Key)
 				{
 				case ConsoleKey.Escape:
-						//close any modal if modal is open
-						CloseModal();
-						break;
-					default:
-						break;
+					//close any modal if modal is open
+					CloseModal();
+					break;
+				case ConsoleKey.LeftArrow:
+					_currentModal.SelectLeft();
+					break;
+				case ConsoleKey.RightArrow:
+					_currentModal.SelectRight();
+					break;
+				case ConsoleKey.Enter:
+					GameAction action = _currentModal.Options[_currentModal.SelectedIndex].Action;
+					action.Use(this);
+					break;
+				default:
+					break;
 				}
 			}
 		}
@@ -272,7 +283,48 @@ class Game
 			_renderer.DrawSprite(_currentModal.GetSpriteBg(), _viewport.Pos);
 			_renderer.DrawSprite(_currentModal.GetSpriteContent(), _viewport.Pos);
 		}
+	}
 
+	protected void DrawModalOptions()
+	{
+		if (_currentModal != null)
+		{
+			//draw modal buttons
+			int totaloptions = _currentModal.Options.Count;
+			if (totaloptions > 0)
+			{
+				int totalWidth = 0;
+				foreach (MenuItem o in _currentModal.Options)
+				{
+					totalWidth += o.Sprite.Size.X + 4;
+				}
+
+				for (int i = 0; i < totaloptions; i++)
+				{
+					MenuItem option = _currentModal.Options[i];
+					Sprite optionSprite = option.Sprite;
+
+					//add markers around active option
+					if (i == _currentModal.SelectedIndex)
+					{
+						optionSprite.Data[1, 1].Character = '>';
+						if (optionSprite.Size.X >= 2) optionSprite.Data[1, optionSprite.Size.X - 2].Character = '<';
+					}
+					else
+					{
+						optionSprite.Data[1, 1].Character = ' ';
+						if (optionSprite.Size.X >= 2) optionSprite.Data[1, optionSprite.Size.X - 2].Character = ' ';
+					}
+					
+					int xpos = (_viewport.Size.X - totalWidth) / 2;
+					//offset xpos by position in array
+					xpos += i * (option.Sprite.Size.X + 4);
+
+					Vec2 buttonPos = new Vec2(_viewport.Left + xpos, _viewport.Bottom - 5);
+					_renderer.DrawSprite(optionSprite, buttonPos);
+				}
+			}
+		}
 	}
 
 	protected void DrawMenuItems()
@@ -437,7 +489,7 @@ class Game
 	}
 
 	//game actions
-	protected GameAction SetAction(ActionType type)
+	internal GameAction SetAction(ActionType type)
 	{
 		Action<Game> logic;
 		switch (type)
@@ -523,6 +575,14 @@ class Game
 					_menu.Enable();
 				};
 				break;
+			case ActionType.HIGHSCORES_CLEAR:
+				logic = (game) =>
+				{
+					DataManager.ClearHighScores();
+					game._highScores.UpdatePage(_viewport.Size);
+				};
+				break;
+
 			default:
 				logic = (game) => { }; // Default action does nothing
 				break;

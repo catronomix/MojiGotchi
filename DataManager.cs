@@ -201,6 +201,15 @@ static class DataManager
 		return highScores;
 	}
 
+	static public void ClearHighScores()
+	{
+		if (File.Exists(highScoreFile))
+		{
+			File.Delete(highScoreFile);
+		}
+		EnsureHighScoreFileExists();
+	}
+
 	static public string GetAgeString(TimeSpan ageSpan)
 	{
 		int days = ageSpan.Days;
