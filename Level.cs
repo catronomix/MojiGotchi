@@ -297,6 +297,55 @@ class Level
 		}
 	}
 
+	public void Resize(int newWidth, int newHeight)
+	{
+		const int min = 32;
+		const int max = 512;
+
+		newWidth = Math.Clamp(newWidth, min, max);
+		newHeight = Math.Clamp(newHeight, min, max);
+
+		Vec2 newSize = new Vec2(newWidth, newHeight);
+
+		// Calculate offsets to center existing content
+		int offsetX = (newWidth - _size.X) / 2;
+		int offsetY = (newHeight - _size.Y) / 2;
+
+		for (int i = 0; i < Layers.Length; i++)
+		{
+			LevelLayer oldLayer = Layers[i];
+			var newElements = new LevelElement?[newSize.X, newSize.Y];
+
+			for (int y = 0; y < newSize.Y; y++)
+			{
+				for (int x = 0; x < newSize.X; x++)
+				{
+					// Map new grid coordinates back to old grid coordinates using offsets
+					int oldX = x - offsetX;
+					int oldY = y - offsetY;
+
+					// If the mapped coordinates fall within the old level boundaries, copy the element
+					if (oldX >= 0 && oldX < _size.X && oldY >= 0 && oldY < _size.Y)
+					{
+						newElements[x, y] = oldLayer.Elements[oldX, oldY];
+						if (newElements[x, y] != null)
+						{
+							newElements[x, y]!.Pos = new Vec2(x, y);
+						}
+					}
+				}
+			}
+
+			oldLayer.Elements = newElements;
+			oldLayer.UpdateSprite();
+		}
+
+		_size = newSize;
+		_relativeCenter = _size.Divide(2);
+
+		DebugLogger.Log($"Resized level to {newWidth}x{newHeight} (Centered with offsets: {offsetX}, {offsetY})");
+	}
+
 	public void PadLevel(int borderh, int borderv)
 	{
 		Vec2 newSize = new Vec2(_size.X + (borderh * 2), _size.Y + (borderv * 2));
