@@ -31,6 +31,7 @@ static class JsonParser
 			"Yellow" => Color.Yellow,
 			"White" => Color.White,
 			"Orange" => Color.Orange,
+			"Purple" => Color.Purple,
 			_ => Color.White // Fallback for unknown colors
 		};
 	}

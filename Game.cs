@@ -15,7 +15,6 @@ class Game
 	protected Rect _statusBgRect;
 	protected Rect _viewport;
 
-
 	// Set area sizes
 	protected int _menuWidth = 21;
 	protected int _statusHeight = 7;
@@ -28,6 +27,9 @@ class Game
 
 	//have a level
 	protected Level _level;
+
+	//can have a race
+	protected Race? _race;
 
 	//have a camera
 	protected Camera _camera;
@@ -123,6 +125,27 @@ class Game
 		//Game logic
 		CheckStats();
 
+		//Race minigame
+		if (_race != null && _pet != null)
+		{
+			if (!_race.Tick(_pet.Pos))
+			{
+				//race is over
+				if (_race.HasWon())
+				{
+					_pet.Play(2000);
+					SetTransientStatus(LM.Get("pet_race_win"), 2000);
+				}
+				else
+				{
+					_pet.WakeUp(2000);
+					SetTransientStatus(LM.Get("pet_race_lose"), 2000);
+				}
+				_race = null;
+			}
+		}
+
+
 		/*--------------------DRAWING--------------------*/
 		// don't clear renderer when not needed
 		// _renderer.ClearBuffer();
@@ -137,6 +160,7 @@ class Game
 		DrawLevelLayer(_level.Layers[0], true);
 		DrawPet();
 		DrawLevelLayer(_level.Layers[1], true);
+		DrawRace();
 		DrawLevelLayer(_level.Layers[2], true);
 		DrawPetBubble();
 		DrawStatus();
@@ -530,7 +554,9 @@ class Game
 				{
 					if (game._pet != null)
 					{
-						game.SetTransientStatus(game._pet.Play(1500), 1500);
+						// game.SetTransientStatus(game._pet.Play(1500), 1500);
+						//replace with race game
+						game.StartRace(3, 20);
 					}
 				};
 				break;
@@ -616,9 +642,26 @@ class Game
 		_renderer.DrawSprite(layer.Sprite, drawPos, _viewport);
 	}
 
+	protected void DrawRace()
+	{
+		if(_race != null && _currentModal == null)
+		{
+			foreach(RaceCollectible rc in _race.Collectibles)
+			{
+				Vec2 drawPos = Vec2.Add(_camera.GetAbsCenter(), rc.Pos.Sum(-1, -1));
+				_renderer.DrawSprite(rc.GetSprite(), drawPos, _viewport);
+			}
+		}
+	}
+
 	protected Vec2 ElementPosInWorldSpace(LevelElement element)
 	{
 		if (_level == null) return new Vec2(0, 0);
 		return Vec2.Subtract(element.Pos, _level.RelativeCenter);
+	}
+
+	protected void StartRace(int count = 4, int duration = 20)
+	{
+		_race = new Race(_level, count, duration);
 	}
 }

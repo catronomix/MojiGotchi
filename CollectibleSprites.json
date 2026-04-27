@@ -1,0 +1,61 @@
+{
+	"Sprite": {
+		"grid_size": {
+			"rows": 1,
+			"cols": 1
+		},
+		"Frames": [
+			{
+				"name": "DEFAULT",
+				"cells": [{ "char": "X", "fg": "Red", "bg": "Black" }]
+			},
+			{
+				"name": "RACE1",
+				"cells": [{ "char": "€", "fg": "Yellow", "bg": "Black" }]
+			},
+			{
+				"name": "RACE2",
+				"cells": [{ "char": "€", "fg": "Black", "bg": "Yellow" }]
+			},
+			{
+				"name": "RACE3",
+				"cells": [{ "char": "€", "fg": "Green", "bg": "DarkGray" }]
+			},
+			{
+				"name": "APPLE",
+				"cells": [{ "char": "@", "fg": "Red", "bg": "Green" }]
+			},
+			{
+				"name": "BERRY",
+				"cells": [{ "char": "o", "fg": "Purple", "bg": "Green" }]
+			}
+		],
+		"Animations": [
+			{
+				"state": "DEFAULT",
+				"frames": [0],
+				"ftime": 9999
+			},
+			{
+				"state": "RACEDEFAULT",
+				"frames": [1, 2],
+				"ftime": 500
+			},
+			{
+				"state": "RACECOLLECTED",
+				"frames": [3],
+				"ftime": 9999
+			},
+			{
+				"state": "FOODAPPLE",
+				"frames": [4],
+				"ftime": 9999
+			},
+			{
+				"state": "FOODBERRY",
+				"frames": [5],
+				"ftime": 9999
+			}
+		]
+	}
+}
