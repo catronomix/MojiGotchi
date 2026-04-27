@@ -1,8 +1,6 @@
 namespace MojiGotchi;
 
-/// <summary>
-/// Defines the type of collectible and its primary effect
-/// </summary>
+// Defines the type of collectible and its primary effect
 public enum CollectibleType
 {
 	FOOD,        // Increases saturation
@@ -12,10 +10,7 @@ public enum CollectibleType
 	MYSTERY      // Random stat effects
 }
 
-/// <summary>
-/// Represents a collectible item that can be placed in the level and collected by the pet
-/// Derives from Entity to inherit animation and positioning capabilities
-/// </summary>
+// Represents a collectible item that derives from Entity for animation and positioning
 public class Collectible : Entity
 {
 	private CollectibleType _type;
@@ -25,9 +20,7 @@ public class Collectible : Entity
 		set => _type = value;
 	}
 
-	/// <summary>
-	/// Defines which stats this collectible affects and by how much
-	/// </summary>
+	// Defines which stats this collectible affects and by how much
 	private Dictionary<StatType, int> _statModifiers;
 	public Dictionary<StatType, int> StatModifiers
 	{
@@ -35,9 +28,7 @@ public class Collectible : Entity
 		set => _statModifiers = value;
 	}
 
-	/// <summary>
-	/// Sound effect to play when collected
-	/// </summary>
+	// Sound effect to play when collected
 	private string _collectSoundEffect;
 	public string CollectSoundEffect
 	{
@@ -45,9 +36,7 @@ public class Collectible : Entity
 		set => _collectSoundEffect = value;
 	}
 
-	/// <summary>
-	/// Message displayed when pet collects this item
-	/// </summary>
+	// Message displayed when pet collects this item
 	private string _collectMessage;
 	public string CollectMessage
 	{
@@ -55,9 +44,7 @@ public class Collectible : Entity
 		set => _collectMessage = value;
 	}
 
-	/// <summary>
-	/// Visual indicator color for the collectible
-	/// </summary>
+	// Visual indicator color for the collectible
 	private Color _displayColor;
 	public Color DisplayColor
 	{
@@ -65,9 +52,7 @@ public class Collectible : Entity
 		set => _displayColor = value;
 	}
 
-	/// <summary>
-	/// Whether this collectible has been collected
-	/// </summary>
+	// Whether this collectible has been collected
 	private bool _isCollected;
 	public bool IsCollected
 	{
@@ -75,9 +60,7 @@ public class Collectible : Entity
 		set => _isCollected = value;
 	}
 
-	/// <summary>
-	/// Time when this collectible was spawned (for despawn logic)
-	/// </summary>
+	// Time when this collectible was spawned
 	private DateTime _spawnTime;
 	public DateTime SpawnTime
 	{
@@ -85,9 +68,7 @@ public class Collectible : Entity
 		set => _spawnTime = value;
 	}
 
-	/// <summary>
-	/// Lifetime in milliseconds before auto-despawn (-1 = infinite)
-	/// </summary>
+	// Lifetime in milliseconds before auto-despawn (-1 = infinite)
 	private int _lifetimeMs;
 	public int LifetimeMs
 	{
@@ -95,9 +76,7 @@ public class Collectible : Entity
 		set => _lifetimeMs = value;
 	}
 
-	/// <summary>
-	/// Whether this collectible can be walked through or blocks movement
-	/// </summary>
+	// Whether this collectible blocks movement
 	private bool _isBlocking;
 	public bool IsBlocking
 	{
@@ -105,9 +84,7 @@ public class Collectible : Entity
 		set => _isBlocking = value;
 	}
 
-	/// <summary>
-	/// Points awarded to high score when collected
-	/// </summary>
+	// Points awarded to high score when collected
 	private int _pointValue;
 	public int PointValue
 	{
@@ -115,7 +92,7 @@ public class Collectible : Entity
 		set => _pointValue = value;
 	}
 
-	// Constructor
+	// Default constructor
 	public Collectible() : base()
 	{
 		_type = CollectibleType.FOOD;
@@ -125,14 +102,12 @@ public class Collectible : Entity
 		_displayColor = Color.Yellow;
 		_isCollected = false;
 		_spawnTime = DateTime.Now;
-		_lifetimeMs = -1; // Infinite lifetime by default
+		_lifetimeMs = -1;
 		_isBlocking = false;
 		_pointValue = 10;
 	}
 
-	/// <summary>
-	/// Creates a Collectible with specified type and stat effects
-	/// </summary>
+	// Full constructor with custom parameters
 	public Collectible(CollectibleType type, string name, Dictionary<StatType, int> statMods, 
 	                   string collectMsg, Color color, int points = 10, int lifetimeMs = -1) : base()
 	{
@@ -149,20 +124,15 @@ public class Collectible : Entity
 		_collectSoundEffect = "action.wav";
 	}
 
-	/// <summary>
-	/// Checks if this collectible has expired based on lifetime
-	/// </summary>
+	// Checks if this collectible has expired based on lifetime
 	public bool HasExpired()
 	{
-		if (_lifetimeMs < 0) return false; // Negative lifetime = never expires
-
+		if (_lifetimeMs < 0) return false;
 		TimeSpan elapsed = DateTime.Now - _spawnTime;
 		return elapsed.TotalMilliseconds >= _lifetimeMs;
 	}
 
-	/// <summary>
-	/// Marks this collectible as collected and triggers collection effects
-	/// </summary>
+	// Marks collectible as collected and plays sound effect
 	public void Collect()
 	{
 		_isCollected = true;
@@ -172,17 +142,13 @@ public class Collectible : Entity
 		}
 	}
 
-	/// <summary>
-	/// Returns the collection message for display
-	/// </summary>
+	// Returns the collection message for display
 	public string GetCollectionMessage()
 	{
 		return _collectMessage ?? "Collected!";
 	}
 
-	/// <summary>
-	/// Factory method to create a food collectible
-	/// </summary>
+	// Factory: Create a food collectible
 	public static Collectible CreateFood(string name = "Food", int saturationBoost = 5)
 	{
 		var statMods = new Dictionary<StatType, int> { { StatType.SATURATION, saturationBoost } };
@@ -193,13 +159,11 @@ public class Collectible : Entity
 			"Omnomnom!",
 			Color.LightYellow,
 			points: 15,
-			lifetimeMs: 30000 // 30 seconds
+			lifetimeMs: 30000
 		);
 	}
 
-	/// <summary>
-	/// Factory method to create a toy collectible
-	/// </summary>
+	// Factory: Create a toy collectible
 	public static Collectible CreateToy(string name = "Toy", int moodBoost = 3, int energyBoost = 2)
 	{
 		var statMods = new Dictionary<StatType, int>
@@ -214,13 +178,11 @@ public class Collectible : Entity
 			"Wheeeee!",
 			Color.LightCyan,
 			points: 20,
-			lifetimeMs: 45000 // 45 seconds
+			lifetimeMs: 45000
 		);
 	}
 
-	/// <summary>
-	/// Factory method to create a fruit collectible
-	/// </summary>
+	// Factory: Create a fruit collectible
 	public static Collectible CreateFruit(string name = "Fruit", int saturationBoost = 3, 
 	                                       int moodBoost = 2, int energyBoost = 1)
 	{
@@ -237,13 +199,11 @@ public class Collectible : Entity
 			"Delicious!",
 			Color.LightRed,
 			points: 25,
-			lifetimeMs: 40000 // 40 seconds
+			lifetimeMs: 40000
 		);
 	}
 
-	/// <summary>
-	/// Factory method to create a special treat collectible (rare, high value)
-	/// </summary>
+	// Factory: Create a rare treat collectible (high value, short lifetime)
 	public static Collectible CreateTreat(string name = "Treat", int primaryBoost = 8)
 	{
 		var statMods = new Dictionary<StatType, int> { { StatType.MOOD, primaryBoost } };
@@ -254,13 +214,11 @@ public class Collectible : Entity
 			"Amazing!",
 			Color.Magenta,
 			points: 50,
-			lifetimeMs: 20000 // 20 seconds - rarer, disappears faster
+			lifetimeMs: 20000
 		);
 	}
 
-	/// <summary>
-	/// Factory method to create a mystery collectible with random effects
-	/// </summary>
+	// Factory: Create a mystery collectible with random effects
 	public static Collectible CreateMystery(string name = "Mystery Box")
 	{
 		var random = new Random();
@@ -285,29 +243,23 @@ public class Collectible : Entity
 			"Surprise!",
 			Color.Yellow,
 			points: 30,
-			lifetimeMs: 25000 // 25 seconds
+			lifetimeMs: 25000
 		);
 	}
 
-	/// <summary>
-	/// Gets remaining lifetime in milliseconds (returns -1 if infinite)
-	/// </summary>
+	// Gets remaining lifetime in milliseconds (-1 if infinite)
 	public int GetRemainingLifetime()
 	{
 		if (_lifetimeMs < 0) return -1;
-		
 		TimeSpan elapsed = DateTime.Now - _spawnTime;
 		int remaining = _lifetimeMs - (int)elapsed.TotalMilliseconds;
 		return Math.Max(0, remaining);
 	}
 
-	/// <summary>
-	/// Returns a percentage of remaining lifetime (0-100, useful for visual feedback)
-	/// </summary>
+	// Returns percentage of remaining lifetime (0-100, useful for visual feedback)
 	public int GetLifetimePercentage()
 	{
-		if (_lifetimeMs < 0) return 100; // Infinite = always full
-		
+		if (_lifetimeMs < 0) return 100;
 		int remaining = GetRemainingLifetime();
 		return (int)((remaining / (float)_lifetimeMs) * 100);
 	}
