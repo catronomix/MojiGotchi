@@ -355,10 +355,12 @@ class Editor : Game
 						break;
 					case (ConsoleKey.Tab, _):
 						_layerbar.NextLayer();
+						CursorInfo();
 						break;
 					case (ConsoleKey.S, _):
 						//toggle layer shading
 						_shade = !_shade;
+						CursorInfo();
 						break;
 					case (_, '0'):
 						_cursor.SetAnimation("DELETE");
@@ -560,12 +562,26 @@ class Editor : Game
 
 			SetTransientStatus("",100);
 			LevelElement? e = null;
-			for (int i = 2; i >= 0; i--) //top down
+			int layerstart = 2;
+			int layerend = 0;
+			if (_shade)
+			{
+				layerstart = _layerbar.ActiveLayer;
+				layerend = _layerbar.ActiveLayer;
+			}
+			for (int i = layerstart; i >= layerend; i--) //top down
 			{
 				e = _level.Layers[i].Elements[worldpos.X, worldpos.Y];
 				if (e != null)
 				{
-					SetTransientStatus($"[ ]{LM.Get("cursor")}:{(e.Name + (e.IsBlocking ? $" ({LM.Get("blocking")})" : "")).PadRight(18)}| {LM.Get("pos")}: {e.Pos.ToString().PadRight(7)}| {LM.Get("layer")}: {Level.LayerNames[i].PadRight(6)} |", 20000);
+					string nameString = e.Name;
+					if (e.IsBlocking && i == 1)
+					{
+						nameString += " (" + LM.Get("blocking") + ")";
+					};
+					nameString = nameString.PadRight(18);
+
+					SetTransientStatus($"[ ]{LM.Get("cursor")}:{nameString}| {LM.Get("pos")}: {e.Pos.ToString().PadRight(7)}| {LM.Get("layer")}: {Level.LayerNames[i].PadRight(6)} |", 20000);
 					_selectedElement = e;
 					return;
 				}
