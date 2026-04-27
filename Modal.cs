@@ -130,7 +130,7 @@ public class Modal
 		{
 			data[0, titleX + x] = new ScreenCell { Character = _title[x], Color = Color.White, BgColor = _bgColor };
 		}
-		string helptext = "Druk op [ESC] om te sluiten";
+		string helptext = LM.Get("modal_close_info");
 		int helpX = (size.X - helptext.Length) / 2;
 		for (int x = 0; x < helptext.Length; x++)
 		{
