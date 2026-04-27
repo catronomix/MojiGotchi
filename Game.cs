@@ -107,6 +107,8 @@ class Game
 		_sounds.AddSound("newgame", "newgame.wav");
 	}
 
+	public Level GetLevel() { return _level; }
+
 	public void ChooseLanguage()
 	{
 		_languageChoice.UpdatePage(_viewport.Size);
@@ -294,11 +296,20 @@ class Game
 			if (totaloptions > 0)
 			{
 				int totalWidth = 0;
+				int gap = 4;
+
+				// Calculate total width of the set
 				foreach (MenuItem o in _currentModal.Options)
 				{
-					totalWidth += o.Sprite.Size.X + 4;
+					totalWidth += o.Sprite.Size.X + gap;
 				}
+				if (totalWidth > 0) totalWidth -= gap;
 
+				// Calculate the x start
+				int startX = (_viewport.Size.X - totalWidth) / 2;
+				int currentXOffset = 0;
+
+				// Draw buttons
 				for (int i = 0; i < totaloptions; i++)
 				{
 					MenuItem option = _currentModal.Options[i];
@@ -315,13 +326,9 @@ class Game
 						optionSprite.Data[1, 1].Character = ' ';
 						if (optionSprite.Size.X >= 2) optionSprite.Data[1, optionSprite.Size.X - 2].Character = ' ';
 					}
-					
-					int xpos = (_viewport.Size.X - totalWidth) / 2;
-					//offset xpos by position in array
-					xpos += i * (option.Sprite.Size.X + 4);
-
-					Vec2 buttonPos = new Vec2(_viewport.Left + xpos, _viewport.Bottom - 5);
+					Vec2 buttonPos = new Vec2(_viewport.Left + startX + currentXOffset, _viewport.Bottom - 5);
 					_renderer.DrawSprite(optionSprite, buttonPos);
+					currentXOffset += optionSprite.Size.X + gap;
 				}
 			}
 		}

@@ -66,8 +66,6 @@ class Editor : Game
 		_editorConfig = new EditorConfig(this); // Initialize editor-specific configuration
 
 		//menu
-
-		//editor
 		_menu.AddItem(LM.Get("editor_menu_edit"), SetEditorAction(ActionType.EDITOR_EDIT), Color.WoodDark);
 		_menu.AddItem(LM.Get("editor_menu_config"), SetEditorAction(ActionType.EDITOR_CONFIG), Color.WoodDark);
 		_menu.AddItem(LM.Get("editor_menu_save"), SetEditorAction(ActionType.EDITOR_SAVE), Color.WoodDark);
@@ -85,6 +83,7 @@ class Editor : Game
 		_selectedElement = null;
 		_focus = Focus.MENU;
 		_editrect = new FillRect(_cursor.Pos, new Vec2(0,0));
+
 		//has blueprint bar
 		_blueprintBar = new BlueprintBar();
 		_shade = false;
@@ -579,6 +578,10 @@ class Editor : Game
 
 	private void ResizeLevel(int h, int v){
 		_level.Resize(_level.Size.X+h*2, _level.Size.Y+v*2);
+		if (_currentModal == _editorConfig)
+		{
+			_editorConfig.UpdatePage(_viewport.Size);
+		}
 	}
 
 	//editor actions
@@ -590,7 +593,7 @@ class Editor : Game
 			case ActionType.EDITOR_LOAD:
 				logic = (game) =>
 				{
-					Editor editor = (Editor)game; // Cast to Editor
+					Editor editor = (Editor)game; 
 					if (editor._level != null)
 					{
 						editor._level.LoadFromFile("level1.json");
@@ -600,7 +603,7 @@ class Editor : Game
 			case ActionType.EDITOR_SAVE:
 				logic = (game) =>
 				{
-					Editor editor = (Editor)game; // Cast to Editor
+					Editor editor = (Editor)game; 
 					if (editor._level != null)
 					{
 						editor._level.SaveToFile("level1.json");
@@ -610,7 +613,7 @@ class Editor : Game
 			case ActionType.EDITOR_EDIT:
 				logic = (game) =>
 				{
-					Editor editor = (Editor)game; // Cast to Editor
+					Editor editor = (Editor)game; 
 					_editingmode = EditingMode.SELECT;
 					editor._menu.Disable();
 					editor._focus = Focus.CURSOR;
@@ -619,59 +622,59 @@ class Editor : Game
 			case ActionType.EDITOR_CONFIG:
 				logic = (game) =>
 				{
-					Editor editor = (Editor)game; // Cast to Editor
-					editor._editorConfig.UpdatePage(editor._viewport.Size); // Use editor._editorHelp
-					editor._currentModal = editor._editorConfig; // Assign editor._editorHelp to inherited _currentModal
-					editor._menu.Disable(); // Use editor._menu
+					Editor editor = (Editor)game; 
+					editor._editorConfig.UpdatePage(editor._viewport.Size);
+					editor._currentModal = editor._editorConfig;
+					editor._menu.Disable(); 
 				};
 				break;
 			case ActionType.EDITOR_QUIT:
 				logic = (game) =>
 				{
-					Editor editor = (Editor)game; // Cast to Editor
-					editor._loopresult = LoopResult.GOTOGAME; // Use editor._isRunning
+					Editor editor = (Editor)game; 
+					editor._loopresult = LoopResult.GOTOGAME;
 				};
 				break;
 			case ActionType.EDITOR_HELP:
 				logic = (game) =>
 				{
-					Editor editor = (Editor)game; // Cast to Editor
-					editor._editorHelp.UpdatePage(editor._viewport.Size); // Use editor._editorHelp
-					editor._currentModal = editor._editorHelp; // Assign editor._editorHelp to inherited _currentModal
-					editor._menu.Disable(); // Use editor._menu
+					Editor editor = (Editor)game; 
+					editor._editorHelp.UpdatePage(editor._viewport.Size);
+					editor._currentModal = editor._editorHelp; 
+					editor._menu.Disable(); 
 				};
 				break;
 			//resize level actions
 			case ActionType.EDITOR_SIZEHPLUS:
 				logic = (game) =>
 				{
-					Editor editor = (Editor)game; // Cast to Editor
+					Editor editor = (Editor)game;
 					editor.ResizeLevel(1, 0);
 				};
 				break;
 			case ActionType.EDITOR_SIZEHMIN:
 				logic = (game) =>
 				{
-					Editor editor = (Editor)game; // Cast to Editor
+					Editor editor = (Editor)game;
 					editor.ResizeLevel(-1, 0);
 				};
 				break;
 			case ActionType.EDITOR_SIZEVPLUS:
 				logic = (game) =>
 				{
-					Editor editor = (Editor)game; // Cast to Editor
+					Editor editor = (Editor)game;
 					editor.ResizeLevel(0, 1);
 				};
 				break;
 			case ActionType.EDITOR_SIZEVMIN:
 				logic = (game) =>
 				{
-					Editor editor = (Editor)game; // Cast to Editor
+					Editor editor = (Editor)game;
 					editor.ResizeLevel(0, -1);
 				};
 				break;
 			default:
-				logic = (game) => { }; // Default action does nothing, already Action<Game>
+				logic = (game) => { }; // Default action does nothing
 				break;
 		}
 		return new GameAction(type, logic);
@@ -861,47 +864,6 @@ class EditorHelp: Modal
 		SetSpriteBg(size);
 		ClearContentSprite(size);
 		string[] lines = _helpText.Split('\n');
-
-		for (int i = 0; i < lines.Length; i++)
-		{
-			string line = lines[i].TrimEnd('\r');
-			if (string.IsNullOrEmpty(line)) continue;
-
-			Sprite lineSprite = new Sprite(new Vec2(line.Length, 1));
-			for (int x = 0; x < line.Length; x++)
-			{
-				lineSprite.WriteCell(new Vec2(x, 0), new ScreenCell
-				{
-					Character = line[x],
-					Color = Color.White,
-					BgColor = base.BgColor
-				});
-			}
-
-			// Add content with a small margin (x=2) and vertical offset
-			AddContent(lineSprite, new Vec2(4, i + 2));
-		}
-	}
-}
-
-class EditorConfig: Modal
-{
-	private string _configIntroText = LM.Get("editor_config_introtext");
-
-	//constructor
-	public EditorConfig(Editor editor) : base("Editor Config", Color.DarkYellow, Color.Yellow)
-	{
-		base.AddMenuItem("Horizontal +", editor.SetEditorAction(ActionType.EDITOR_SIZEHPLUS), Color.WoodDark);
-		base.AddMenuItem("Horizontal -", editor.SetEditorAction(ActionType.EDITOR_SIZEHMIN), Color.WoodDark);
-		base.AddMenuItem("Vertical +", editor.SetEditorAction(ActionType.EDITOR_SIZEVPLUS), Color.WoodDark);
-		base.AddMenuItem("Vertical -", editor.SetEditorAction(ActionType.EDITOR_SIZEVMIN), Color.WoodDark);
-	}
-
-	public void UpdatePage(Vec2 size)
-	{
-		SetSpriteBg(size);
-		ClearContentSprite(size);
-		string[] lines = _configIntroText.Split('\n');
 
 		for (int i = 0; i < lines.Length; i++)
 		{
