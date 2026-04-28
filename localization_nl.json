@@ -56,5 +56,8 @@
 	"modaltitle_highscores": "Topscores",
 	"modaltitle_help": "MojiGotchi - Handleiding",
 	"modaltext_help": "DOEL:\n\nHoud je virtuele huisdier in leven door zijn statistieken te beheren.\n  BESTURING:\n- Pijltjes Omhoog/Omlaag: Navigeer door het menu.\n- Enter: Bevestig je selectie.\n- Escape: Sluit dit venster.\n\nACTIES:\n- Voeden: Verhoogt verzadiging en energie. Pas op voor overvoeding!\n- Spelen: Verhoogt humeur, maar kost energie.\n- Aaien: Verhoogt humeur en maakt je pet een beetje moe.\n- Wekken: Maakt je pet wakker als hij slaapt, maar dit schaadt zijn humeur.\n- Slaap: Je pet valt vanzelf in slaap als hij moe is.",
-	"highscores_button_clear": "Topscores verwijderen"
+	"highscores_button_clear": "Topscores verwijderen",
+	"pet_race_running_prefix": "Race is bezig. Items verzameld:",
+	"status_race_started_prefix": "Een race is begonnen! Gebruikt pijltjes om",
+	"status_race_started_suffix": "alle items te laten verzamelen."
 	}

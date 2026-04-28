@@ -31,9 +31,8 @@ class Race
 	}
 	private DateTime _startTime;
 	private TimeSpan _raceDuration;
-	// TODO: remove if not used eventually
-	// private bool _started;
-	// public bool Started {get => _started; set => Started = value;}
+	private bool _hasUpdate;
+	public bool HasUpdate {get => _hasUpdate; set => _hasUpdate = value;}
 	private bool _win;
 	private Level _level;
 	
@@ -116,20 +115,25 @@ class Race
 					{
 						collectible.Collected = true;
 						collectible.SetAnimation(CollectAnims.AnimRaceCollected);
+						_hasUpdate = true;
 					}
 				}
 			}
 			
 		}
 		//check if we have won
+			int counter = 0;
 			foreach (RaceCollectible collectible in _collectibles)
 		{
-			if (!collectible.Collected)
+			if (collectible.Collected)
 			{
-				break;
+				counter++;
 			}
-			_win = true;
-			return false;
+			if (counter == _collectibles.Count)
+			{
+				_win = true;
+				return false;
+			}
 		}
 		//or lose if time expired
 		if (DateTime.Now > _startTime + _raceDuration)

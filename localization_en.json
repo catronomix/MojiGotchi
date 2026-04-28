@@ -56,5 +56,9 @@
 	"modaltitle_highscores": "High Scores",
 	"modaltitle_help": "MojiGotchi - Manual",
 	"modaltext_help": "GOAL:\n\nKeep your virtual pet alive by managing its statistics.\n CONTROLS:\n- Up/Down Arrows: Navigate through the menu.\n- Enter: Confirm your selection.\n- Escape: Close this window.\n\nACTIONS:\n- Feed: Increases fullness and energy. Watch out for overfeeding!\n- Play: Increases mood, but costs energy.\n- Pet: Increases mood and makes your pet a little tired.\n- Wake up: Wakes up your pet if it's sleeping, but this harms its mood.\n- Sleep: Your pet falls asleep automatically when it's tired.",
-	"highscores_button_clear": "Clear Highscores"
+	"highscores_button_clear": "Clear Highscores",
+	"pet_race_running_prefix": "Race in progress. Items collected:",
+	"status_race_started_prefix": "A race has started! Use arrow keys to let",
+	"status_race_started_suffix": "collect all items."
+
 }

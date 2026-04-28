@@ -126,29 +126,9 @@ class Game
 		CheckStats();
 
 		//Race minigame
-		if (_race != null && _pet != null)
-		{
-			if (!_race.Tick(_pet.Pos))
-			{
-				//race is over
-				if (_race.HasWon())
-				{
-					_pet.Play(2000);
-					SetTransientStatus(LM.Get("pet_race_win"), 2000);
-				}
-				else
-				{
-					_pet.WakeUp(2000);
-					SetTransientStatus(LM.Get("pet_race_lose"), 2000);
-				}
-				_race = null;
-				_menu.Enable();
-			}
-		}
-		else
-		{
-			PetMove();
-		}
+		CheckRace();
+
+		PetMove();
 
 		/*--------------------DRAWING--------------------*/
 		// don't clear renderer when not needed
@@ -499,22 +479,60 @@ class Game
 		}
 	}
 
+	void CheckRace()
+	{
+		if (_race != null && _pet != null)
+		{
+			if (!_race.Tick(_pet.Pos))
+			{
+				//query race for updates
+				if (_race.HasUpdate)
+				{
+					int numcollected = 0;
+					foreach(RaceCollectible item in _race.Collectibles)
+					{
+						numcollected += item.Collected ? 1 : 0;
+					}
+					string updatestring = $"{LM.Get("pet_race_running_prefix")} {numcollected}/{_race.Collectibles.Count}";
+					SetTransientStatus(updatestring, 9999);
+					_race.HasUpdate = false;
+				}
+
+				//race is over
+				if (_race.HasWon())
+				{
+					_pet.Play(2000);
+					SetTransientStatus(LM.Get("pet_race_win"), 2000);
+				}
+				else
+				{
+					_pet.WakeUp(2000);
+					SetTransientStatus(LM.Get("pet_race_lose"), 2000);
+				}
+				_race = null;
+				_menu.Enable();
+			}
+		}
+	}
+
 	void PetMove()
 	{
-		//update menu availability
-		if (_pet != null && _pet.IsSleeping)
-		{
-			UpdateMenuAvailability([ActionType.WAKE], true);
-			UpdateMenuAvailability([ActionType.FEED, ActionType.PLAY, ActionType.PET], false);
-			_pet.SetAnimation(Pet.AnimSleeping);
-		}
-		else if (_pet != null)
-		{
-			UpdateMenuAvailability([ActionType.WAKE], false);
-			UpdateMenuAvailability([ActionType.FEED, ActionType.PLAY, ActionType.PET], true);
-			Vec2 lastpetpos = _pet.Pos;
-			_pet.Wander();
-			KeepInLevel(_pet, lastpetpos);
+		if (_race == null){
+			//update menu availability
+			if (_pet != null && _pet.IsSleeping)
+			{
+				UpdateMenuAvailability([ActionType.WAKE], true);
+				UpdateMenuAvailability([ActionType.FEED, ActionType.PLAY, ActionType.PET], false);
+				_pet.SetAnimation(Pet.AnimSleeping);
+			}
+			else if (_pet != null)
+			{
+				UpdateMenuAvailability([ActionType.WAKE], false);
+				UpdateMenuAvailability([ActionType.FEED, ActionType.PLAY, ActionType.PET], true);
+				Vec2 lastpetpos = _pet.Pos;
+				_pet.Wander();
+				KeepInLevel(_pet, lastpetpos);
+			}
 		}
 	}
 
@@ -701,6 +719,6 @@ class Game
 	{
 		_race = new Race(_level, count, duration);
 		_menu.Disable();
-		_persistentStatus = $"{LM.Get("status_race_prefix")} {_pet?.Name} {LM.Get("status_race_suffix")}";
+		SetTransientStatus($"{LM.Get("status_race_started_prefix")} {_pet?.Name} {LM.Get("status_race_started_suffix")}", 9999);
 	}
 }
