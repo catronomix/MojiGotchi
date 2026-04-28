@@ -4,7 +4,7 @@ MojiGotchi is a charming console-based Tamagotchi-style pet simulation game buil
 
 ## Disclaimer
 
-- The game is currently localized in **Dutch**.
+- The game is currently localized in **Dutch** and **English**.
 - This project was created with the assistance and tutoring of AI tools.
 
 ---
@@ -18,6 +18,7 @@ MojiGotchi is a charming console-based Tamagotchi-style pet simulation game buil
   - **Mood:** A happy pet is a healthy pet!
   - **Sleepiness:** Manage its sleep cycle.
 - **Interactive Actions:** Feed, play with, pet, and wake up your MojiGotchi through a simple menu system.
+- **Minigame** Collect all the coins to give your pet a better mood.
 - **Dynamic Environment:** Your pet wanders around a customizable level, interacting with its surroundings.
 - **Life Cycle:** Watch your MojiGotchi grow, but be careful – neglect can lead to unfortunate outcomes!
 - **High Scores:** Track your best pet-parenting achievements.
