@@ -224,6 +224,7 @@ class Level
 				}
 			}
 			oldLayer.Elements = newElements;
+			oldLayer.UpdateSize(newSize);
 			oldLayer.UpdateSprite();
 		}
 
@@ -280,6 +281,11 @@ public class LevelLayer
 			}
 		}
 		Sprite = targetsprite;
+	}
+
+	public void UpdateSize(Vec2 size)
+	{
+		Size = size;
 	}
 }
 

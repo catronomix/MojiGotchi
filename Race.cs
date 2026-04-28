@@ -11,14 +11,14 @@ class RaceCollectible : Collectible
 	//constructor
 	public RaceCollectible() : base(CollectibleType.RACE)
 	{
-		SetAnimation(AnimRaceDefault);
+		SetAnimation(CollectAnims.AnimRaceDefault);
 		_collected = false;
 	}
 
 	public void Collect()
 	{
 		_collected = true;
-		SetAnimation(AnimRaceCollected);
+		SetAnimation(CollectAnims.AnimRaceCollected);
 	}
 }
 
@@ -31,6 +31,9 @@ class Race
 	}
 	private DateTime _startTime;
 	private TimeSpan _raceDuration;
+	// TODO: remove if not used eventually
+	// private bool _started;
+	// public bool Started {get => _started; set => Started = value;}
 	private bool _win;
 	private Level _level;
 	
@@ -104,10 +107,19 @@ class Race
 		foreach (RaceCollectible collectible in _collectibles)
 		{
 			if (collectible.Collected) continue;
-			if (Vec2.Equals(collectible.Pos, pos))
-			{
-				collectible.Collected = true;
+			//check all pet's cells:
+			for (int y = 0; y < 2; y++){
+				for (int x = 0; x < 2; x++)
+				{
+					Vec2 newpos = pos.Sum(x,y);
+					if (Vec2.Equals(collectible.Pos, newpos))
+					{
+						collectible.Collected = true;
+						collectible.SetAnimation(CollectAnims.AnimRaceCollected);
+					}
+				}
 			}
+			
 		}
 		//check if we have won
 			foreach (RaceCollectible collectible in _collectibles)

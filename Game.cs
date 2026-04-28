@@ -142,9 +142,13 @@ class Game
 					SetTransientStatus(LM.Get("pet_race_lose"), 2000);
 				}
 				_race = null;
+				_menu.Enable();
 			}
 		}
-
+		else
+		{
+			PetMove();
+		}
 
 		/*--------------------DRAWING--------------------*/
 		// don't clear renderer when not needed
@@ -242,6 +246,10 @@ class Game
 		if (Console.KeyAvailable)
 		{
 			ConsoleKeyInfo key = Console.ReadKey(true);
+			//only process last key to prevent buffer from filling
+			while(Console.KeyAvailable){
+				key = Console.ReadKey(true);
+			}
 			if (_menu.Enabled) //menu is active
 			{
 				switch (key.Key)
@@ -271,23 +279,45 @@ class Game
 			{
 				switch (key.Key)
 				{
-				case ConsoleKey.Escape:
-					//close any modal if modal is open
-					CloseModal();
-					break;
-				case ConsoleKey.LeftArrow:
-					_currentModal.SelectLeft();
-					break;
-				case ConsoleKey.RightArrow:
-					_currentModal.SelectRight();
-					break;
-				case ConsoleKey.Enter:
-					GameAction action = _currentModal.Options[_currentModal.SelectedIndex].Action;
-					action.Use(this);
-					break;
-				default:
-					break;
+					case ConsoleKey.Escape:
+						//close any modal if modal is open
+						CloseModal();
+						break;
+					case ConsoleKey.LeftArrow:
+						_currentModal.SelectLeft();
+						break;
+					case ConsoleKey.RightArrow:
+						_currentModal.SelectRight();
+						break;
+					case ConsoleKey.Enter:
+						GameAction action = _currentModal.Options[_currentModal.SelectedIndex].Action;
+						action.Use(this);
+						break;
+					default:
+						break;
 				}
+			}
+			else if(_race != null && _pet != null) //race is happening
+			{
+				Vec2 lastpetpos = _pet.Pos;
+				switch (key.Key)
+				{
+					case ConsoleKey.UpArrow:
+						_pet.Move(new Vec2(0,-1));
+						break;
+					case ConsoleKey.DownArrow:
+						_pet.Move(new Vec2(0,1));
+						break;
+					case ConsoleKey.LeftArrow:
+						_pet.Move(new Vec2(-1,0));
+						break;
+					case ConsoleKey.RightArrow:
+						_pet.Move(new Vec2(1,0));
+						break;
+					default:
+						break;
+				}
+				KeepInLevel(_pet, lastpetpos);
 			}
 		}
 	}
@@ -466,41 +496,48 @@ class Game
 				(_pet.IsSleeping ? " | " + LM.Get("status_sleeping") : "");
 			}
 			_lastStatUpdate = DateTime.Now;
+		}
+	}
 
-			//update menu availability
-			if (_pet.IsSleeping)
-			{
-				UpdateMenuAvailability([ActionType.WAKE], true);
-				UpdateMenuAvailability([ActionType.FEED, ActionType.PLAY, ActionType.PET], false);
-				_pet.SetAnimation(Pet.AnimSleeping);
-			}
-			else
-			{
-				UpdateMenuAvailability([ActionType.WAKE], false);
-				UpdateMenuAvailability([ActionType.FEED, ActionType.PLAY, ActionType.PET], true);
-				Vec2 lastpetpos = _pet.Pos;
-				_pet.Wander();
-				
-				//keep pet inside level
-				int x = Math.Clamp(_pet.Pos.X, -_level.RelativeCenter.X, _level.RelativeCenter.X);
-				int y = Math.Clamp(_pet.Pos.Y, -_level.RelativeCenter.Y, _level.RelativeCenter.Y);
-				_pet.Pos = new Vec2(x, y);
+	void PetMove()
+	{
+		//update menu availability
+		if (_pet != null && _pet.IsSleeping)
+		{
+			UpdateMenuAvailability([ActionType.WAKE], true);
+			UpdateMenuAvailability([ActionType.FEED, ActionType.PLAY, ActionType.PET], false);
+			_pet.SetAnimation(Pet.AnimSleeping);
+		}
+		else if (_pet != null)
+		{
+			UpdateMenuAvailability([ActionType.WAKE], false);
+			UpdateMenuAvailability([ActionType.FEED, ActionType.PLAY, ActionType.PET], true);
+			Vec2 lastpetpos = _pet.Pos;
+			_pet.Wander();
+			KeepInLevel(_pet, lastpetpos);
+		}
+	}
 
-				//keep pet from moving into solid objects
-				if (_level != null)
+	void KeepInLevel(Entity entity, Vec2 lastpos)
+	{
+		//keep entity inside level
+		int x = Math.Clamp(entity.Pos.X, -_level.RelativeCenter.X, _level.RelativeCenter.X);
+		int y = Math.Clamp(entity.Pos.Y, -_level.RelativeCenter.Y, _level.RelativeCenter.Y);
+		entity.Pos = new Vec2(x, y);
+
+		//keep pet from moving into solid objects
+		if (_pet != null && _level != null)
+		{
+			foreach(LevelElement? element in _level.Layers[1].Elements)
+			{
+				if (element == null) continue; //skip empty cells
+				if (element.IsBlocking)
 				{
-					foreach(LevelElement? element in _level.Layers[1].Elements)
+					// check if colliding
+					// The pet's collision point is its center cell, which is _pet.Pos + (1,1)
+					if(Vec2.Chebyshev(ElementPosInWorldSpace(element), entity.Pos) < 2)
 					{
-						if (element == null) continue; //skip empty cells
-						if (element.IsBlocking)
-						{
-							// check if colliding
-							// The pet's collision point is its center cell, which is _pet.Pos + (1,1)
-							if(Vec2.Chebyshev(ElementPosInWorldSpace(element), _pet.Pos) < 2)
-							{
-								_pet.Pos = lastpetpos;
-							}
-						}
+						_pet.Pos = lastpos;
 					}
 				}
 			}
@@ -556,7 +593,7 @@ class Game
 					{
 						// game.SetTransientStatus(game._pet.Play(1500), 1500);
 						//replace with race game
-						game.StartRace(3, 20);
+						game.StartRace(3, 60);
 					}
 				};
 				break;
@@ -663,5 +700,7 @@ class Game
 	protected void StartRace(int count = 4, int duration = 20)
 	{
 		_race = new Race(_level, count, duration);
+		_menu.Disable();
+		_persistentStatus = $"{LM.Get("status_race_prefix")} {_pet?.Name} {LM.Get("status_race_suffix")}";
 	}
 }

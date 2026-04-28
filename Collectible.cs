@@ -7,6 +7,16 @@ enum CollectibleType
 	FOOD
 }
 
+public static class CollectAnims
+{
+	// Animation state constants
+	public const string Default = "DEFAULT"; //should not be used in-game
+	public const string AnimRaceDefault = "RACEDEFAULT";
+	public const string AnimRaceCollected = "RACECOLLECTED";
+	public const string AnimFoodApple = "FOODAPPLE";
+	public const string AnimFoodBerry = "FOODBERRY";
+}
+
 abstract class Collectible: Entity
 {
 	private CollectibleType _type;
@@ -19,13 +29,6 @@ abstract class Collectible: Entity
 	{
 		get => _sharedAnimations;
 	}
-
-	// Animation state constants
-	public const string Default = "DEFAULT"; //should not be used in-game
-	public const string AnimRaceDefault = "RACEDEFAULT";
-	public const string AnimRaceCollected = "RACECOLLECTED";
-	public const string AnimFoodApple = "FOODAPPLE";
-	public const string AnimFoodBerry = "FOODBERRY";
 
 	public CollectibleType Type
 	{
