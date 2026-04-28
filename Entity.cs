@@ -9,18 +9,17 @@ public abstract class Entity
 	private int _animOffset;
 
 	//Animations list
+	protected virtual Dictionary<string, Animation>? _animationsSource
+	{
+		get => _animations;
+		set => _animations = value;
+	}
 	protected Dictionary<string, Animation>? _animations;
 	[System.Text.Json.Serialization.JsonIgnore]
 	public Dictionary<string, Animation>? Animations
 	{
-		get
-		{
-			return _animations;
-		}
-		set
-		{
-			_animations = value;
-		}
+		get => _animationsSource;
+		set => _animationsSource = value;
 	}
 	protected Vec2 _pos;
 	public Vec2 Pos //relative to the center of the game area
@@ -41,7 +40,7 @@ public abstract class Entity
 	{
 		Name = "";
 		//setup animations list
-		_animations = null;
+		_animationsSource = null;
 		_animationState = AnimDefault;
 		_animOffset = AnimRandom.GetRandom(0, 16);
 
@@ -51,7 +50,7 @@ public abstract class Entity
 
 	public Sprite? GetSprite()
 	{
-		if (_animations != null && _animations.TryGetValue(_animationState, out var animation))
+		if (_animationsSource != null && _animationsSource.TryGetValue(_animationState, out var animation))
 		{
 			return animation.GetSprite(_animOffset);
 		}

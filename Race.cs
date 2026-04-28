@@ -133,19 +133,19 @@ class Race
 		return _win;
 	}
 	
-	private Vec2 FindAvailablePosition(int radius = 5)
+	private Vec2 FindAvailablePosition(int space = 5)
 	{
 		//check middle layer only
 		LevelLayer layer = _level.Layers[1];
 
 		//limit radius for safety:
-		radius = Math.Clamp(radius, 1, 15);
+		space = Math.Clamp(space, 1, 15);
 
 		// Make sure not to go out of bounds of the layer's array
-		int minSearchX = radius;
-		int maxSearchX = layer.Size.X - 1 - radius;
-		int minSearchY = radius;
-		int maxSearchY = layer.Size.Y - 1 - radius;
+		int minSearchX = space;
+		int maxSearchX = layer.Size.X - 1 - space;
+		int minSearchY = space;
+		int maxSearchY = layer.Size.Y - 1 - space;
 
 		Random rand = Randomizer.R();
 		int maxAttempts = 512; // Limit random attempts to prevent excessive computation on dense levels
@@ -156,14 +156,14 @@ class Race
 			int randomY = rand.Next(minSearchY, maxSearchY + 1);
 			Vec2 potentialPos = new Vec2(randomX, randomY);
 
-			if (IsSpaceOpen(potentialPos, radius))
+			if (IsSpaceOpen(potentialPos, space))
 			{
 				return potentialPos;
 			}
 		}
 
 		// If no available position is found after all attempts, log a warning and return a default.
-		DebugLogger.Log($"WARNING: No available position found for RaceCollectible with radius {radius} after all attempts. Returning (0,0).");
+		DebugLogger.Log($"WARNING: No available position found for RaceCollectible with radius {space} after all attempts. Returning (0,0).");
 		return new Vec2(0, 0); // Default fallback position
 	}
 

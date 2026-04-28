@@ -11,6 +11,15 @@ abstract class Collectible: Entity
 {
 	private CollectibleType _type;
 
+	//static animations dict for all collectibles
+	protected static Dictionary<string, Animation>? _sharedAnimations = JsonParser.LoadAnimations("CollectibleSprites.json");
+
+	//override base class's animations source to point to the static one
+	protected override Dictionary<string, Animation>? _animationsSource
+	{
+		get => _sharedAnimations;
+	}
+
 	// Animation state constants
 	public const string Default = "DEFAULT"; //should not be used in-game
 	public const string AnimRaceDefault = "RACEDEFAULT";

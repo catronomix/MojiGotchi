@@ -162,7 +162,7 @@ public class Pet : Entity //Pet inherits from Entity class
 		_lastWaked = DateTime.MinValue;
 
 		//setup animations list
-		_animations = JsonParser.LoadAnimations("PetSprites.json");
+		_animationsSource = JsonParser.LoadAnimations("PetSprites.json");
 		SetAnimation(AnimDefault);
 
 		//position in the level, relative to world origin
@@ -202,11 +202,11 @@ public class Pet : Entity //Pet inherits from Entity class
 
 	public void ApplyColorToAnimations()
 	{
-		if (_animations == null)
+		if (_animationsSource == null)
 		{
 			return;
 		}
-		foreach (var animation in _animations.Values)
+		foreach (var animation in _animationsSource.Values)
 		{
 			if (animation.Frames == null) continue;
 			foreach (var frame in animation.Frames)

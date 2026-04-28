@@ -703,7 +703,7 @@ class Cursor: Entity
 	//constructor
 	public Cursor()
 	{
-		_animations = JsonParser.LoadAnimations("CursorSprites.json");
+		_animationsSource = JsonParser.LoadAnimations("CursorSprites.json");
 		SetAnimation("SELECT");
 		_pos = new Vec2(0,0);
 	}
