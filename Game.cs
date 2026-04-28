@@ -31,6 +31,9 @@ class Game
 	//can have a race
 	protected Race? _race;
 
+	//draw hidden items every x frames
+	private int _drawhidden;
+
 	//have a camera
 	protected Camera _camera;
 
@@ -92,6 +95,9 @@ class Game
 			UpdateMenuAvailability([ActionType.NEWPET], false);
 			_menu.SelectFirstEnabled();
 		}
+
+		//draw hidden items every x frames
+		_drawhidden = 0;
 		
 		_camera = new Camera(_level, _pet, deadzone, _viewport); 
 
@@ -144,14 +150,18 @@ class Game
 		DrawLevelLayer(_level.Layers[0], true);
 		DrawPet();
 		DrawLevelLayer(_level.Layers[1], true);
-		DrawRace();
+		DrawRace(); //race items are in middle layer but we want to see hidden items.
 		DrawLevelLayer(_level.Layers[2], true);
+		if(_drawhidden < 2){
+			DrawRace(); //race items are in middle layer but we want to see hidden items.
+		}
 		DrawPetBubble();
 		DrawStatus();
 		_renderer.RenderScreen();
 
 		/*--------------------INPUT--------------------*/
 		HandleInput();
+		_drawhidden = (_drawhidden + 1) % 6;
 		Thread.Sleep(sleepDelta);
 		return _loopresult;
 	}
@@ -406,7 +416,6 @@ class Game
 				// We subtract petSprite.Size / 2 to make (0,0) the center of the pet.
 				Vec2 drawPos = Vec2.Add(_camera.GetAbsCenter(), _pet.Pos.Sum(-1,-1));
 				_renderer.DrawSprite(petSprite, drawPos, _viewport);
-				//draw message bubble	
 			}
 		}
 	}
@@ -483,31 +492,32 @@ class Game
 	{
 		if (_race != null && _pet != null)
 		{
+			//query race for updates
+			if (_race.HasUpdate)
+			{
+				int numcollected = 0;
+				foreach(RaceCollectible item in _race.Collectibles)
+				{
+					numcollected += item.Collected ? 1 : 0;
+				}
+				string updatestring = $"{LM.Get("pet_race_running_prefix")} {numcollected}/{_race.Collectibles.Count}";
+				SetTransientStatus(updatestring, 9999);
+				_pet.MessageBubble.SetMessage("Woooh!");
+				_race.HasUpdate = false;
+			}
 			if (!_race.Tick(_pet.Pos))
 			{
-				//query race for updates
-				if (_race.HasUpdate)
-				{
-					int numcollected = 0;
-					foreach(RaceCollectible item in _race.Collectibles)
-					{
-						numcollected += item.Collected ? 1 : 0;
-					}
-					string updatestring = $"{LM.Get("pet_race_running_prefix")} {numcollected}/{_race.Collectibles.Count}";
-					SetTransientStatus(updatestring, 9999);
-					_race.HasUpdate = false;
-				}
 
 				//race is over
 				if (_race.HasWon())
 				{
 					_pet.Play(2000);
-					SetTransientStatus(LM.Get("pet_race_win"), 2000);
+					SetTransientStatus(LM.Get("pet_race_win"), 4000);
 				}
 				else
 				{
 					_pet.WakeUp(2000);
-					SetTransientStatus(LM.Get("pet_race_lose"), 2000);
+					SetTransientStatus(LM.Get("pet_race_lose"), 4000);
 				}
 				_race = null;
 				_menu.Enable();

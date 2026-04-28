@@ -107,8 +107,8 @@ class Race
 		{
 			if (collectible.Collected) continue;
 			//check all pet's cells:
-			for (int y = 0; y < 2; y++){
-				for (int x = 0; x < 2; x++)
+			for (int y = 0; y < 3; y++){
+				for (int x = 0; x < 3; x++)
 				{
 					Vec2 newpos = pos.Sum(x,y);
 					if (Vec2.Equals(collectible.Pos, newpos))
