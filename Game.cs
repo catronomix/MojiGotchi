@@ -695,7 +695,42 @@ class Game
 					game._menu.Disable(); 
 				};
 				break;
-
+			case ActionType.SWITCHLANG_EN:
+				logic = (game) =>
+				{
+					Program.GameOptions["language"] = "en";
+					LM.SetLanguage("en");
+					Program.SaveGameOptions();
+					if (game._pet != null) { DataManager.SavePet(game._pet); } else { DataManager.DeleteSave(); }
+					game._loopresult = LoopResult.GOTOGAME;
+				};
+				break;
+			case ActionType.SWITCHLANG_NL:
+				logic = (game) =>
+				{
+					Program.GameOptions["language"] = "nl";
+					LM.SetLanguage("nl");
+					Program.SaveGameOptions();
+					if (game._pet != null) { DataManager.SavePet(game._pet); } else { DataManager.DeleteSave(); }
+					game._loopresult = LoopResult.GOTOGAME;
+				};
+				break;
+			case ActionType.DEVMODE_ON:
+				logic = (game) =>
+				{
+					Program.GameOptions["devmode"] = "true";
+					Program.SaveGameOptions();
+					_gameOptions.UpdatePage(_viewport.Size);
+				};
+				break;
+			case ActionType.DEVMODE_OFF:
+				logic = (game) =>
+				{
+					Program.GameOptions["devmode"] = "false";
+					Program.SaveGameOptions();
+					_gameOptions.UpdatePage(_viewport.Size);
+				};
+				break;
 			default:
 				logic = (game) => { }; // Default action does nothing
 				break;

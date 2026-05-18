@@ -11,10 +11,13 @@ public enum LoopResult
 	GOTOEDITOR
 }
 
-class Program
+static class Program
 {
 	private static Dictionary<string, string> _gameOptions = new();
-
+	public static Dictionary<string, string> GameOptions{
+		get => _gameOptions;
+	}
+	
 	private enum AppState
 	{
 		GAME,
@@ -80,6 +83,7 @@ class Program
 			LoopResult result = game.Step(); 
 
 			if (result == LoopResult.GOTOEDITOR) return AppState.EDITOR;
+			if (result == LoopResult.GOTOGAME) return AppState.GAME;
 			if (result == LoopResult.QUIT) return AppState.QUIT;
 		}
 	}
@@ -124,7 +128,7 @@ class Program
 		}
 	}
 
-	private static void SaveGameOptions()
+	internal static void SaveGameOptions()
 	{
 		try
 		{
