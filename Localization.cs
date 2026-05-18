@@ -85,10 +85,10 @@ public static class LM //shorthand for localizationmanager
 	
 }
 
-public class LanguageChoice : Modal
+public class MissingLang : Modal
 {
 	
-	public LanguageChoice() : base("Choose Language", Color.DarkCyan, Color.Cyan)
+	public MissingLang() : base("Choose Language", Color.DarkCyan, Color.Cyan)
 	{
 		
 	}
@@ -98,8 +98,8 @@ public class LanguageChoice : Modal
 		SetSpriteBg(size);
 		ClearContentSprite(size);
 
-		string messagestring = "Language setting not found, defaulting to English.\nYou can change this in options.json.\nPress [ESC] to close this window]\n";
-		messagestring += "Taalinstalling niet gevonden, standaardtaal is Engels.\nJe kan dit wijzigen in options.json\nDruk op [ESC] om dit venster te sluiten]";
+		string messagestring = "Language setting not found, defaulting to English.\nYou can change this in the Options menu.\nPress [ESC] to close this window]\n";
+		messagestring += "Taalinstalling niet gevonden, standaardtaal is Engels.\nJe kan dit wijzigen in het 'Options' menu.\nDruk op [ESC] om dit venster te sluiten]";
 
 		string[] message = messagestring.Split('\n');
 

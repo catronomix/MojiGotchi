@@ -50,7 +50,8 @@ class Game
 	protected Modal? _currentModal;
 	protected Help _help;
 	protected HighScores _highScores;
-	protected LanguageChoice _languageChoice;
+	protected MissingLang _missingLang;
+	protected GameOptions _gameOptions;
 
 	// Initialize the game
 	public Game(bool devmode)
@@ -67,7 +68,8 @@ class Game
 		//init modals
 		_help = new Help();
 		_highScores = new HighScores(this);
-		_languageChoice = new LanguageChoice();
+		_missingLang = new MissingLang();
+		_gameOptions = new GameOptions(this);
 		_currentModal = null;
 
 		//gameplay
@@ -80,6 +82,7 @@ class Game
 		_menu.AddItem(LM.Get("menu_newgame"), SetAction(ActionType.NEWPET), Color.DarkGreen);
 		_menu.AddItem(LM.Get("menu_topscore"), SetAction(ActionType.TOPSCORE), Color.DarkGreen);
 		_menu.AddItem(LM.Get("menu_help"), SetAction(ActionType.HELP), Color.DarkGreen);
+		_menu.AddItem(LM.Get("menu_options"), SetAction(ActionType.OPTIONS), Color.DarkGreen);
 		_menu.AddItem(LM.Get("menu_editor"), SetAction(ActionType.EDITOR_START), Color.DarkYellow);
 		_menu.AddItem(LM.Get("menu_quit"), SetAction(ActionType.QUIT), Color.DarkGreen);
 
@@ -119,8 +122,8 @@ class Game
 
 	public void ChooseLanguage()
 	{
-		_languageChoice.UpdatePage(_viewport.Size);
-		_currentModal = _languageChoice;
+		_missingLang.UpdatePage(_viewport.Size);
+		_currentModal = _missingLang;
 		_menu.Disable();
 	}
 
@@ -476,6 +479,10 @@ class Game
 				KillPet();
 				return;
 			}
+			else if (_race != null){
+				//race is in progress, display race timer
+				_persistentStatus = LM.Get("status_race_time") + _race.GetTimeLeft();
+			}
 			else // Pet is alive, update stats display
 			{
 				_persistentStatus = LM.Get("status_caring", [_pet.Name]) + " | "
@@ -511,7 +518,7 @@ class Game
 				//race is over
 				if (_race.HasWon())
 				{
-					_pet.Play(2000);
+					_pet.Play(3, 2000);
 					SetTransientStatus(LM.Get("pet_race_win"), 4000);
 				}
 				else
@@ -678,6 +685,14 @@ class Game
 				{
 					DataManager.ClearHighScores();
 					game._highScores.UpdatePage(_viewport.Size);
+				};
+				break;
+			case ActionType.OPTIONS:
+				logic = (game) =>
+				{
+					game._gameOptions.UpdatePage(game._viewport.Size);
+					game._currentModal = game._gameOptions;
+					game._menu.Disable(); 
 				};
 				break;
 

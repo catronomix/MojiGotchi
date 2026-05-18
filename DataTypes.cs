@@ -7,6 +7,7 @@ public enum ActionType
 	QUIT,
 	TOPSCORE,
 	HELP,
+	OPTIONS,
 	FEED,
 	PLAY,
 	PET,
@@ -23,6 +24,8 @@ public enum ActionType
 	EDITOR_SIZEVPLUS,
 	EDITOR_SIZEVMIN,
 	HIGHSCORES_CLEAR,
+	SWITCHLANG_EN,
+	SWITCHLANG_NL
 }
 
 public struct Color

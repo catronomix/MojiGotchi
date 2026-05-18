@@ -206,4 +206,10 @@ class Race
 		}
 		return true; // All cells in the radius are empty or null
 	}
+
+	public string GetTimeLeft()
+	{
+		TimeSpan timeleft = _raceDuration - (DateTime.Now - _startTime);
+		return $"{(int)timeleft.TotalSeconds}s / {(int)_raceDuration.TotalSeconds}s";
+	}
 }
