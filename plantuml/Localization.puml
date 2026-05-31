@@ -1,0 +1,13 @@
+@startuml
+class LM <<static>> {
+    + {static} SetLanguage(language:string) : void
+    + {static} Get(key:string) : string
+    + {static} Get(key:string, args:object?[]) : string
+    + {static} CurrentLang() : string
+}
+class LanguageChoice {
+    + LanguageChoice()
+    + UpdatePage(size:Vec2) : void
+}
+Modal <|-- LanguageChoice
+@enduml

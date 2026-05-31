@@ -1,0 +1,11 @@
+@startuml
+class ConsoleHelper <<static>> {
+    + {static} EnableAnsiEscapeCodes() : void
+    + {static} GetForegroundAnsiCode(color:Color) : string
+    + {static} GetBackgroundAnsiCode(color:Color) : string
+    + {static} HideCursor() : void
+    + {static} EnableUTF8() : void
+    + {static} SetWindowSize(width:int, height:int) : void
+    + {static} GetWindowSize() : Vec2
+}
+@enduml

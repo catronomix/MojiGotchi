@@ -1,0 +1,16 @@
+@startuml
+enum LoopResult {
+    CONTINUE,
+    QUIT,
+    GOTOGAME,
+    GOTOEDITOR,
+}
+class Program {
+}
+enum AppState {
+    GAME,
+    EDITOR,
+    QUIT,
+}
+Program +-- AppState
+@enduml

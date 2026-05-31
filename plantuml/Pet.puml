@@ -1,0 +1,41 @@
+@startuml
+enum StatType {
+    SATURATION,
+    ENERGY,
+    MOOD,
+    SLEEPYNESS,
+}
+class Pet {
+    + <<const>> AnimEating : string = "EATING"
+    + <<const>> AnimPlaying : string = "PLAYING"
+    + <<const>> AnimSleeping : string = "SLEEPING"
+    + <<const>> AnimWakeup : string = "WAKEUP"
+    + <<const>> AnimHappy : string = "HAPPY"
+    + IsAlive : bool <<get>> <<set>>
+    + IsSleeping : bool <<get>> <<set>>
+    + Pet()
+    + RandomizePetColor() : void
+    + ApplyColorToAnimations() : void
+    + Feed(bubbletime:int) : string
+    + Play(bubbletime:int) : string
+    + PetPet(bubbletime:int) : string
+    + WakeUp(bubbletime:int) : string
+    + UpdateAllStats() : string
+    + Wander() : void
+    + Communicate() : void
+}
+Entity <|-- Pet
+Pet --> "Saturation" Stat
+Pet --> "Energy" Stat
+Pet --> "Mood" Stat
+Pet --> "Sleepyness" Stat
+Pet --> "LastFed" DateTime
+Pet --> "LastPlayed" DateTime
+Pet --> "LastPetted" DateTime
+Pet --> "LastWaked" DateTime
+Pet --> "BirthTime" DateTime
+Pet --> "SaveTime" DateTime
+Pet --> "FaceColor" Color
+Pet --> "BodyColor" Color
+Pet --> "MessageBubble" MessageBubble
+@enduml

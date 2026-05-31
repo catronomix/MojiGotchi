@@ -1,0 +1,34 @@
+@startuml
+!include .\\Audio.puml
+!include .\\BluePrints.puml
+!include .\\Camera.puml
+!include .\\Collectible.puml
+!include .\\ConsoleHelper.puml
+!include .\\DataManager.puml
+!include .\\DataTypes.puml
+!include .\\DebugLogger.puml
+!include .\\Editor.puml
+!include .\\editorConfig.puml
+!include .\\Entity.puml
+!include .\\Game.puml
+!include .\\Help.puml
+!include .\\HighScores.puml
+!include .\\JsonParser.puml
+!include .\\Level.puml
+!include .\\LevelJsonContext.puml
+!include .\\Localization.puml
+!include .\\Menu.puml
+!include .\\MessageBubble.puml
+!include .\\Modal.puml
+!include .\\OptionsJsonContext.puml
+!include .\\Pet.puml
+!include .\\PetJsonContext.puml
+!include .\\Program.puml
+!include .\\Race.puml
+!include .\\Renderer.puml
+!include .\\Sprite.puml
+!include .\\Stat.puml
+!include .\\obj\Debug\net9.0\.NETCoreApp,Version=v9.0.AssemblyAttributes.puml
+!include .\\obj\Debug\net9.0\MojiGotchi.AssemblyInfo.puml
+!include .\\obj\Debug\net9.0\MojiGotchi.GlobalUsings.g.puml
+@enduml

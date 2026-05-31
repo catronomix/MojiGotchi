@@ -1,0 +1,18 @@
+@startuml
+enum CollectibleType {
+    RACE,
+    FOOD,
+}
+class CollectAnims <<static>> {
+    + <<const>> Default : string = "DEFAULT"
+    + <<const>> AnimRaceDefault : string = "RACEDEFAULT"
+    + <<const>> AnimRaceCollected : string = "RACECOLLECTED"
+    + <<const>> AnimFoodApple : string = "FOODAPPLE"
+    + <<const>> AnimFoodBerry : string = "FOODBERRY"
+}
+abstract class Collectible {
+    + Collectible(type:CollectibleType)
+}
+Entity <|-- Collectible
+Collectible --> "Type" CollectibleType
+@enduml

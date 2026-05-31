@@ -1,0 +1,5 @@
+@startuml
+class JsonParser <<static>> {
+    + {static} LoadAnimations(filepath:string) : Dictionary<string, Animation>?
+}
+@enduml

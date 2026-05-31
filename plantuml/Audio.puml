@@ -1,0 +1,10 @@
+@startuml
+class SoundManager <<static>> {
+    + {static} Volume : float <<get>> <<set>>
+    + {static} PlaySound(soundbytes:byte[]?) : void
+}
+class Sounds {
+    + AddSound(name:string, filename:string) : void
+    + GetSound(key:string) : byte[]?
+}
+@enduml

@@ -1,0 +1,16 @@
+@startuml
+class Modal {
+    + Title : string <<get>> <<protected set>>
+    + SelectedIndex : int <<get>>
+    + Modal(title:string, bgColor:Color, edgeColor:Color)
+    + SelectRight() : void
+    + SelectLeft() : void
+    + SelectFirstEnabled() : void
+    + SetSpriteBg(size:Vec2) : void
+    + GetSpriteBg() : Sprite?
+    + ClearContentSprite(size:Vec2) : void
+    + AddContent(content:Sprite, pos:Vec2) : void
+    + GetSpriteContent() : Sprite?
+}
+Modal --> "BgColor" Color
+@enduml

@@ -1,0 +1,48 @@
+@startuml
+enum Focus {
+    MENU,
+    CURSOR,
+    BROWSER,
+    MODAL,
+}
+enum EditingMode {
+    DISABLED,
+    SELECT,
+    INSERTSINGLE,
+    INSERTRECTSTART,
+    INSERTRECTEND,
+    FILL,
+    DELETE,
+}
+class Editor {
+    + Editor(devmode:bool)
+    + <<new>> Step() : LoopResult
+}
+class Cursor {
+    + Cursor()
+}
+class BlueprintBar {
+    + SelectedKey : string <<get>>
+    + GetSprite() : Sprite
+    + NextRow() : void
+    + PrevRow() : void
+    + SelectElement(key:char) : LevelElement?
+}
+class LayerBar {
+    + ActiveLayer : int <<get>> <<set>>
+    + LayerBar(maxlayers:int, pos:Vec2, size:Vec2)
+    + NextLayer() : void
+    + PrevLayer() : void
+    + Update() : void
+}
+class EditorHelp {
+    + EditorHelp(title:string, bgcolor:Color, edgecolor:Color)
+    + UpdatePage(size:Vec2) : void
+}
+Game <|-- Editor
+Entity <|-- Cursor
+BlueprintBar --> "SelectedElement" LevelElement
+Rect <|-- LayerBar
+LayerBar --> "GetSprite" Sprite
+Modal <|-- EditorHelp
+@enduml

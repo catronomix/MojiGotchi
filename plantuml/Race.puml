@@ -1,0 +1,17 @@
+@startuml
+class RaceCollectible {
+    + Collected : bool <<get>> <<set>>
+    + RaceCollectible()
+    + Collect() : void
+}
+class Race {
+    + HasUpdate : bool <<get>> <<set>>
+    + Race(level:Level, count:int, duration:int)
+    + Tick(pos:Vec2) : bool
+    + HasWon() : bool
+}
+class "List`1"<T> {
+}
+Collectible <|-- RaceCollectible
+Race --> "Collectibles<RaceCollectible>" "List`1"
+@enduml

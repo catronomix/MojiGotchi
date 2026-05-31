@@ -1,0 +1,7 @@
+@startuml
+class Help {
+    + Help()
+    + UpdatePage(size:Vec2) : void
+}
+Modal <|-- Help
+@enduml

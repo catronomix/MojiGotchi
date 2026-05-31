@@ -1,0 +1,14 @@
+@startuml
+class DataManager <<static>> {
+    + {static} SavePet(myPet:Pet) : bool
+    + {static} LoadPet() : Pet?
+    + {static} UpdateDateTimes(myPet:Pet) : Pet
+    + {static} EnsureSaveFileExists() : bool
+    + {static} DeleteSave() : void
+    + {static} EnsureHighScoreFileExists() : bool
+    + {static} AddHighScore(myPet:Pet) : void
+    + {static} GetHighScores() : List<string[]>
+    {static} + ClearHighScores() : void
+    {static} + GetAgeString(ageSpan:TimeSpan) : string
+}
+@enduml

@@ -1,0 +1,143 @@
+@startuml
+enum ActionType {
+    NEWPET,
+    QUIT,
+    TOPSCORE,
+    HELP,
+    FEED,
+    PLAY,
+    PET,
+    WAKE,
+    EDITOR_START,
+    EDITOR_LOAD,
+    EDITOR_SAVE,
+    EDITOR_EDIT,
+    EDITOR_CONFIG,
+    EDITOR_HELP,
+    EDITOR_QUIT,
+    EDITOR_SIZEHPLUS,
+    EDITOR_SIZEHMIN,
+    EDITOR_SIZEVPLUS,
+    EDITOR_SIZEVMIN,
+    HIGHSCORES_CLEAR,
+}
+struct Color {
+    + R : byte <<get>> <<set>>
+    + G : byte <<get>> <<set>>
+    + B : byte <<get>> <<set>>
+    + Color(r:byte, g:byte, b:byte)
+    + Color(hex:string)
+    + {static} Equals(a:Color, b:Color) : bool
+    + {static} Mix(a:Color, b:Color, amount:float) : Color
+}
+struct ScreenCell {
+    + Character : char
+    + <<const>> SkipChar : char = '\0'
+    + ScreenCell()
+    + ScreenCell(character:char, color:Color, bgcolor:Color)
+}
+struct Vec2 {
+    + X : int <<get>> <<set>>
+    + Y : int <<get>> <<set>>
+    + Vec2(x:int, y:int)
+    + Sum(x:int, y:int) : Vec2
+    + Multiply(scalar:int) : Vec2
+    + Divide(scalar:int) : Vec2
+    {static} + Equals(A:Vec2, B:Vec2) : bool
+    {static} + Add(A:Vec2, B:Vec2) : Vec2
+    {static} + Subtract(A:Vec2, B:Vec2) : Vec2
+    {static} + Multiply(A:Vec2, scalar:int) : Vec2
+    {static} + Divide(A:Vec2, scalar:int) : Vec2
+    {static} + Taxicab(A:Vec2, B:Vec2) : int
+    {static} + Chebyshev(A:Vec2, B:Vec2) : int
+    {static} + Invert(A:Vec2) : Vec2
+    + <<readonly>> <<override>> ToString() : string
+}
+class SimpleRect {
+    + Left : int <<get>>
+    + Top : int <<get>>
+    + Right : int <<get>>
+    + Bottom : int <<get>>
+    + SimpleRect(pos:Vec2, size:Vec2)
+    + SimpleRect(other:SimpleRect)
+    + Width : int <<get>> <<set>>
+    + Height : int <<get>> <<set>>
+}
+class FillRect {
+    + FillRect(pos:Vec2, size:Vec2)
+    + Init(origin:Vec2) : void
+    + Update(cornerpos:Vec2, cell:ScreenCell?) : void
+    + GetSprite() : Sprite?
+}
+class Rect {
+    + BorderWidth : int <<get>> <<set>>
+    + BorderHeight : int <<get>> <<set>>
+    + Character : char <<get>> <<set>>
+    + Rect(pos:Vec2, size:Vec2, borderwidth:int, borderheight:int, fgColor:Color, borderBgColor:Color, bgColor:Color, character:char)
+    + GetSimple() : SimpleRect
+    + GetSprite() : Sprite
+}
+class GameAction {
+    + GameAction(type:ActionType, logic:Action<Game>)
+    + Use(game:Game) : void
+}
+class AnimRandom <<static>> {
+    + {static} GetRandom(min:int, max:int) : int
+}
+class CharSet <<static>> {
+}
+class Randomizer <<static>> {
+    + {static} R() : Random
+}
+Color o-> "Wallfg" Color
+Color o-> "Wallbg" Color
+Color o-> "Black" Color
+Color o-> "DarkBlue" Color
+Color o-> "DarkGreen" Color
+Color o-> "DarkCyan" Color
+Color o-> "DarkRed" Color
+Color o-> "DarkMagenta" Color
+Color o-> "DarkYellow" Color
+Color o-> "Gray" Color
+Color o-> "DarkGray" Color
+Color o-> "Blue" Color
+Color o-> "Green" Color
+Color o-> "Cyan" Color
+Color o-> "Red" Color
+Color o-> "Purple" Color
+Color o-> "Magenta" Color
+Color o-> "Yellow" Color
+Color o-> "Orange" Color
+Color o-> "White" Color
+Color o-> "LightBlue" Color
+Color o-> "LightGreen" Color
+Color o-> "LightCyan" Color
+Color o-> "LightRed" Color
+Color o-> "LightGray" Color
+Color o-> "LightYellow" Color
+Color o-> "LightOrange" Color
+Color o-> "BabyPink" Color
+Color o-> "BabyBrown" Color
+Color o-> "BabyWhite" Color
+Color o-> "GrassGreen" Color
+Color o-> "GroundGreen" Color
+Color o-> "BushGreen" Color
+Color o-> "WoodLight" Color
+Color o-> "WoodDark" Color
+Color o-> "WaterLight" Color
+Color o-> "WaterDark" Color
+ScreenCell --> "Color" Color
+ScreenCell --> "BgColor" Color
+SimpleRect --> "Pos" Vec2
+SimpleRect --> "Size" Vec2
+SimpleRect --> "BottomRight" Vec2
+SimpleRect --> "RelativeCenter" Vec2
+SimpleRect --> "AbsCenter" Vec2
+SimpleRect <|-- FillRect
+SimpleRect <|-- Rect
+Rect --> "FgColor" Color
+Rect --> "BorderBgColor" Color
+Rect --> "BgColor" Color
+GameAction --> "MyActionType" ActionType
+CharSet o-> "Numbers" String
+@enduml
