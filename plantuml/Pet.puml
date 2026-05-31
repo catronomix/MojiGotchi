@@ -17,7 +17,7 @@ class Pet {
     + RandomizePetColor() : void
     + ApplyColorToAnimations() : void
     + Feed(bubbletime:int) : string
-    + Play(bubbletime:int) : string
+    + Play(raise:int, bubbletime:int) : string
     + PetPet(bubbletime:int) : string
     + WakeUp(bubbletime:int) : string
     + UpdateAllStats() : string

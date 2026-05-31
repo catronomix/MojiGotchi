@@ -5,9 +5,9 @@ class LM <<static>> {
     + {static} Get(key:string, args:object?[]) : string
     + {static} CurrentLang() : string
 }
-class LanguageChoice {
-    + LanguageChoice()
+class MissingLang {
+    + MissingLang()
     + UpdatePage(size:Vec2) : void
 }
-Modal <|-- LanguageChoice
+Modal <|-- MissingLang
 @enduml

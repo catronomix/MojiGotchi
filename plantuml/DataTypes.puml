@@ -4,6 +4,7 @@ enum ActionType {
     QUIT,
     TOPSCORE,
     HELP,
+    OPTIONS,
     FEED,
     PLAY,
     PET,
@@ -20,6 +21,10 @@ enum ActionType {
     EDITOR_SIZEVPLUS,
     EDITOR_SIZEVMIN,
     HIGHSCORES_CLEAR,
+    SWITCHLANG_EN,
+    SWITCHLANG_NL,
+    DEVMODE_ON,
+    DEVMODE_OFF,
 }
 struct Color {
     + R : byte <<get>> <<set>>

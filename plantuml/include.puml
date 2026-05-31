@@ -11,6 +11,7 @@
 !include .\\editorConfig.puml
 !include .\\Entity.puml
 !include .\\Game.puml
+!include .\\GameOptions.puml
 !include .\\Help.puml
 !include .\\HighScores.puml
 !include .\\JsonParser.puml

@@ -9,6 +9,7 @@ class Race {
     + Race(level:Level, count:int, duration:int)
     + Tick(pos:Vec2) : bool
     + HasWon() : bool
+    + GetTimeLeft() : string
 }
 class "List`1"<T> {
 }

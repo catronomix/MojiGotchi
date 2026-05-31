@@ -1,0 +1,7 @@
+@startuml
+class GameOptions {
+    + GameOptions(game:Game)
+    + UpdatePage(size:Vec2) : void
+}
+Modal <|-- GameOptions
+@enduml
