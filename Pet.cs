@@ -244,10 +244,10 @@ public class Pet : Entity //Pet inherits from Entity class
 		return LM.Get("pet_action_feed", [Name]);
 	}
 
-	public string Play(int bubbletime = 1000)
+	public string Play(int raise = 1, int bubbletime = 1000)
 	{
 		Energy.Lower(); // Playing uses energy
-		Mood.Raise();   // Playing increases mood
+		Mood.Raise(raise);   // Playing increases mood
 		_lastPlayed = DateTime.Now;
 		_animationState = AnimPlaying;
 		SoundManager.PlaySound(_sounds.GetSound("play"));
