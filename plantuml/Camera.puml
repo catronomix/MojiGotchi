@@ -1,9 +1,0 @@
-@startuml
-class Camera {
-    + Camera(level:Level, entity:Entity?, deadzone:SimpleRect, viewport:SimpleRect)
-    + SetPet(pet:Pet?) : void
-    + UpdateCamera() : void
-    + GetAbsCenter() : Vec2
-}
-Camera --> "CamPos" Vec2
-@enduml

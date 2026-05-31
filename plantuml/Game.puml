@@ -1,8 +1,0 @@
-@startuml
-class Game {
-    + Game(devmode:bool)
-    + GetLevel() : Level
-    + ChooseLanguage() : void
-    + Step() : LoopResult
-}
-@enduml

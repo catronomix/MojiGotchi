@@ -1,5 +1,0 @@
-@startuml
-class LevelJsonContext <<partial>> {
-}
-JsonSerializerContext <|-- LevelJsonContext
-@enduml

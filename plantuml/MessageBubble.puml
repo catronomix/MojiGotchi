@@ -1,9 +1,0 @@
-@startuml
-class MessageBubble {
-    + Text : string <<get>> <<set>>
-    + MessageBubble(fgcolor:Color, bgcolor:Color)
-    + SetMessage(message:string, expireMs:int, force:bool) : void
-    + SetMessage(message:string, fgcolor:Color, bgcolor:Color, expireMs:int, force:bool) : void
-    + GetSprite() : Sprite?
-}
-@enduml

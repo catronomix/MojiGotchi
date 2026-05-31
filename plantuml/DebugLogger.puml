@@ -1,7 +1,0 @@
-@startuml
-class DebugLogger <<static>> {
-    + {static} Log(message:string) : void
-    + {static} Enable() : void
-    + {static} Disable() : void
-}
-@enduml

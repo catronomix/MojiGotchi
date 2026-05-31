@@ -1,7 +1,0 @@
-@startuml
-class HighScores {
-    + HighScores(game:Game)
-    + UpdatePage(size:Vec2) : void
-}
-Modal <|-- HighScores
-@enduml

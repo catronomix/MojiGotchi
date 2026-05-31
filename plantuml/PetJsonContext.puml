@@ -1,5 +1,0 @@
-@startuml
-class PetJsonContext <<partial>> {
-}
-JsonSerializerContext <|-- PetJsonContext
-@enduml

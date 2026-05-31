@@ -1,7 +1,0 @@
-@startuml
-class EditorConfig {
-    + EditorConfig(editor:Editor)
-    + UpdatePage(size:Vec2) : void
-}
-Modal <|-- EditorConfig
-@enduml
