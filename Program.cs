@@ -13,11 +13,13 @@ public enum LoopResult
 
 static class Program
 {
+	//for storing global game options
 	private static Dictionary<string, string> _gameOptions = new();
 	public static Dictionary<string, string> GameOptions{
 		get => _gameOptions;
 	}
 	
+	//for switching between game modes
 	private enum AppState
 	{
 		GAME,
@@ -28,9 +30,9 @@ static class Program
 	private static void Main(string[] args)
 	{
 		ConsoleHelper.EnableAnsiEscapeCodes(); // Enable ANSI support for the console
-		ConsoleHelper.SetWindowSize(116,33);
-		ConsoleHelper.HideCursor();
-		ConsoleHelper.EnableUTF8();
+		ConsoleHelper.SetWindowSize(116,33); //default console dimensions
+		ConsoleHelper.HideCursor(); //dont want to see console blinking cursor
+		ConsoleHelper.EnableUTF8(); //want to use unicode characters
 
 		DebugLogger.Enable();
 		LoadGameOptions();
@@ -102,6 +104,7 @@ static class Program
 		}
 	}
 
+	//load global game options from json file
 	private static void LoadGameOptions()
 	{
 		try
@@ -128,6 +131,7 @@ static class Program
 		}
 	}
 
+	//save global game options to json file
 	internal static void SaveGameOptions()
 	{
 		try

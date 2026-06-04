@@ -3,12 +3,12 @@ namespace MojiGotchi;
 class Game
 {
 	protected const int FPS = 30;
-	protected const int sleepDelta = 1000 / FPS;
-	protected const int statUpdateIntervalMs = 250;
+	protected const int sleepDelta = 1000 / FPS; //TODO: measure actual frame time and make wait time dynamic.
+	protected const int statUpdateIntervalMs = 250; //update stats 4 times per second is enough.
 
 	protected static Color programBgColor = Color.Black;
-	protected Renderer _renderer; // Changed to instance field
-	protected LoopResult _loopresult = LoopResult.CONTINUE;
+	protected Renderer _renderer;
+	protected LoopResult _loopresult = LoopResult.CONTINUE; //stay in the loop by default
 
 	// Declare Rect objects as instance fields to cache them
 	protected Rect _menuBgRect;
@@ -72,6 +72,7 @@ class Game
 		_gameOptions = new GameOptions(this);
 		_currentModal = null;
 
+		/*--------------------MENU SETUP--------------------*/
 		//gameplay
 		_menu.AddItem(LM.Get("menu_feed"), SetAction(ActionType.FEED), Color.WoodDark, false);
 		_menu.AddItem(LM.Get("menu_play"), SetAction(ActionType.PLAY), Color.WoodDark, false);
@@ -87,12 +88,16 @@ class Game
 		_menu.AddItem(LM.Get("menu_quit"), SetAction(ActionType.QUIT), Color.DarkGreen);
 
 		_menu.SelectFirstEnabled();
+		
 		//load saved pet from file
 		_pet = DataManager.LoadPet();
+
+		//set up level
 		BlueprintManager.Initialize(); // Initialize blueprints before loading a level
 		_level = new Level(); // This is now empty, we need to load a level
 		_level.LoadFromFile("level1.json"); // Load the level from the text file
-		SimpleRect deadzone = new SimpleRect(new Vec2(-4, -2), new Vec2(8, 4));
+
+		//disable making a new pet if there is already a pet.
 		if (_pet != null)
 		{
 			UpdateMenuAvailability([ActionType.NEWPET], false);
@@ -101,10 +106,12 @@ class Game
 
 		//draw hidden items every x frames
 		_drawhidden = 0;
-		
+
+		//Camera setup
+		SimpleRect deadzone = new SimpleRect(new Vec2(-4, -2), new Vec2(8, 4)); //area the pet can move in without repositioning the camera
 		_camera = new Camera(_level, _pet, deadzone, _viewport); 
 
-		_persistentStatus = LM.Get("status_welcome"); // Welcome
+		_persistentStatus = LM.Get("status_welcome"); // Default status when launching game
 
 		//call CheckWindow once forced to ensure the window and buffer size are synced.
 		CheckWindow(true);
@@ -120,6 +127,7 @@ class Game
 
 	public Level GetLevel() { return _level; }
 
+	//only called on missing language configuration (usually this means first game launch)
 	public void ChooseLanguage()
 	{
 		_missingLang.UpdatePage(_viewport.Size);
@@ -127,6 +135,7 @@ class Game
 		_menu.Disable();
 	}
 
+	//main game loop
 	public LoopResult Step()
 	{
 		//Check window resized
@@ -137,6 +146,7 @@ class Game
 		//Race minigame
 		CheckRace();
 
+		//Let the pet wander
 		PetMove();
 
 		/*--------------------DRAWING--------------------*/
@@ -147,8 +157,7 @@ class Game
 		DrawMenuItems();
 		DrawModalOptions();
 
-		//update camera before drawing game
-		_camera.UpdateCamera();
+		_camera.UpdateCamera(); //update camera before drawing game
 
 		DrawLevelLayer(_level.Layers[0], true);
 		DrawPet();
@@ -164,8 +173,11 @@ class Game
 
 		/*--------------------INPUT--------------------*/
 		HandleInput();
-		_drawhidden = (_drawhidden + 1) % 6;
-		Thread.Sleep(sleepDelta);
+
+		_drawhidden = (_drawhidden + 1) % 6; //blink hidden sprites to reveal positions
+
+		Thread.Sleep(sleepDelta); //TODO: make sleep dynamic
+
 		return _loopresult;
 	}
 
@@ -189,7 +201,7 @@ class Game
 			// Always update the Rect properties that depend on console dimensions.
 			// The Rect's setters will handle marking them as dirty if values actually change.
 			// This ensures they are correctly sized on initial setup and subsequent resizes.
-			_menuBgRect.Height = consoleSize.Y; // Crucial: Update menu background height
+			_menuBgRect.Height = consoleSize.Y; //Update menu background height
 
 			_statusBgRect.Pos = new Vec2(_menuWidth, 0); // Ensure position is correct
 			_statusBgRect.Width = consoleSize.X - _menuWidth;
@@ -197,13 +209,15 @@ class Game
 			_viewport.Pos = new Vec2(_menuWidth, _statusHeight); // Ensure position is correct
 			_viewport.Width = consoleSize.X - _menuWidth;
 			_viewport.Height = consoleSize.Y - _statusHeight;
+
+			//flush render buffer
 			_renderer.ClearBuffer();
 
 			//update modals too
 			_help.UpdatePage(_viewport.Size);
 			_highScores.UpdatePage(_viewport.Size);
 			_camera.UpdateCamera();
-			ConsoleHelper.HideCursor();
+			ConsoleHelper.HideCursor(); //fix for cursor becoming visible after console resize
 		}
 
 		return resized;
@@ -317,11 +331,12 @@ class Game
 
 	protected void DrawRects()
 	{
-		// make sprites
+		// get (cached) sprites
 		Sprite menuBgSprite = _menuBgRect.GetSprite();
 		Sprite statusBgSprite = _statusBgRect.GetSprite();
 		Sprite viewportSprite = _viewport.GetSprite();
 		
+		// draw sprites to render buffer
 		_renderer.DrawSprite(menuBgSprite, _menuBgRect.Pos);
 		_renderer.DrawSprite(statusBgSprite, _statusBgRect.Pos);
 		_renderer.DrawSprite(viewportSprite, _viewport.Pos);
@@ -410,13 +425,13 @@ class Game
 	{
 		if (_pet != null && _currentModal == null)
 		{
-			_pet.Communicate();
+			_pet.Communicate(); //set speech bubble contents
 			Sprite? petSprite = _pet.GetSprite(); // Capture the sprite once
 			if (petSprite != null)
 			{
-				// 2. Calculate Top-Left based on Pet's World Position and its Pivot (center)
+				// Calculate Top-Left based on Pet's World Position and its Pivot (center)
 				// Pet position (0,0) is world center.
-				// We subtract petSprite.Size / 2 to make (0,0) the center of the pet.
+				// subtract petSprite.Size / 2 to make (0,0) the center of the pet.
 				Vec2 drawPos = Vec2.Add(_camera.GetAbsCenter(), _pet.Pos.Sum(-1,-1));
 				_renderer.DrawSprite(petSprite, drawPos, _viewport);
 			}
@@ -452,7 +467,7 @@ class Game
 		}
 
 		// Draw persistent status on line 2.
-		// The ANSI codes embedded in _persistentStatus will handle coloring.
+		// The ANSI codes embedded in _persistentStatus handle coloring.
 		int persistentY = _statusBgRect.Pos.Y + spacing;
 		int persistentX = _statusBgRect.AbsCenter.X - _persistentStatus.Length / 2;
 		_renderer.DrawText(_persistentStatus, new Vec2(persistentX, persistentY), Color.White);
@@ -473,17 +488,17 @@ class Game
 			string deathMessage = _pet.UpdateAllStats();
 			if (deathMessage != "")
 			{
-				//add pet to high scores
+				//pet died :( - add pet to high scores
 				DataManager.AddHighScore(_pet); // Add high score
 				_persistentStatus = deathMessage;
 				KillPet();
 				return;
 			}
 			else if (_race != null){
-				//race is in progress, display race timer
+				//race is in progress - display race timer
 				_persistentStatus = LM.Get("status_race_time") + _race.GetTimeLeft();
 			}
-			else // Pet is alive, update stats display
+			else // Pet is alive - update stats display
 			{
 				_persistentStatus = LM.Get("status_caring", [_pet.Name]) + " | "
 				+ LM.Get("status_stats", [_pet.Saturation.Value, _pet.Saturation.Max,
@@ -514,7 +529,6 @@ class Game
 			}
 			if (!_race.Tick(_pet.Pos))
 			{
-
 				//race is over
 				if (_race.HasWon())
 				{
@@ -534,7 +548,7 @@ class Game
 
 	void PetMove()
 	{
-		if (_race == null){
+		if (_race == null){ //manual control of pet using move actions.
 			//update menu availability
 			if (_pet != null && _pet.IsSleeping)
 			{
@@ -542,7 +556,7 @@ class Game
 				UpdateMenuAvailability([ActionType.FEED, ActionType.PLAY, ActionType.PET], false);
 				_pet.SetAnimation(Pet.AnimSleeping);
 			}
-			else if (_pet != null)
+			else if (_pet != null) //automatic movement of pet using random directions (wander)
 			{
 				UpdateMenuAvailability([ActionType.WAKE], false);
 				UpdateMenuAvailability([ActionType.FEED, ActionType.PLAY, ActionType.PET], true);
